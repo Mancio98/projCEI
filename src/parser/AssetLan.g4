@@ -45,10 +45,10 @@ call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 
 initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
 
-exp	    : '(' exp ')'				        #baseExp
-	    | '-' exp					        #negExp
+exp	    : '(' exp ')'				        				#baseExp
+	    | '-' exp					        				#negExp
 	    | '!' exp                                           #notExp
-	    | ID						#derExp
+	    | ID												#idExp
 	    | left=exp op=('*' | '/')               right=exp   #binExp
 	    | left=exp op=('+' | '-')               right=exp   #binExp
 	    | left=exp op=('<' | '<=' | '>' | '>=') right=exp   #binExp

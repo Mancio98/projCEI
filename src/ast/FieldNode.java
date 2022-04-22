@@ -1,31 +1,30 @@
 package ast;
 
+
 import java.util.ArrayList;
 
+import ast.exp.Exp;
 import util.Environment;
 import util.SemanticError;
 
-public class FieldNode implements Node{
+public class FieldNode extends VarNode {
 	
-	private Node type;
-	private Node exp;
-	private String id;
+	private Exp exp;
 
-	public FieldNode(String s, Node t, Node e) {
-		type=t;
-		exp=e;
-		id=s;
+	public FieldNode(String id, Node type, Exp exp) {
+		super(id, type);
+		this.exp = exp;
 	}
 	
-	public FieldNode(String s, Node t) {
-		type=t;
-		id=s;
-	}
-	
-	public String getId() {
-		return id;
+	public FieldNode(String id, Node type) {
+		super(id, type);
+		this.exp = null;
 	}
 
+	public Node getExp() {
+		return this.exp;
+	}
+	
 	@Override
 	public String toPrint(String indent) {
 		// TODO Auto-generated method stub
@@ -46,8 +45,11 @@ public class FieldNode implements Node{
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<SemanticError> errors = super.checkSemantics(env);
+		if(exp != null)
+			errors.addAll(exp.checkSemantics(env));
+		return errors;
 	}
 
 }
+

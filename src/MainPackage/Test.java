@@ -57,7 +57,7 @@ public class Test {
 	        Node ast = visitor.visit(tree); //generazione AST 
 				
 			//SIMPLE CHECK FOR LEXER ERRORS
-			if (lexicalErrors > 0){
+			if (lexicalErrors > 0 || parser.getNumberOfSyntaxErrors() > 0){
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
 			} else {
 				Environment env = new Environment();

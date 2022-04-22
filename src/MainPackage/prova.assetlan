@@ -1,13 +1,44 @@
+/*
+int t = 5;
+bool ciao;
 
-int x;
-int y=1;
+asset m;
+asset n;
 
-bool x;
 
-asset pippo;
+bool luca(int x, int y)[asset a, asset b]{
 
-void pluto()[]{
-
+	int m, int n;
+	
+	if(x==1)
+		y = 3;
+	else
+		y = 10;
 }
 
-luca (!y)[]
+void intermerda()[]{}
+
+luca (7,5)[true, false]
+*/
+
+asset x; asset y ;
+
+void f()[asset u, asset v]{
+	u -o y ;
+	v -o x ;
+	if(true)
+		if(x)
+			f(v)[u,x];
+		else
+			print ;
+	else
+		transfer ;
+}
+ void main()[asset u,asset v]{
+    u -o x ;
+	u -o y ;
+	f()[x,y] ;
+ }
+ 
+ main()[2,3]
+     

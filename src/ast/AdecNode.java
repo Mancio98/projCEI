@@ -33,11 +33,16 @@ public class AdecNode implements Node {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
-		// TODO Auto-generated method stub
-		return null;
+		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
+		
+		for (AssetNode node : adec) {
+			errors.addAll(node.checkSemantics(env));
+		}
+		
+		return errors;
 	}
 
 }

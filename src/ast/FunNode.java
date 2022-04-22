@@ -85,19 +85,23 @@ public class FunNode implements Node{
 			
 			for(VarNode n : parDec.getListDec()) {
 				
+				
 				env.addDeclaration(n.getId(), n.getType());
+
 			}
 		
 			for(AssetNode n : parAdec.getListAdec()) {
 				
-				env.addDeclaration(n.getID(), new AssetTypeNode());
+				env.addDeclaration(n.getId(), new AssetTypeNode());
 			}
+			
 			
 			
 			for(DecNode n : decList) {
 				
-				for(VarNode ni : n.getListDec())
+				for(VarNode ni : n.getListDec()) {
 					env.addDeclaration(ni.getId(), ni.getType());
+				}
 			}
 			
 			for(Node n : statementList) {
@@ -105,13 +109,14 @@ public class FunNode implements Node{
 				semErrors.addAll(n.checkSemantics(env));
 			}
 			
+			
 		
 		} catch (DuplicateEntryException e) {
-			semErrors.add(new SemanticError("Fun id "+id+" already declared"));
+			semErrors.add(new SemanticError("id "+id+" already declared"));
 			e.printStackTrace();
 		}
 		
-		
+		env.exitScope();
 		
 		return semErrors;
 	}

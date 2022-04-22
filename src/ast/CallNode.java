@@ -6,11 +6,12 @@ import java.util.List;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
+import ast.statement.Statement;
 import util.Environment;
 import util.Environment.UndeclaredIdException;
 import util.SemanticError;
 
-public class CallNode implements Node {
+public class CallNode extends Statement{
 	
 	private String id;
 	private List<Node> exp;

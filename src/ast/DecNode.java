@@ -38,8 +38,13 @@ public class DecNode implements Node {
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
+		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
-		return null;
+		for (VarNode node : dec) {
+			errors.addAll(node.checkSemantics(env));
+		}
+		
+		return errors;
 	}
 
 }

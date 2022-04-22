@@ -48,9 +48,21 @@ public class Environment {
 		
 		STentry fun = null;
 		
-		for(HashMap<String,STentry> st : symTable) {
-			fun = st.get(id);
+		
+		System.out.println("\nNL:"+nestingLevel);
+		
+		boolean foundId = false;
+		
+		int i = 0;
+		while(i < symTable.size() && !foundId) {
+			
+			fun = symTable.get(i).get(id);
+			if (fun != null)
+				foundId = true;
+			i++;
 		}
+		
+		System.out.println("\nSL:"+symTable);
 		
 		if (fun == null)
 			throw new UndeclaredIdException();

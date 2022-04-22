@@ -16,8 +16,6 @@ public class VerboseListener extends BaseErrorListener {
 	private int lexicalerrors = 0;
 	private FileWriter lexerrors;
 	
-	
-	
 	public VerboseListener() throws IOException {
 		super();
 		lexerrors = new FileWriter("src/lexicalerrors.txt");

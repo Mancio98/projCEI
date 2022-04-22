@@ -1,9 +1,7 @@
 package ast;
 
 import java.util.ArrayList;
-
-
-
+import java.util.List;
 
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -20,7 +18,7 @@ import parser.AssetLanParser.BoolExpContext;
 import parser.AssetLanParser.CallContext;
 import parser.AssetLanParser.CallExpContext;
 import parser.AssetLanParser.DecContext;
-import parser.AssetLanParser.DerExpContext;
+import parser.AssetLanParser.IdExpContext;
 import parser.AssetLanParser.ExpContext;
 import parser.AssetLanParser.FieldContext;
 import parser.AssetLanParser.FunctionContext;
@@ -49,23 +47,23 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		ProgramNode res;
 		
-		ArrayList<Node> field = new ArrayList<Node>();
-		ArrayList<Node> asset = new ArrayList<Node>();
-		ArrayList<Node> function = new ArrayList<Node>();
+		ArrayList<FieldNode> field = new ArrayList<FieldNode>();
+		ArrayList<AssetNode> asset = new ArrayList<AssetNode>();
+		ArrayList<FunNode> function = new ArrayList<FunNode>();
 		
 		for(FieldContext fc : ctx.field()) {
-			field.add(visit(fc));
+			field.add((FieldNode) visit(fc));
 		}
 		for(AssetContext ac : ctx.asset()) {
-			asset.add(visit(ac));
+			asset.add((AssetNode) visit(ac));
 		}
 		for(FunctionContext func : ctx.function()) {
-			function.add(visit(func));
+			function.add((FunNode) visit(func));
 		}
 		
-		Node initcall = visit(ctx.initcall());
+		InitcallNode init = (InitcallNode) visit(ctx.initcall());
 		
-		res = new ProgramNode(field, asset, function, initcall);
+		res = new ProgramNode(field, asset, function, init);
 		
 		return res;
 	}
@@ -81,7 +79,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		if (ctx.exp()!=null) {
 			exp = visit(ctx.exp());
-			field = new FieldNode(ctx.ID().getText(),type,exp);
+			field = new FieldNode(ctx.ID().getText(),type,(Exp) exp);
 		}
 		else field = new FieldNode(ctx.ID().getText(),type);
 	
@@ -107,16 +105,21 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		else res = new FunNode(ctx.ID().getText(),new VoidTypeNode());
 		
 		
-		int decSize = ctx.dec().size();
+		
+		
+		List<DecContext> decls = ctx.dec();
+		int decSize = decls.size();
 		
 		if (decSize > 0 && ctx.adec() == null) {
 			
-			DecContext decParams = ctx.dec().get(0);
-			if(decParams.toString().equals(new String("[72 46]"))){
-				res.addPar((DecNode)visit(ctx.dec().get(0)), null);
-				ctx.dec().remove(0);
+			DecContext decParams = decls.get(0);
+			
+			if(decParams.invokingState == 72 ){
+				
+				res.addPar((DecNode)visit(decls.get(0)), null);
+				decls.remove(0);
 			}
-			else if (decParams.toString().equals(new String("[82 46]"))){
+			else {
 				res.addPar(null, null);
 			}
 		}
@@ -126,12 +129,18 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		}
 		else if (decSize > 0 && ctx.adec() != null) {
 			
-			DecContext decParams = ctx.dec().get(0);
-			if(decParams.toString().equals(new String("[72 46]"))){
-				res.addPar((DecNode)visit(ctx.dec().get(0)), (AdecNode)visit(ctx.adec()));
-				ctx.dec().remove(0);
+			
+			DecContext decParams = decls.get(0);
+			
+			
+			if(decParams.invokingState == 72 ){
+				
+				res.addPar((DecNode)visit(decls.get(0)), (AdecNode)visit(ctx.adec()));
+				
+				decls.remove(0);
+				
 			}
-			else if (decParams.toString().equals(new String("[82 46]"))){
+			else {
 				res.addPar(null, (AdecNode)visit(ctx.adec()));
 			}
 			
@@ -142,7 +151,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		ArrayList<DecNode> innerDec = new ArrayList<DecNode>();
 		
-		for(DecContext dc: ctx.dec()) {
+		
+		for(DecContext dc: decls) {
 			innerDec.add((DecNode)visit(dc));
 		}
 		
@@ -161,9 +171,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		ArrayList<VarNode> dec = new ArrayList<VarNode>();
 		
-		
-		System.out.println("len id:"+ctx.ID().size()+"\n");
-		System.out.println("len type:"+ctx.type().size()+"\n");
 		
 		for(int i=0; i<ctx.ID().size(); i++) {
 			
@@ -224,7 +231,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return null;
 	}
 	
-	public Node visitAssignement(AssignmentContext ctx) {
+	public Node visitAssignment(AssignmentContext ctx) {
 		return new AssignmentStmt(new IdExp(ctx.ID().getText()),(Exp)visit(ctx.exp()));
 	}
 	
@@ -248,7 +255,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	public Node visitIte(IteContext ctx) {
 			if(ctx.statement().size()>1){
-				return new IteStmt((Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)),(Statement)visit(ctx.statement().get(1)));
+				
+				
+	
+				return new IteStmt((Exp)visit(ctx.exp()),(Statement) visit(ctx.statement().get(0)),
+						(Statement) visit(ctx.statement().get(1)));
 			}
 			else return new IteStmt((Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)));
 	}
@@ -273,14 +284,22 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	}
 	
 	
-	
-	public Node visitInitCall(InitcallContext ctx) {
-		ArrayList<Node> expList = new ArrayList<Node>();
-		for(ExpContext ec: ctx.exp()) {
-			expList.add(visit(ec));
-		}
+	public Node visitInitcall(InitcallContext ctx) {
 		
-		return new InitcallNode(ctx.ID().getText(),expList);
+		ArrayList<Exp> exp1 = new ArrayList<Exp>();
+		ArrayList<Exp> exp2 = new ArrayList<Exp>();
+		
+
+		
+		for(ExpContext ec: ctx.exp()) {
+			
+			if(ec.invokingState == 195 || ec.invokingState == 197)
+				exp1.add((Exp)visit(ec));
+			else
+				exp2.add((Exp)visit(ec));
+		}
+
+		return new InitcallNode(ctx.ID().getText(),exp1,exp2);
 	}
 	
 	public Node visitBaseExp(BaseExpContext ctx) {
@@ -295,11 +314,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return new NotExp((Exp) visit(ctx.exp()));
 	}
 	
-	public Node visitIdExp(DerExpContext ctx) {
+	public Node visitIdExp(IdExpContext ctx) {
 		return new IdExp(ctx.ID().getText());
 	}
 	
-	
+
 	public Node visitBinExp(BinExpContext ctx) {
 
 		switch(ctx.op.getText()) {

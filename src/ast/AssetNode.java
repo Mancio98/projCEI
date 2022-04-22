@@ -5,6 +5,7 @@ import java.util.ArrayList;
 
 
 import util.Environment;
+import util.Environment.DuplicateEntryException;
 import util.SemanticError;
 import util.Type;
 
@@ -13,10 +14,10 @@ public class AssetNode implements Node{
 	private String id;
 	
 	public AssetNode(String id) {
-		id=id;
+		this.id = id;
 	}
 
-	public String getID() {
+	public String getId() {
 		return id;
 	}
 	
@@ -40,9 +41,17 @@ public class AssetNode implements Node{
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
+		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
+		try {
+			env.addDeclaration(this.id, new AssetTypeNode());
+		}
+		catch (DuplicateEntryException e) {
+			errors.add(new SemanticError("Asset id "+ id +" already declared"));
+			e.printStackTrace();
+		}
 		
-		return null;
+		return errors;
 	}
 
 }
