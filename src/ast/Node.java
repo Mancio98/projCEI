@@ -5,18 +5,32 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public interface Node {
+//Basic class used to inherit some of the principal methods for the project
+public abstract class Node {
+	
+	protected final int row;
+	protected final int column;
+	
+	public Node(int row,int column) {
+		this.row=row;
+		this.column=column;
+	}
+	
+	public int getRow() {
+		return row;
+	}
+	
+	public int getColumn() {
+		return column;
+	}
    
-  String toPrint(String indent);
+  public abstract String toPrint(String indent);
 
-  //fa il type checking e ritorna: 
-  //  per una espressione, il suo tipo (oggetto BoolTypeNode o IntTypeNode)
-  //  per una dichiarazione, "null"
-  Node typeCheck();
+  public abstract Node typeCheck();
   
-  String codeGeneration();
+  public abstract String codeGeneration();
   
-  ArrayList<SemanticError> checkSemantics(Environment env);
+  public abstract ArrayList<SemanticError> checkSemantics(Environment env);
   
   
 }  

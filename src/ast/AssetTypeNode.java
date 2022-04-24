@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class AssetTypeNode implements Node {
+//Used to specify the type of a node
+public class AssetTypeNode extends Node {
+
+	public AssetTypeNode(int row, int column) {
+		super(row, column);
+	}
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return indent+"AssetType\n";
+		return indent + "Type: Asset";
 	}
 
 	@Override

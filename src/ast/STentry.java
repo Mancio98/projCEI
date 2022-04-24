@@ -1,5 +1,6 @@
 package ast;
 
+//Used for the insertion of an ID in the HashMap
 public class STentry {
 	
 	private int nl;
@@ -23,7 +24,7 @@ public class STentry {
 	  public int getNestinglevel ()
 	  {return nl;}
 	  
-	  public String toPrint(String s) { //
+	  public String toPrint(String s) { 
 		   return s+"STentry: nestlev " + Integer.toString(nl) +"\n"+
 				  s+"STentry: type\n" + 
 				  type.toPrint(s+"  ") + "\n";

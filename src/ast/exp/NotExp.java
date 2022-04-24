@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
+//Used for expression of type "! exp" 
 public class NotExp extends Exp {
 
 	private final Exp child;
 
-    public NotExp(Exp child) {
+    public NotExp(int row,int column, Exp child) {
+    	super(row,column);
         this.child = child;
     }
 
@@ -27,14 +29,20 @@ public class NotExp extends Exp {
         return child.checkSemantics(env);
     }
 
-    @Override
-    public Node typeCheck() {
-        return child.typeCheck();
-    }
+	@Override
+	public Node typeCheck() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String codeGeneration() {
-        return child.codeGeneration();
-    }
+	@Override
+	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+
+ 
 	
 }

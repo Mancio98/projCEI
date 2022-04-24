@@ -34,16 +34,12 @@ import parser.AssetLanParser.StatementContext;
 import parser.AssetLanParser.TransferContext;
 import parser.AssetLanParser.TypeContext;
 import parser.AssetLanParser.ValExpContext;
-import util.Type;
-import util.Types;
+
 
 public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
-	
 	@Override
 	public Node visitProgram(ProgramContext ctx) {
-		
-		//System.out.println("");
 		
 		ProgramNode res;
 		
@@ -63,15 +59,13 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		InitcallNode init = (InitcallNode) visit(ctx.initcall());
 		
-		res = new ProgramNode(field, asset, function, init);
+		res = new ProgramNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),field, asset, function, init);
 		
 		return res;
 	}
 	
 	public Node visitField(FieldContext ctx) {
-		
-		//System.out.println("sono dentro!!!\n");
-		
+	
 		FieldNode field;
 		
 		Node type = visit(ctx.type());
@@ -79,33 +73,26 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		if (ctx.exp()!=null) {
 			exp = visit(ctx.exp());
-			field = new FieldNode(ctx.ID().getText(),type,(Exp) exp);
+			field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(),type,(Exp) exp);
 		}
-		else field = new FieldNode(ctx.ID().getText(),type);
+		else field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),type);
 	
 		return field;
 	}
 	
 	public Node visitAsset(AssetContext ctx) {
-		
-		//System.out.println("sono dentro!!!\n");
-		
-		return new AssetNode(ctx.ID().getText());
+				
+		return new AssetNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText());
 		
 	}
 	
 	public Node visitFunction(FunctionContext ctx) {
 		
-		//System.out.println("sono dentro!!!\n");
-		
 		FunNode res;
 		if(ctx.type()!=null) {
-			res = new FunNode(ctx.ID().getText(),visit(ctx.type()));
+			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),visit(ctx.type()));
 		}
-		else res = new FunNode(ctx.ID().getText(),new VoidTypeNode());
-		
-		
-		
+		else res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),new VoidTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine()));
 		
 		List<DecContext> decls = ctx.dec();
 		int decSize = decls.size();
@@ -156,10 +143,10 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 			innerDec.add((DecNode)visit(dc));
 		}
 		
-		ArrayList<Node> innerStatement = new ArrayList<Node>();
+		ArrayList<Statement> innerStatement = new ArrayList<Statement>();
 		
 		for(StatementContext sc: ctx.statement()) {
-			innerStatement.add(visit(sc));
+			innerStatement.add((Statement) visit(sc));
 		}
 		
 		res.addBody(innerDec,innerStatement);
@@ -174,11 +161,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		for(int i=0; i<ctx.ID().size(); i++) {
 			
-			dec.add(new VarNode(ctx.ID(i).getText(),visit(ctx.type(i))));
+			dec.add(new VarNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID(i).getText(),visit(ctx.type(i))));
 			
 		}
 		
-		return new DecNode(dec);
+		return new DecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),dec);
 	}
 	
 	public AdecNode visitAdec(AdecContext ctx) {
@@ -187,11 +174,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		if(ctx != null) {
 		
 			for(TerminalNode tc : ctx.ID()) {
-				adec.add(new AssetNode(tc.getText()));
+				adec.add(new AssetNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),tc.getText()));
 			}
 		}
 		
-		return new AdecNode(adec);
+		return new AdecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),adec);
 	}
 	
 	public Node visitStatement(StatementContext ctx){
@@ -222,65 +209,67 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	public Node visitType(TypeContext ctx) {
 		if(ctx.getText().equals("int")) 
-			return new IntTypeNode();
+			return new IntTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		else if(ctx.getText().equals("bool"))
-			return new BoolTypeNode();
+			return new BoolTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		else if(ctx.getText().equals("void"))
-			return new VoidTypeNode();
+			return new VoidTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		
 		return null;
 	}
 	
 	public Node visitAssignment(AssignmentContext ctx) {
-		return new AssignmentStmt(new IdExp(ctx.ID().getText()),(Exp)visit(ctx.exp()));
+		return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
 	}
 	
 	public Node visitMove(MoveContext ctx) {
-		return new MoveStmt(new IdExp(ctx.ID().get(0).getText()), new IdExp(ctx.ID().get(1).getText()));
+		return new MoveStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().get(0).getSymbol().getLine(), ctx.ID().get(0).getSymbol().getCharPositionInLine(),ctx.ID().get(0).getText()), new IdNode(ctx.ID().get(1).getSymbol().getLine(), ctx.ID().get(1).getSymbol().getCharPositionInLine(),ctx.ID().get(1).getText()));
+	
 	}
 	
 	public Node visitPrint(PrintContext ctx) {
-		return new PrintStmt((Exp)visit(ctx.exp()));
+		return new PrintStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()));
 	}
 	
 	public Node visitTransfer(TransferContext ctx) {
-		return new TransferStmt(new IdExp(ctx.ID().getText()));
+		return new TransferStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()));
 	}
 	
 	public Node visitRet(RetContext ctx) {
 		if(ctx.exp()!=null)
-			return new ReturnStmt((Exp)visit(ctx.exp()));
-		else return new ReturnStmt();
+			return new ReturnStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()));
+		else return new ReturnStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 	}
 	
 	public Node visitIte(IteContext ctx) {
 			if(ctx.statement().size()>1){
 				
-				
-	
-				return new IteStmt((Exp)visit(ctx.exp()),(Statement) visit(ctx.statement().get(0)),
+				return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement) visit(ctx.statement().get(0)),
 						(Statement) visit(ctx.statement().get(1)));
 			}
-			else return new IteStmt((Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)));
+			else return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)));
 	}
 
 	public Node visitCall(CallContext ctx) {
 		
-		ArrayList<String> id = new ArrayList<String>();
-		ArrayList<Node> exp = new ArrayList<Node>();
+		ArrayList<IdNode> id = new ArrayList<IdNode>();
+		ArrayList<Exp> exp = new ArrayList<Exp>();
 		
+		String idFun = ctx.ID(0).getText();
+		List<TerminalNode> temp = ctx.ID();
+		temp.remove(0);
 		
-		for(TerminalNode cc: ctx.ID()) {
-			id.add(cc.getText());
+		for(TerminalNode cc: temp) {
+			id.add(new IdNode(cc.getSymbol().getLine(),cc.getSymbol().getCharPositionInLine(),cc.getText()));
 		}
 		
 		if (ctx.exp() != null) {
 			
 			for(ExpContext ec: ctx.exp()) {
-				exp.add(visit(ec));
+				exp.add((Exp) visit(ec));
 			}
 		}
-		return new CallNode(id,exp);
+		return new CallNode(ctx.start.getLine(),ctx.start.getCharPositionInLine(),idFun,id,exp);
 	}
 	
 	
@@ -299,23 +288,23 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				exp2.add((Exp)visit(ec));
 		}
 
-		return new InitcallNode(ctx.ID().getText(),exp1,exp2);
+		return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),exp1,exp2);
 	}
 	
 	public Node visitBaseExp(BaseExpContext ctx) {
-		return new BaseExp((Exp) visit(ctx.exp()));
+		return new BaseExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
 	public Node visitNegExp(NegExpContext ctx) {
-		return new NegExp((Exp) visit(ctx.exp()));
+		return new NegExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
 	public Node visitNotExp(NotExpContext ctx) {
-		return new NotExp((Exp) visit(ctx.exp()));
+		return new NotExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
 	public Node visitIdExp(IdExpContext ctx) {
-		return new IdExp(ctx.ID().getText());
+		return new IdNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText());
 	}
 	
 
@@ -324,31 +313,29 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		switch(ctx.op.getText()) {
 
 		case "*":
-			return new MulExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
-
+			return new MulExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "/":
-			return new DivExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new DivExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "+":
-			return new SumExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new SumExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "-":
-			return new SubExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new SubExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "<":
-			return new LessExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new LessExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "<=":
-			return new LessOrEqualExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new LessOrEqualExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case ">":
-			return new GreaterExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new GreaterExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case ">=":
-			return new GreaterOrEqualExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new GreaterOrEqualExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "==":
-			return new EqualExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new EqualExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "!=":
-			return new NotEqualExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new NotEqualExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "&&":
-			return new AndExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
+			return new AndExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		case "||":
-			return new OrExp((Exp)visit(ctx.left),(Exp)visit(ctx.right));
-			
+			return new OrExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.left),(Exp)visit(ctx.right));
 		default:
 			break;
 		}
@@ -357,28 +344,32 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	}
 	
 	public Node visitCallExp(CallExpContext ctx) {
-		ArrayList<String> id = new ArrayList<String>();
-		ArrayList<Node> exp = new ArrayList<Node>();
+		ArrayList<IdNode> id = new ArrayList<IdNode>();
+		ArrayList<Exp> exp = new ArrayList<Exp>();
+		
+		String idFun = ctx.call().ID(0).getText();
+		List<TerminalNode> temp = ctx.call().ID();
+		temp.remove(0);
 		
 		
-		for(TerminalNode cc: ctx.call().ID()) {
-			id.add(cc.getText());
+		for(TerminalNode cc: temp) {
+			id.add(new IdNode(cc.getSymbol().getLine(),cc.getSymbol().getCharPositionInLine(),cc.getText()));
 		}
 		
 		for(ExpContext ec: ctx.call().exp()) {
-			exp.add(visit(ec));
+			exp.add((Exp) visit(ec));
 		}
 		
-		return new CallNode(id,exp);
+		return new CallNode(ctx.start.getLine(),ctx.start.getCharPositionInLine(),idFun,id,exp);
 	}
 	
 	public Node visitBoolExp(BoolExpContext ctx) {
-		return new BoolExp(Boolean.parseBoolean(ctx.getText()));
+		return new BoolExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),Boolean.parseBoolean(ctx.getText()));
 		
 	}
 	
 	public Node visitValExp(ValExpContext ctx) {
-		return new ValExp(Integer.parseInt(ctx.NUMBER().getText()));
+		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),Integer.parseInt(ctx.NUMBER().getText()));
 	
 	}
 }

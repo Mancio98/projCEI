@@ -6,12 +6,14 @@ import util.Environment;
 import util.Environment.DuplicateEntryException;
 import util.SemanticError;
 
-public class VarNode implements Node {
+//Used to declaration of variable of type bool or int
+public class VarNode extends Node {
 	
 	String id;
 	Node type;
 	
-	public VarNode(String id, Node type) {
+	public VarNode(int row,int column,String id, Node type) {
+		super(row, column);
 		this.id = id;
 		this.type = type;
 	}
@@ -22,8 +24,7 @@ public class VarNode implements Node {
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		return indent + "Var: " + type.toPrint(indent) + " " + id + "\n";
 	}
 
 	@Override
@@ -46,8 +47,7 @@ public class VarNode implements Node {
 			env.addDeclaration(this.id, this.type);
 		}
 		catch (DuplicateEntryException e) {
-			errors.add(new SemanticError("Var id "+ id +" already declared"));
-			e.printStackTrace();
+			errors.add(new SemanticError(super.row + ":" + super.column + " var "+ id +" already declared"));
 		}
 		
 		return errors;

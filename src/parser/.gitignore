@@ -4,3 +4,5 @@
 /AssetLanLexer.tokens
 /AssetLanParser.java
 /AssetLanVisitor.java
+/AssetLan.interp
+/AssetLanLexer.interp

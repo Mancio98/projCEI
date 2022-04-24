@@ -1,26 +1,29 @@
 package ast.statement;
 
 import java.util.ArrayList;
+
+import ast.IdNode;
 import ast.Node;
 import ast.exp.Exp;
-import ast.exp.IdExp;
 import util.SemanticError;
 import util.Environment;
 
+//Used for rule like "ID -o ID"
 public class MoveStmt extends Statement {
 
-	private final IdExp left;
-	private final IdExp right;
+	private final IdNode left;
+	private final IdNode right;
 
-	public MoveStmt(IdExp left, IdExp right) {
+	public MoveStmt(int row,int column,IdNode left, IdNode right) {
+		super(row, column);
 		this.left = left;
 		this.right = right;
 	}
 
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Move:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + indent
-				+ "\tRight: \n" + this.right.toPrint(indent + "\t\t");
+		return indent + "Move:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
+				+ "\tRight: \n" + this.right.toPrint(indent + "\t\t") + "\n";
 	}
 
 	@Override
@@ -33,12 +36,14 @@ public class MoveStmt extends Statement {
 
 	@Override
 	public Node typeCheck() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		return "";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

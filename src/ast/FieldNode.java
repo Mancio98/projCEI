@@ -1,23 +1,23 @@
 package ast;
 
-
 import java.util.ArrayList;
 
 import ast.exp.Exp;
 import util.Environment;
 import util.SemanticError;
 
+//Used for a declaration of an ID and in case also for the assignment of it
 public class FieldNode extends VarNode {
 	
 	private Exp exp;
 
-	public FieldNode(String id, Node type, Exp exp) {
-		super(id, type);
+	public FieldNode(int row,int column,String id, Node type, Exp exp) {
+		super(row, column, id, type);
 		this.exp = exp;
 	}
 	
-	public FieldNode(String id, Node type) {
-		super(id, type);
+	public FieldNode(int row,int column,String id, Node type) {
+		super(row, column, id, type);
 		this.exp = null;
 	}
 
@@ -27,8 +27,10 @@ public class FieldNode extends VarNode {
 	
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		String s = super.toPrint(indent);
+		
+		return indent + "Field:\n" + indent + "\t" + s +(exp!=null?  "\n" + indent
+				+ "\t =: " + this.exp.toPrint(indent + "\t\t"): "") + "\n"; 
 	}
 
 	@Override

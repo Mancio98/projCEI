@@ -7,12 +7,14 @@ import util.Environment;
 import util.Environment.UndeclaredIdException;
 import util.SemanticError;
 
-public class InitcallNode implements Node {
+////Used to the management of initial function's call
+public class InitcallNode extends Node {
 	private String id;
 	private ArrayList<Exp> exp1;
 	private ArrayList<Exp> exp2;
 
-	public InitcallNode(String id, ArrayList<Exp> exp1, ArrayList<Exp> exp2) {
+	public InitcallNode(int row,int column,String id, ArrayList<Exp> exp1, ArrayList<Exp> exp2) {
+		super(row, column);
 		this.id = id;
 		this.exp1 = exp1;
 		this.exp2 = exp2;
@@ -20,8 +22,31 @@ public class InitcallNode implements Node {
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		String s = indent + "Initcall:\n" + indent + "\t Fun: " + id ;
+		s+=" (";
+		int i=0;
+		for(Exp e : exp1) {
+			if(i==0) {
+				i++;
+				s = s + e.toPrint(" ");
+			}
+			else {
+				s = s + e.toPrint(", ");
+			}
+		}
+		s+= " ) [";
+		i=0;
+		for(Exp t : exp2) {
+			if (i==0){
+				i++;
+				s +=  t.toPrint(" ");
+			}
+			else {
+				s += t.toPrint(", ");
+			}
+		}
+		s+= " ]";
+		return s;
 	}
 
 	@Override
@@ -43,20 +68,20 @@ public class InitcallNode implements Node {
 		try {
 			
 			env.lookUp(this.id);
-			
-			for(Exp nodeExp : exp1) {
-				errors.addAll(nodeExp.checkSemantics(env));
-			}
-			
-			for(Exp nodeExp : exp2) {
-				errors.addAll(nodeExp.checkSemantics(env));
-			}
-			
-		} catch (UndeclaredIdException e) {
-			
-			errors.add(new SemanticError(id + " undeclared\n"));
-			e.printStackTrace();
 		}
+		catch (UndeclaredIdException e) {
+			errors.add(new SemanticError(super.row + ":" + super.column + " " + id +" undeclared"));
+		}
+			
+		for(Exp nodeExp : exp1) {
+			errors.addAll(nodeExp.checkSemantics(env));
+		}			
+		
+		for(Exp nodeExp : exp2) {
+			errors.addAll(nodeExp.checkSemantics(env));
+		}
+			
+		
 		
 		return errors;
 	}

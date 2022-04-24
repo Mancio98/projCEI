@@ -5,7 +5,8 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class ProgramNode implements Node {
+//Used as the entry point of the program
+public class ProgramNode extends Node {
 	
 	private ArrayList<FieldNode> field;
 	private ArrayList<AssetNode> asset;
@@ -13,36 +14,31 @@ public class ProgramNode implements Node {
 	private InitcallNode initcall;
 	
 	
-	public ProgramNode(ArrayList<FieldNode> field, ArrayList<AssetNode> asset, ArrayList<FunNode> fun, InitcallNode init) {
+	public ProgramNode(int row,int column,ArrayList<FieldNode> field, ArrayList<AssetNode> asset, ArrayList<FunNode> fun, InitcallNode init) {
+		super(row, column);
 		this.field = field;
 		this.asset = asset;
 		this.function = fun;
 		this.initcall = init;
 	}
-	/*
-	
-	public void addField(ArrayList<FieldNode> field) {
-		this.field = field;
-	}
-	
-	public void addAsset(ArrayList<AssetNode> asset) {
-		this.asset = asset;
-	}
-	
-	public void addFunction(ArrayList<FunNode> fun) {
-		this.function = fun;
-	}*/
-
 
 	@Override
 	public String toPrint(String indent) {
 		
-		
+		String s="";
 		
 		for(FieldNode f : field) {
-			indent += f.toPrint("Field:\n");
+			s += f.toPrint(indent);
 		}
-		return indent;
+		for(AssetNode a : asset) {
+			s += a.toPrint(indent);
+		}
+		for(FunNode f : function) {
+			s += f.toPrint(indent);
+		}
+		s += "\n" + initcall.toPrint(indent);
+		
+		return s;
 	}
 
 

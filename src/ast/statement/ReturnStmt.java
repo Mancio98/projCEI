@@ -6,21 +6,24 @@ import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
 
+//Used for rule like "return (exp)?"
 public class ReturnStmt extends Statement {
 
 	private final Exp exp;
 
-	public ReturnStmt() {
+	public ReturnStmt(int row,int column) {
+		super(row, column);
 		this.exp = null;
 	}
 	
-	public ReturnStmt(Exp exp) {
+	public ReturnStmt(int row,int column,Exp exp) {
+		super(row, column);
 		this.exp = exp;
 	}
 
 	@Override
     public String toPrint(String indent) {
-        return indent + "Stmt: return\n" + (exp != null ? exp.toPrint(indent) : "");
+        return indent + "Return\n" + (exp != null ? exp.toPrint(indent + "\t") : "") + "\n";
     }
 
 	@Override
@@ -33,12 +36,14 @@ public class ReturnStmt extends Statement {
 
 	@Override
 	public Node typeCheck() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		return "";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -1,0 +1,36 @@
+//ESEMPIO 1
+/*
+asset x@; asset y;
+
+void main()[asset u,asset v]{
+    u -o x ;
+	u -o y ;
+ }
+ 
+ main()[x,y]
+*/
+
+//ESEMPIO 2
+/*
+asset x; asset y%;
+
+void main()[asset u,asset v]{
+    u -o x ;
+	u# -o y ;
+ }
+ 
+ main()[x§,y]
+*/
+
+//ESEMPIO 3
+/*
+asset #x; asset y;
+
+void main()[asset u,asset v]{
+    u -o @x ;
+	u -o y ;
+	print ;
+ }
+ 
+ main()[x,y]
+*/

@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class IntTypeNode implements Node {
+//Used to specify the type of a node
+public class IntTypeNode extends Node {
+
+	public IntTypeNode(int row, int column) {
+		super(row, column);
+	}
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		return indent + "Type: Int\n";
 	}
 
 	@Override

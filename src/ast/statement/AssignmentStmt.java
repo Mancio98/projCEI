@@ -2,35 +2,30 @@ package ast.statement;
 
 import java.util.ArrayList;
 
+import ast.IdNode;
 import ast.Node;
 import ast.exp.Exp;
-import ast.exp.IdExp;
 import util.SemanticError;
 import util.Environment;
 
+//Used for rule like "ID = exp"
 public class AssignmentStmt extends Statement {
 
-	private final IdExp left;
+	private final IdNode left;
 	//private final String id;
 	private final Exp exp;
 
 	
-	public AssignmentStmt(IdExp left, Exp exp) {
+	public AssignmentStmt(int row,int column,IdNode left, Exp exp) {
+		super(row, column);
 		this.left = left;
 		this.exp = exp;
 	}
 	
-	
-	/*
-	public AssignmentStmt(String id, Exp exp) {
-		this.id = id;
-		this.exp = exp;
-	}*/
-	
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + indent
-				+ "\tRight: \n" + this.exp.toPrint(indent + "\t\t");
+		return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
+				+ "\tRight: \n" + this.exp.toPrint(indent + "\t\t") + "\n";
 	}
 
 	@Override
@@ -43,12 +38,14 @@ public class AssignmentStmt extends Statement {
 
 	@Override
 	public Node typeCheck() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		return "";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

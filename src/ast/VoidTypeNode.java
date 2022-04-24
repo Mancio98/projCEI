@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class VoidTypeNode implements Node {
+//Used to specify the type of a node
+public class VoidTypeNode extends Node {
+
+	public VoidTypeNode(int row, int column) {
+		super(row, column);
+	}
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		return indent + "Type: Void\n";
 	}
 
 	@Override

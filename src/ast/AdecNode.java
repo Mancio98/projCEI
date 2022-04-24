@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class AdecNode implements Node {
+//Used to the management of declaration of multiple ID of type asset
+public class AdecNode extends Node {
 	
 	private ArrayList<AssetNode> adec;
 
-	public AdecNode(ArrayList<AssetNode> a) {
+	public AdecNode(int row,int column,ArrayList<AssetNode> a) {
+		super(row, column);
 		adec=a;
 	}
 
@@ -18,8 +20,11 @@ public class AdecNode implements Node {
 	}
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		String s="";
+		for(AssetNode v: adec) {
+			s += v.toPrint(indent);
+		}
+		return s;
 	}
 
 	@Override

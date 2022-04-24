@@ -6,11 +6,13 @@ import util.SemanticError;
 import ast.IntTypeNode;
 import util.Environment;
 
+//Used for NUMBER
 public class ValExp extends Exp {
 
     private final int value;
 
-    public ValExp(int value) {
+    public ValExp(int row, int column,int value) {
+    	super(row,column);
         this.value = value;
     }
 
@@ -20,7 +22,7 @@ public class ValExp extends Exp {
 
     @Override
     public String toPrint(String indent) {
-        return indent + "Exp: Val(" + String.valueOf(value) + ")\n";
+        return indent + "Val(" + String.valueOf(value) + ")";
     }
 
     @Override
@@ -30,12 +32,14 @@ public class ValExp extends Exp {
     
     @Override
     public IntTypeNode typeCheck() {
-        return new IntTypeNode();
+    	// TODO Auto-generated method stub
+    	return null;
     }
 
-    @Override
-    public String codeGeneration() {
-        return "li $a0 " + value +"\n";
-    }
+	@Override
+	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

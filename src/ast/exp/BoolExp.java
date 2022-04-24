@@ -4,13 +4,16 @@ import java.util.ArrayList;
 
 import util.SemanticError;
 import ast.BoolTypeNode;
+import ast.Node;
 import util.Environment;
 
+//Used for BOOL 
 public class BoolExp extends Exp {
 
     private final boolean bool;
 
-    public BoolExp(boolean bool) {
+    public BoolExp(int row,int column,boolean bool) {
+    	super(row,column);
         this.bool = bool;
     }
 
@@ -20,22 +23,25 @@ public class BoolExp extends Exp {
 
     @Override
     public String toPrint(String indent) {
-        return indent + "Exp: Bool(" + String.valueOf(bool) + ")\n";
+        return indent + "Bool(" + String.valueOf(bool) + ")\n";
     }
 
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
         return new ArrayList<SemanticError>();
     }
-    
-    @Override
-    public BoolTypeNode typeCheck() {
-        return new BoolTypeNode();
-    }
 
-    @Override
-    public String codeGeneration() {
-        return "";
-    }
+	@Override
+	public Node typeCheck() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
     
 }

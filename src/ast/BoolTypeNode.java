@@ -5,12 +5,16 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class BoolTypeNode implements Node {
+//Used to specify the type of a node
+public class BoolTypeNode extends Node {
+
+	public BoolTypeNode(int row, int column) {
+		super(row, column);
+	}
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		return indent + "Type: Bool\n";
 	}
 
 	@Override

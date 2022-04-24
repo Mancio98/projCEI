@@ -1,23 +1,26 @@
 package ast.statement;
 
 import java.util.ArrayList;
+
+import ast.IdNode;
 import ast.Node;
 import ast.exp.Exp;
-import ast.exp.IdExp;
 import util.SemanticError;
 import util.Environment;
 
+//Used for rule like "transfer ID"
 public class TransferStmt extends Statement {
 
-	private final IdExp id;
+	private final IdNode id;
 
-	public TransferStmt(IdExp id) {
+	public TransferStmt(int row,int column,IdNode id) {
+		super(row, column);
 		this.id = id;
 	}
 
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Transfer:\n" + indent + "\tLeft: \n" + this.id.toPrint(indent + "\t\t") ;
+		return indent + "Transfer:\n" + this.id.toPrint(indent + "\t") +"\n";
 	}
 
 	@Override
@@ -29,12 +32,14 @@ public class TransferStmt extends Statement {
 
 	@Override
 	public Node typeCheck() {
+		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		return "";
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

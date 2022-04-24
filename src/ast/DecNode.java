@@ -5,11 +5,13 @@ import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
 
-public class DecNode implements Node {
+//Used to the management of declaration of multiple ID of type int or bool
+public class DecNode extends Node {
 	
 	private ArrayList<VarNode> dec;
 
-	public DecNode(ArrayList<VarNode> dec2) {
+	public DecNode(int row,int column,ArrayList<VarNode> dec2) {
+		super(row, column);
 		dec=dec2;
 	}
 
@@ -20,8 +22,11 @@ public class DecNode implements Node {
 
 	@Override
 	public String toPrint(String indent) {
-		// TODO Auto-generated method stub
-		return null;
+		String s="";
+		for(VarNode v: dec) {
+			s += v.toPrint(indent);
+		}
+		return s;
 	}
 
 	@Override
