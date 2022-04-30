@@ -1,24 +1,32 @@
-package ast;
+package ast.type;
 
 import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import ast.Node;
 
 //Used to specify the type of a node
-public class AssetTypeNode extends Node {
-
-	public AssetTypeNode(int row, int column) {
+public class Type extends Node {
+	
+	protected final String name;
+	
+	public Type(int row, int column, String name) {
 		super(row, column);
+		this.name = name;
 	}
 
+	public String getType() {
+		return this.name;
+	}
+	
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Type: Asset";
+		return indent + "Type: " + this.name;
 	}
 
 	@Override
-	public Node typeCheck() {
+	public Type typeCheck() {
 		// TODO Auto-generated method stub
 		return null;
 	}

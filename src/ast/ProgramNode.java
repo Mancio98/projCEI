@@ -4,6 +4,10 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.SemanticError;
+import ast.dec.FieldNode;
+import ast.dec.AssetNode;
+import ast.dec.FunNode;
+import ast.type.Type;
 
 //Used as the entry point of the program
 public class ProgramNode extends Node {
@@ -25,25 +29,25 @@ public class ProgramNode extends Node {
 	@Override
 	public String toPrint(String indent) {
 		
-		String s="";
+		String s = "";
 		
-		for(FieldNode f : field) {
-			s += f.toPrint(indent);
+		for(FieldNode f : this.field) {
+			s += "\n" + f.toPrint(indent);
 		}
-		for(AssetNode a : asset) {
-			s += a.toPrint(indent);
+		for(AssetNode a : this.asset) {
+			s += "\n" + a.toPrint(indent);
 		}
-		for(FunNode f : function) {
-			s += f.toPrint(indent);
+		for(FunNode f : this.function) {
+			s += "\n" + f.toPrint(indent);
 		}
-		s += "\n" + initcall.toPrint(indent);
+		s += "\n" + this.initcall.toPrint(indent);
 		
 		return s;
 	}
 
 
 	@Override
-	public Node typeCheck() {
+	public Type typeCheck() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -62,11 +66,11 @@ public class ProgramNode extends Node {
 		
 		env.entryScope();
 		
-		for(FieldNode node : field)
+		for(FieldNode node : this.field)
             errors.addAll(node.checkSemantics(env));
-		for(AssetNode node : asset)
+		for(AssetNode node : this.asset)
             errors.addAll(node.checkSemantics(env));
-		for(FunNode node : function)
+		for(FunNode node : this.function)
             errors.addAll(node.checkSemantics(env));
         errors.addAll(initcall.checkSemantics(env));
         

@@ -2,9 +2,9 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-
-import ast.Node;
-import ast.STentry;
+import java.util.Iterator;
+import ast.type.Type;
+import ast.type.FunType;
 
 public class Environment {
 	
@@ -33,7 +33,7 @@ public class Environment {
 	}
 	
 	//Add of a new id if it isn't already declared
-	public void addDeclaration(String id, Node node) throws DuplicateEntryException {
+	public void addDeclaration(String id, Type node) throws DuplicateEntryException {
 		STentry value = symTable.get(0).get(id);
 		//There is already an entry
 		if (value != null)
@@ -61,6 +61,26 @@ public class Environment {
 		
 		return fun;	
 	}
+	
+	/*
+	public STentry lookUpFun() {
+		
+		Iterator<STentry> entries = null;
+		STentry fun = null;
+		boolean found = false;
+		
+		HashMap<String, STentry> retTable = this.symTable.get(1);
+		
+		entries = retTable.values().iterator();
+		while(entries.hasNext() && !found) {
+			fun = entries.next();
+			if (fun.getType() instanceof FunType)
+				found = true;
+		}
+		
+		return fun;	
+	}
+	*/
 	
 	//Extensions of Exception class for duplicate declaration
 	public static class DuplicateEntryException extends Exception {

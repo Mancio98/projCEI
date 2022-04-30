@@ -3,7 +3,8 @@ package ast.exp;
 import java.util.ArrayList;
 
 import util.SemanticError;
-import ast.IntTypeNode;
+import ast.type.Type;
+import ast.type.IntType;
 import util.Environment;
 
 //Used for NUMBER
@@ -11,8 +12,8 @@ public class ValExp extends Exp {
 
     private final int value;
 
-    public ValExp(int row, int column,int value) {
-    	super(row,column);
+    public ValExp(int row, int column, int value) {
+    	super(row, column);
         this.value = value;
     }
 
@@ -22,7 +23,7 @@ public class ValExp extends Exp {
 
     @Override
     public String toPrint(String indent) {
-        return indent + "Val(" + String.valueOf(value) + ")";
+        return indent + "Val(" + String.valueOf(this.value) + ")";
     }
 
     @Override
@@ -31,9 +32,8 @@ public class ValExp extends Exp {
     }
     
     @Override
-    public IntTypeNode typeCheck() {
-    	// TODO Auto-generated method stub
-    	return null;
+    public Type typeCheck() {
+    	return new IntType();
     }
 
 	@Override

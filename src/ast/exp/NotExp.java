@@ -1,6 +1,6 @@
 package ast.exp;
 
-import ast.Node;
+import ast.type.Type;
 import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
@@ -10,8 +10,8 @@ public class NotExp extends Exp {
 
 	private final Exp child;
 
-    public NotExp(int row,int column, Exp child) {
-    	super(row,column);
+    public NotExp(int row, int column, Exp child) {
+    	super(row, column);
         this.child = child;
     }
 
@@ -21,18 +21,17 @@ public class NotExp extends Exp {
     
     @Override
     public String toPrint(String indent) {
-        return indent + "Exp: Not\n" + child.toPrint(indent + "\t");
+        return indent + "Exp: Not\n" + this.child.toPrint(indent + "\t");
     }
 
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
-        return child.checkSemantics(env);
+        return this.child.checkSemantics(env);
     }
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		return this.child.typeCheck();
 	}
 
 	@Override

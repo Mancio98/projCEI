@@ -13,4 +13,6 @@ public abstract class Exp extends Node {
     public String toPrint(String indent) {
         return indent + "Exp: (Generic)\n";
     }
+	
+	// public abstract String toPrintInFun(String indent);
 }

@@ -3,10 +3,12 @@ package ast.statement;
 import java.util.ArrayList;
 
 import ast.IdNode;
-import ast.Node;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import ast.type.Type;
+import ast.type.BoolType;
+import util.TypeError;
 
 //Used for rule like "if ( exp ) statement (else statement)?"
 public class IteStmt extends Statement {
@@ -30,9 +32,9 @@ public class IteStmt extends Statement {
 
 	@Override
     public String toPrint(String indent) {
-        return indent + "If:\n" + exp.toPrint(indent + "\t") + "\n" + indent + "Then:\n"
-                + thenStmt.toPrint(indent + "\t") 
-                + (elseStmt != null ? "\n" +indent + "Else:\n" + elseStmt.toPrint(indent+ "\t") : "");
+        return indent + "If:\n" + this.exp.toPrint(indent + "\t") + "\n" + indent + "Then:\n"
+                + this.thenStmt.toPrint(indent + "\t") 
+                + (this.elseStmt != null ? "\n" + indent + "Else:\n" + this.elseStmt.toPrint(indent+ "\t") : "");
     }
 		
 	@Override
@@ -40,16 +42,36 @@ public class IteStmt extends Statement {
         ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
         errors.addAll(exp.checkSemantics(env));
         errors.addAll(thenStmt.checkSemantics(env));
-        if (elseStmt != null) {
-            errors.addAll(elseStmt.checkSemantics(env));
+        if (this.elseStmt != null) {
+            errors.addAll(this.elseStmt.checkSemantics(env));
         }
         return errors;
     }
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		Type expType = this.exp.typeCheck();
+        if (!(expType instanceof BoolType)) {
+            new TypeError(super.row, super.column,
+                    "If condition must be of [" + (new BoolType()).getType() + "]");
+        }
+
+        Type thenType = this.thenStmt.typeCheck();
+
+        if (this.elseStmt == null)
+            return thenType; // return null;
+
+        Type elseType = this.elseStmt.typeCheck();
+
+        if (elseType == null || thenType == null)
+            return null;
+        
+        if (elseType.equals(thenType))
+            return thenType;
+
+        new TypeError(super.row, super.column, "Braches types mismatch");
+        
+        return null;
 	}
 
 	@Override

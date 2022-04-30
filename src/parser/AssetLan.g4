@@ -43,7 +43,18 @@ ite         : 'if' '(' exp ')' statement ('else' statement)?;
 
 call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 
-initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
+//initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
+
+initcall    : ID '(' (expinit (',' expinit)* )? ')' '[' (expinit (',' expinit)* )? ']' ;
+
+// VEDERE SE SI PUO FARE MEGLIO
+
+expinit	    : '(' expinit ')'				        				#baseExpInit
+	    | left=expinit op=('*' | '/')               right=expinit   #binExpInit
+	    | left=expinit op=('+' | '-')               right=expinit   #binExpInit
+	    //| call                                              #callExpInit   //FORSE DA LEVARE
+	    | NUMBER					        				#valExpInit;
+
 
 exp	    : '(' exp ')'				        				#baseExp
 	    | '-' exp					        				#negExp

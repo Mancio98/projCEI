@@ -3,17 +3,18 @@ package ast.exp;
 import java.util.ArrayList;
 
 import util.SemanticError;
-import ast.BoolTypeNode;
-import ast.Node;
+import ast.type.Type;
+import ast.type.BoolType;
 import util.Environment;
+
 
 //Used for BOOL 
 public class BoolExp extends Exp {
 
     private final boolean bool;
 
-    public BoolExp(int row,int column,boolean bool) {
-    	super(row,column);
+    public BoolExp(int row, int column, boolean bool) {
+    	super(row, column);
         this.bool = bool;
     }
 
@@ -23,8 +24,15 @@ public class BoolExp extends Exp {
 
     @Override
     public String toPrint(String indent) {
-        return indent + "Bool(" + String.valueOf(bool) + ")\n";
+        return indent + "Bool(" + String.valueOf(this.bool) + ")";
     }
+    
+    /*
+    @Override
+    public String toPrintInFun(String indent) {
+    	return indent + "Bool(" + String.valueOf(this.bool) + ")";
+    }
+    */
 
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
@@ -32,9 +40,8 @@ public class BoolExp extends Exp {
     }
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		return new BoolType();
 	}
 
 	@Override

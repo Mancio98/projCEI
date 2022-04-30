@@ -3,10 +3,12 @@ package ast.statement;
 import java.util.ArrayList;
 
 import ast.IdNode;
-import ast.Node;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import util.TypeError;
+import ast.type.Type;
+import ast.type.VoidType;
 
 //Used for rule like "ID = exp"
 public class AssignmentStmt extends Statement {
@@ -25,21 +27,32 @@ public class AssignmentStmt extends Statement {
 	@Override
 	public String toPrint(String indent) {
 		return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
-				+ "\tRight: \n" + this.exp.toPrint(indent + "\t\t") + "\n";
+				+ "\tRight: \n" + this.exp.toPrint(indent + "\t\t");
 	}
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
-		errors.addAll(left.checkSemantics(env));
-		errors.addAll(exp.checkSemantics(env));
+		errors.addAll(this.left.checkSemantics(env));
+		errors.addAll(this.exp.checkSemantics(env));
 		return errors;
 	}
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		Type typeLeft = this.left.typeCheck();
+		Type typeExp = this.exp.typeCheck();
+		
+		if (typeExp == null)
+			return null;
+
+		if (!typeLeft.equals(typeExp)) {
+			new TypeError(super.row, super.column,
+					"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]");
+			return null;
+		}
+		
+		return new VoidType();
 	}
 
 	@Override

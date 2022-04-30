@@ -3,8 +3,9 @@ package ast.statement;
 import java.util.ArrayList;
 
 import ast.IdNode;
-import ast.Node;
-import ast.exp.Exp;
+import ast.type.Type;
+import ast.type.AssetType;
+import ast.type.VoidType;
 import util.SemanticError;
 import util.Environment;
 
@@ -20,20 +21,24 @@ public class TransferStmt extends Statement {
 
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Transfer:\n" + this.id.toPrint(indent + "\t") +"\n";
+		return indent + "Transfer:\n" + this.id.toPrint(indent + "\t");
 	}
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
-		errors.addAll(id.checkSemantics(env));
+		errors.addAll(this.id.checkSemantics(env));
 		return errors;
 	}
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		Type typeId = this.id.typeCheck();
+		
+		if (!(typeId != null && this.id.getSTentry().getType() instanceof AssetType))
+			return null;
+		
+		return new VoidType();
 	}
 
 	@Override

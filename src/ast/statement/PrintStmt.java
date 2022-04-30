@@ -1,7 +1,8 @@
 package ast.statement;
 
 import java.util.ArrayList;
-import ast.Node;
+import ast.type.Type;
+import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
@@ -18,20 +19,24 @@ public class PrintStmt extends Statement {
 
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Print\n" + exp.toPrint(indent + "\t") + "\n";
+		return indent + "Print:\n" + this.exp.toPrint(indent + "\t");
 	}
 
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
-		errors.addAll(exp.checkSemantics(env));
+		errors.addAll(this.exp.checkSemantics(env));
 		return errors;
 	}
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		Type typeExp = this.exp.typeCheck();
+		
+		if (typeExp == null)
+			return null;
+		
+		return new VoidType();
 	}
 
 	@Override

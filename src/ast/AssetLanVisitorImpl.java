@@ -7,7 +7,9 @@ import org.antlr.v4.runtime.tree.TerminalNode;
 
 import ast.statement.*;
 import ast.exp.*;
-import ast.exp.binaryExp.*;
+import ast.exp.binExp.*;
+import ast.dec.*;
+import ast.type.*;
 import parser.*;
 import parser.AssetLanParser.AdecContext;
 import parser.AssetLanParser.AssetContext;
@@ -34,7 +36,13 @@ import parser.AssetLanParser.StatementContext;
 import parser.AssetLanParser.TransferContext;
 import parser.AssetLanParser.TypeContext;
 import parser.AssetLanParser.ValExpContext;
+import parser.AssetLanParser.ExpinitContext;
+import parser.AssetLanParser.BinExpInitContext;
+import parser.AssetLanParser.BaseExpInitContext;
+import parser.AssetLanParser.ValExpInitContext;
 
+
+// DA RIVEDERE QUASI TUTTO PER VEDERE POSSIBILI PROBLEMATICHE (TIPO ORDINE DEI PARAMETRI PASSATI, ETC)
 
 public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
@@ -68,14 +76,15 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 		FieldNode field;
 		
-		Node type = visit(ctx.type());
-		Node exp;
+		Type type = (Type) visit(ctx.type());
+		Exp exp;
 		
-		if (ctx.exp()!=null) {
-			exp = visit(ctx.exp());
-			field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(),type,(Exp) exp);
+		if (ctx.exp() != null) {
+			exp = (Exp) visit(ctx.exp());
+			field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), type, ctx.ID().getText(), (Exp) exp);
 		}
-		else field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),type);
+		else
+			field = new FieldNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), type, ctx.ID().getText());
 	
 		return field;
 	}
@@ -89,10 +98,12 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	public Node visitFunction(FunctionContext ctx) {
 		
 		FunNode res;
-		if(ctx.type()!=null) {
-			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),visit(ctx.type()));
+		if(ctx.type() != null) {
+			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Type) visit(ctx.type()), ctx.ID().getText());
 		}
-		else res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),new VoidTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine()));
+		else
+			// CONTROLLARE LA CORRETTEZA
+			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine()), ctx.ID().getText());
 		
 		List<DecContext> decls = ctx.dec();
 		int decSize = decls.size();
@@ -158,27 +169,23 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		
 		ArrayList<VarNode> dec = new ArrayList<VarNode>();
 		
-		
 		for(int i=0; i<ctx.ID().size(); i++) {
-			
-			dec.add(new VarNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID(i).getText(),visit(ctx.type(i))));
-			
+			dec.add(new VarNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Type) visit(ctx.type(i)), ctx.ID(i).getText()));
 		}
 		
-		return new DecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),dec);
+		return new DecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), dec);
 	}
 	
 	public AdecNode visitAdec(AdecContext ctx) {
 		ArrayList<AssetNode> adec = new ArrayList<AssetNode>();
 		
 		if(ctx != null) {
-		
 			for(TerminalNode tc : ctx.ID()) {
 				adec.add(new AssetNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),tc.getText()));
 			}
 		}
 		
-		return new AdecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),adec);
+		return new AdecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), adec);
 	}
 	
 	public Node visitStatement(StatementContext ctx){
@@ -209,11 +216,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	public Node visitType(TypeContext ctx) {
 		if(ctx.getText().equals("int")) 
-			return new IntTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+			return new IntType(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		else if(ctx.getText().equals("bool"))
-			return new BoolTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+			return new BoolType(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		else if(ctx.getText().equals("void"))
-			return new VoidTypeNode(ctx.start.getLine(), ctx.start.getCharPositionInLine());
+			return new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 		
 		return null;
 	}
@@ -269,7 +276,32 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				exp.add((Exp) visit(ec));
 			}
 		}
-		return new CallNode(ctx.start.getLine(),ctx.start.getCharPositionInLine(),idFun,id,exp);
+		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
+	}
+	
+	
+	public Node visitBinExpInit(BinExpInitContext ctx) {
+		switch(ctx.op.getText()) {
+			case "*":
+				return new MulExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.left), (Exp)visit(ctx.right));
+			case "/":
+				return new DivExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.left), (Exp)visit(ctx.right));
+			case "+":
+				return new SumExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.left), (Exp)visit(ctx.right));
+			case "-":
+				return new SubExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.left), (Exp)visit(ctx.right));
+			default:
+				break;
+		}
+		return null;
+	}
+	
+	public Node visitBaseExpInit(BaseExpInitContext ctx) {
+		return new BaseExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp) visit(ctx.expinit()));
+	}
+	
+	public Node visitValExpInit(ValExpInitContext ctx) {
+		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), Integer.parseInt(ctx.NUMBER().getText()));
 	}
 	
 	
@@ -278,17 +310,24 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		ArrayList<Exp> exp1 = new ArrayList<Exp>();
 		ArrayList<Exp> exp2 = new ArrayList<Exp>();
 		
-
+		for(ExpinitContext ec: ctx.expinit()) {
+			if(ec.invokingState == 197 || ec.invokingState == 199) {
+				exp1.add((Exp)visit(ec));
+			}
+			else {
+				exp2.add((Exp)visit(ec));
+			}
+		}
 		
-		for(ExpContext ec: ctx.exp()) {
+		/*for(ExpContext ec: ctx.exp()) {
 			
 			if(ec.invokingState == 195 || ec.invokingState == 197)
 				exp1.add((Exp)visit(ec));
 			else
 				exp2.add((Exp)visit(ec));
-		}
+		}*/
 
-		return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText(),exp1,exp2);
+		return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}
 	
 	public Node visitBaseExp(BaseExpContext ctx) {
@@ -360,7 +399,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 			exp.add((Exp) visit(ec));
 		}
 		
-		return new CallNode(ctx.start.getLine(),ctx.start.getCharPositionInLine(),idFun,id,exp);
+		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
 	}
 	
 	public Node visitBoolExp(BoolExpContext ctx) {
@@ -369,7 +408,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	}
 	
 	public Node visitValExp(ValExpContext ctx) {
-		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),Integer.parseInt(ctx.NUMBER().getText()));
+		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), Integer.parseInt(ctx.NUMBER().getText()));
 	
 	}
 }

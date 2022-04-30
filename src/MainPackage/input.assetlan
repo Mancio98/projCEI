@@ -1,36 +1,22 @@
-//ESEMPIO 1
-/*
-asset x@; asset y;
+int b = 1;
+bool t = true;
+int z = (2+3);
+asset x; 
+asset y;
 
-void main()[asset u,asset v]{
+void f()[] {
+	if (t)
+		b = 4;
+	else
+		transfer x;
+	return ;
+}
+
+void main()[asset u,asset v] {
+	int ciao, int boh
     u -o x ;
 	u -o y ;
+	f(1, 2)[x, y];
  }
  
- main()[x,y]
-*/
-
-//ESEMPIO 2
-/*
-asset x; asset y%;
-
-void main()[asset u,asset v]{
-    u -o x ;
-	u# -o y ;
- }
- 
- main()[x§,y]
-*/
-
-//ESEMPIO 3
-/*
-asset #x; asset y;
-
-void main()[asset u,asset v]{
-    u -o @x ;
-	u -o y ;
-	print ;
- }
- 
- main()[x,y]
-*/
+main((1+2), 3*5)[1+2, 3*5]

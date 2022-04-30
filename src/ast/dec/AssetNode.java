@@ -1,36 +1,39 @@
-package ast;
+package ast.dec;
 
 import java.util.ArrayList;
 
 import util.Environment;
 import util.Environment.DuplicateEntryException;
 import util.SemanticError;
+import ast.Node;
+import ast.type.Type;
+import ast.type.AssetType;
+import ast.type.VoidType;
 
-//Used to declaration of variable of type bool or int
-public class VarNode extends Node {
+//Used to declaration of variable of type asset
+public class AssetNode extends Node {
 	
-	String id;
-	Node type;
+	private Type type;
+	private String id;
 	
-	public VarNode(int row,int column,String id, Node type) {
+	public AssetNode(int row, int column, String id) {
 		super(row, column);
+		this.type = new AssetType();
 		this.id = id;
-		this.type = type;
-	}
-	
-	public String getId() {
-		return id;
 	}
 
+	public String getId() {
+		return this.id;
+	}
+	
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Var: " + type.toPrint(indent) + " " + id + "\n";
+		return indent + "Var: " + this.id + " " + this.type.toPrint("");
 	}
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		return new VoidType();
 	}
 
 	@Override
@@ -47,15 +50,10 @@ public class VarNode extends Node {
 			env.addDeclaration(this.id, this.type);
 		}
 		catch (DuplicateEntryException e) {
-			errors.add(new SemanticError(super.row + ":" + super.column + " var "+ id +" already declared"));
+			errors.add(new SemanticError(super.row, super.column, "asset id "+ this.id +" already declared"));
 		}
 		
 		return errors;
-	}
-
-	public Node getType() {
-		// TODO Auto-generated method stub
-		return type;
 	}
 
 }

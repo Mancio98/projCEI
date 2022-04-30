@@ -1,14 +1,15 @@
-package ast.exp.binaryExp;
+package ast.exp.binExp;
 
-import ast.BoolTypeNode;
-import ast.Node;
+import ast.type.Type;
+import ast.type.BoolType;
 import ast.exp.Exp;
+import util.TypeError;
 
 //Used for expression of type "exp >= exp" 
 public class GreaterOrEqualExp extends BinExp {
 
-    public GreaterOrEqualExp(int row,int column,Exp left, Exp right) {
-        super(row,column,left, right);
+    public GreaterOrEqualExp(int row, int column, Exp left, Exp right) {
+        super(row, column, left, right);
     }
 
 
@@ -19,9 +20,12 @@ public class GreaterOrEqualExp extends BinExp {
 
 
 	@Override
-	public Node typeCheck() {
-		// TODO Auto-generated method stub
-		return null;
+	public Type typeCheck() {
+		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
+            new TypeError(super.row, super.column, "expecting an integer value");
+            return null;
+        }
+        return new BoolType();
 	}
 
 
