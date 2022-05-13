@@ -1,9 +1,12 @@
 package ast.exp;
 
+import ast.type.BoolType;
+import ast.type.IntType;
 import ast.type.Type;
 import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
+import util.TypeError;
 
 //Used for expression of type "- exp " 
 public class NegExp extends Exp {
@@ -31,7 +34,11 @@ public class NegExp extends Exp {
 
 	@Override
 	public Type typeCheck() {
-		return this.child.typeCheck();
+		if (!(this.child.typeCheck() instanceof IntType)) {
+			System.out.println(new TypeError(super.row, super.column, "expecting an integer value").toPrint());
+            System.exit(0);
+        }
+        return new IntType();
 	}
 
 	@Override

@@ -20,8 +20,8 @@ public class SumExp extends BinExp {
 	@Override
 	public Type typeCheck() {
 		if (!(super.left.typeCheck() instanceof IntType && super.right.typeCheck() instanceof IntType)) {
-            new TypeError(super.row, super.column, "expecting an integer value");
-            return null;
+            System.out.println(new TypeError(super.row, super.column, "expecting an integer value").toPrint());
+            System.exit(0);
         }
         return new IntType();
 	}

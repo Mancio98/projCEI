@@ -7,6 +7,7 @@ import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
 import ast.type.Type;
+import ast.type.VoidType;
 import ast.type.BoolType;
 import util.TypeError;
 
@@ -52,26 +53,45 @@ public class IteStmt extends Statement {
 	public Type typeCheck() {
 		Type expType = this.exp.typeCheck();
         if (!(expType instanceof BoolType)) {
-            new TypeError(super.row, super.column,
-                    "If condition must be of [" + (new BoolType()).getType() + "]");
+            System.out.println(new TypeError(this.exp.getRow(), this.exp.getColumn(),
+                    			"If condition must be of type [" + (new BoolType()).getType() + "] instead of type " + expType.getType()).toPrint());
+            System.exit(0);
         }
-
+        
         Type thenType = this.thenStmt.typeCheck();
-
-        if (this.elseStmt == null)
-            return thenType; // return null;
-
-        Type elseType = this.elseStmt.typeCheck();
-
-        if (elseType == null || thenType == null)
-            return null;
         
-        if (elseType.equals(thenType))
+        if (this.thenStmt instanceof CallStmt) {
+			if (!thenType.isSubtype(new VoidType())) {
+				System.out.println(new TypeError(this.thenStmt.getRow(), this.thenStmt.getColumn(),
+									"Invalid call of function [" + ((CallStmt)this.thenStmt).getId() + "]").toPrint());
+				System.exit(0);
+			}
+		}
+        
+        if (this.elseStmt != null) {
+        	Type elseType = this.elseStmt.typeCheck();
+            
+        	if (this.elseStmt instanceof CallStmt) {
+    			if (!elseType.isSubtype(new VoidType())) {
+    				System.out.println(new TypeError(this.elseStmt.getRow(), this.elseStmt.getColumn(),
+    									"Invalid call of function [" + ((CallStmt)this.elseStmt).getId() + "]").toPrint());
+    				System.exit(0);
+    			}
+    		}
+        	
+            if (!elseType.isSubtype(thenType)) {
+            	System.out.println(new TypeError(super.row, super.column, "Branches types mismatch").toPrint());
+            	System.exit(0);
+            }
+            
             return thenType;
-
-        new TypeError(super.row, super.column, "Braches types mismatch");
+        }
+        else if (this.thenStmt instanceof ReturnStmt) {
+        	System.out.println(new TypeError(super.row, super.column, "Irregular").toPrint());
+        	System.exit(0);
+        }
         
-        return null;
+        return new VoidType();
 	}
 
 	@Override

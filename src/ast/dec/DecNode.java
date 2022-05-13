@@ -38,6 +38,9 @@ public class DecNode extends Node {
 
 	@Override
 	public Type typeCheck() {
+		for (VarNode node : dec) {
+			node.typeCheck();
+		}
 		return new VoidType();
 	}
 

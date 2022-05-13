@@ -36,19 +36,15 @@ public class MoveStmt extends Statement {
 		return errors;
 	}
 
-	// DA FINIRE DI CONTROLLARE CONTROLLO SUGLI ASSET
 	@Override
 	public Type typeCheck() {
 		Type typeLeft = this.left.typeCheck();
 		Type typeRight = this.right.typeCheck();
 		
-		if (typeLeft == null || typeRight == null)
-			return null;
-
-		if (!(typeLeft.equals(typeRight) && this.left.getSTentry().getType() instanceof AssetType)) {
-			new TypeError(super.row, super.column,
-					"Cannot move from [" + typeRight.getType() + "] to [" + typeRight.getType() + "]");
-			return null;
+		if (!(typeLeft.isSubtype(typeRight) && this.left.getSTentry().getType() instanceof AssetType)) {
+			System.out.println(new TypeError(super.row, super.column,
+								"Cannot move from [" + typeRight.getType() + "] to [" + typeRight.getType() + "]").toPrint());
+			System.exit(0);
 		}
 		
 		return new VoidType();

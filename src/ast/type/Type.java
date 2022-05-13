@@ -7,7 +7,7 @@ import util.SemanticError;
 import ast.Node;
 
 //Used to specify the type of a node
-public class Type extends Node {
+public abstract class Type extends Node {
 	
 	protected final String name;
 	
@@ -19,6 +19,8 @@ public class Type extends Node {
 	public String getType() {
 		return this.name;
 	}
+	
+	public abstract boolean isSubtype(Type type) ;
 	
 	@Override
 	public String toPrint(String indent) {
@@ -42,5 +44,4 @@ public class Type extends Node {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 }

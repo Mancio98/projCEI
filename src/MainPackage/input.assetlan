@@ -1,22 +1,22 @@
-int b = 1;
-bool t = true;
-int z = (2+3);
-asset x; 
-asset y;
+asset x ;
+asset y ;
 
-void f()[] {
-	if (t)
-		b = 4;
-	else
-		transfer x;
+int g()[] {
+	return 1;
+}
+
+void f()[asset u, asset v] {
+	u -o y ;
+	v -o x ;
 	return ;
 }
 
-void main()[asset u,asset v] {
-	int ciao, int boh
+void main()[asset u, asset v] {
     u -o x ;
 	u -o y ;
-	f(1, 2)[x, y];
- }
- 
-main((1+2), 3*5)[1+2, 3*5]
+	f()[x,y] ;
+	g()[] ;
+	return ;
+}
+
+main()[2,3]

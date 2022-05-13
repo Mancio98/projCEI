@@ -7,6 +7,8 @@ import util.Environment;
 import util.Environment.UndeclaredIdException;
 import util.SemanticError;
 import ast.type.Type;
+import ast.type.VoidType;
+import ast.type.BoolType;
 import ast.type.FunType;
 import ast.IdNode;
 import util.STentry;
@@ -16,15 +18,19 @@ import util.TypeError;
 public class CallStmt extends Statement {
 	
 	private String id;
-	private List<Exp> exp;
+	private List<Exp> expList;
 	private List<IdNode> idList;
 	private STentry entry;
 
 	public CallStmt(int row, int column, String id, ArrayList<Exp> exp, ArrayList<IdNode> idList) {
 		super(row, column);
 		this.id = id;
-		this.exp = exp;
+		this.expList = exp;
 		this.idList = idList;
+	}
+	
+	public String getId() {
+		return this.id;
 	}
 	
 	@Override
@@ -32,7 +38,7 @@ public class CallStmt extends Statement {
 		String s = indent + "Call:\n" + indent + "\tFun: " + this.id ;
 		s += "\n" + indent + "\t(";
 		int i = 0;
-		for(Exp e : this.exp) {
+		for(Exp e : this.expList) {
 			if(i == 0) {
 				i++;
 				s += "\n" + e.toPrint(indent + "\t\t");
@@ -75,42 +81,44 @@ public class CallStmt extends Statement {
 	
 	@Override
 	public Type typeCheck() {
-		/*
-		if (this.entry == null)
-            return null;
-
-        /// Controllo che entry.getType sia una funzione
         if (!(this.entry.getType() instanceof FunType)) {
-            new TypeError(super.row, super.column,
-                    "[" + this.entry.getId() + "] is not a function");
+            System.out.println(new TypeError(super.row, super.column,
+                    			"[" + this.id + "] is not a function").toPrint());
+            System.exit(0);
         }
 
-        
-        // FINIRE DI CONTROLLARE DA QUI
         FunType typeFun = ((FunType) (this.entry.getType()));
-        if (parlist.size() != typeFun.getArguments().size())
-            return null;
+        
+        if ((this.expList.size() != typeFun.getParTypes().size()) && (this.idList.size() != typeFun.getParATypes().size())) {
+        	// SISTEMARE IL SYSTEM.OUT
+        	System.out.println(new TypeError(super.row, super.column,
+        						"[" + this.id + "] has " + (typeFun.getParTypes().size() + typeFun.getParATypes().size()) + " arguments, not " + (this.expList.size() + this.idList.size())).toPrint());
+        	System.exit(0);
+        }
+        
+        for (int i = 0; i < this.expList.size(); i++) {
+            Type funParType = typeFun.getParTypes().get(i);
+            Type callParType = this.expList.get(i).typeCheck();
 
-        for (int i = 0; i < parlist.size(); i++) {
-            Type funParType = typeFun.getArguments().get(i).typeCheck();
-            if (funParType == null) {
-                new TypeError(row, column,
-                        "[" + entry.getId() + "] is not a function");
-                return null;
+            if (!funParType.isSubtype(callParType)) {
+                System.out.println(new TypeError(row, column,
+                        			"Argument " + i + " must be of type [" + funParType.getType() + "], instead of type [" + callParType.getType() + "]").toPrint());
+            	System.exit(0);
             }
+        }
+        
+        for (int i = 0; i < this.idList.size(); i++) {
+            Type funParAType = typeFun.getParATypes().get(i);
+            Type callParAType = this.idList.get(i).typeCheck();
 
-            Type callParType = parlist.get(i).typeCheck();
-
-            if (!funParType.equals(callParType)) {
-                new TypeError(row, column,
-                        "Argument " + i + " must be of type [" + funParType.getType() + "]");
-                return null;
+            if (!funParAType.isSubtype(callParAType)) {
+                System.out.println(new TypeError(row, column,
+                        			"Argument " + i + " must be of type [" + funParAType.getType() + "], instead of type [" + callParAType.getType() + "]").toPrint());
+            	System.exit(0);
             }
         }
 
-        return typeFun.getReturnType();
-        */
-		return null;
+		return typeFun.getReturnType();
 	}
 
 	@Override
@@ -131,7 +139,7 @@ public class CallStmt extends Statement {
 			errors.add(new SemanticError(super.row, super.column, " " + this.id + " undeclared"));
 		}
 		
-		for(Exp nodeExp : this.exp) {
+		for(Exp nodeExp : this.expList) {
 			errors.addAll(nodeExp.checkSemantics(env));
 		}
 			

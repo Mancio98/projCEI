@@ -44,7 +44,6 @@ ite         : 'if' '(' exp ')' statement ('else' statement)?;
 call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 
 //initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
-
 initcall    : ID '(' (expinit (',' expinit)* )? ')' '[' (expinit (',' expinit)* )? ']' ;
 
 // VEDERE SE SI PUO FARE MEGLIO

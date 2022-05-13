@@ -38,6 +38,9 @@ public class AdecNode extends Node {
 
 	@Override
 	public Type typeCheck() {
+		for (AssetNode node : adec) {
+			node.typeCheck();
+		}
 		return new VoidType();
 	}
 

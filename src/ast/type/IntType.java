@@ -10,4 +10,8 @@ public class IntType extends Type {
         super(row, column, "Int");
     }
 
+    public boolean isSubtype(Type type) {
+    	return (type != null ? (type instanceof IntType ? true : false) : false);
+    }
+    
 }

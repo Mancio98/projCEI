@@ -42,14 +42,11 @@ public class AssignmentStmt extends Statement {
 	public Type typeCheck() {
 		Type typeLeft = this.left.typeCheck();
 		Type typeExp = this.exp.typeCheck();
-		
-		if (typeExp == null)
-			return null;
 
-		if (!typeLeft.equals(typeExp)) {
-			new TypeError(super.row, super.column,
-					"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]");
-			return null;
+		if (!typeLeft.isSubtype(typeExp)) {
+			System.out.println(new TypeError(super.row, super.column, 
+								"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]").toPrint());
+            System.exit(0);
 		}
 		
 		return new VoidType();
