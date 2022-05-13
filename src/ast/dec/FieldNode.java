@@ -37,21 +37,16 @@ public class FieldNode extends VarNode {
 
 	@Override
 	public Type typeCheck() {
-		ArrayList<TypeError> errors = new ArrayList<TypeError>();
+		if (this.exp != null) {
+			Type expType = this.exp.typeCheck();
 
-		if (this.exp == null)
-            return new VoidType();
+	        if (!super.type.equals(expType)) {
+	            System.out.println(new TypeError(this.exp.getRow(), this.exp.getColumn(), "Expression type ["
+	                    + expType.getType() + "] is not equal to declared type [" + super.type.getType() + "]").toPrint());
+	            System.exit(0);
+	        }
+		}
 
-        Type expType = this.exp.typeCheck();
-        if (expType == null)
-            return null;
-
-        if (!super.type.equals(expType)) {
-            new TypeError(this.exp.getRow(), this.exp.getColumn(), "Expression type ["
-                    + expType.getType() + "] is not equal to declared type [" + super.type.getType() + "]");
-            return null;
-        }
-        
         return new VoidType();
 	}
 

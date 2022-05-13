@@ -6,11 +6,17 @@ import ast.Node;
 import util.Environment;
 import util.Environment.DuplicateEntryException;
 import util.SemanticError;
+import util.TypeError;
+import ast.statement.CallStmt;
+import ast.statement.IteStmt;
+import ast.statement.ReturnStmt;
 import ast.statement.Statement;
 import ast.type.Type;
 import ast.type.AssetType;
+import ast.type.BoolType;
 import ast.type.VoidType;
 import ast.type.FunType;
+import ast.type.IntType;
 
 //Used to the management of function's declaration
 public class FunNode extends Node {
@@ -90,24 +96,43 @@ public class FunNode extends Node {
 
 	@Override
 	public Type typeCheck() {
-		if (this.parDec.typeCheck() == null) {
-			return null;
-		}
-		
-		if (this.parAdec.typeCheck() == null) {
-			return null;
-		}
+		//boolean retStmt = false;
 		
 		for(DecNode node : this.decList) {
-			if (node.typeCheck() == null)
-                return null;
+			node.typeCheck();
 		}
 		
 		for(Statement stmt : this.statementList) {
-			if (stmt.typeCheck() == null)
-                return null;
+			Type stmtType = stmt.typeCheck();
+			
+			/*if (!retStmt && stmt instanceof ReturnStmt) {
+				retStmt = true;
+			}*/
+			if (stmtType.isSubtype(this.type)) {
+				if (this.statementList.indexOf(stmt) != (this.statementList.size() -1)) {
+					System.out.println(new TypeError(super.row, super.column, 
+							"Return is not the last statement of the function").toPrint());
+					System.exit(0);
+				}
+			}
+			
+			//DA MODIFICARE
+			if ((stmt instanceof ReturnStmt && !stmtType.isSubtype(this.type)) || (stmt instanceof IteStmt && !stmtType.isSubtype(this.type) && !stmtType.isSubtype(new VoidType()))) {
+				System.out.println(new TypeError(super.row, super.column,
+            						"[" + this.id + "] requires return type " + this.funType.getReturnType().getType() + ", instead of " + stmtType.getType()).toPrint());
+				System.exit(0);
+			}
+			//FINO QUA
+			
+			if (stmt instanceof CallStmt) {
+				if (!stmtType.isSubtype(new VoidType())) {
+					System.out.println(new TypeError(stmt.getRow(), stmt.getColumn(),
+										"Invalid call of function [" + ((CallStmt)stmt).getId() + "]").toPrint());
+					System.exit(0);
+				}
+			}
 		}
-
+		
 		return new VoidType();
 	}
 

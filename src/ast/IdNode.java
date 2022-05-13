@@ -13,7 +13,7 @@ import util.STentry;
 public class IdNode extends Exp {
 
 	private final String id;
-    private STentry stEntry;
+    private STentry entry;
 
     public IdNode(int row, int column, String id) {
     	super(row,column);
@@ -21,14 +21,14 @@ public class IdNode extends Exp {
     }
 
     public STentry getSTentry() {
-    	return this.stEntry;
+    	return this.entry;
     }
     
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
         ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
         try {
-			stEntry = env.lookUp(this.id);
+			this.entry = env.lookUp(this.id);
 		} catch (UndeclaredIdException e) {
 			errors.add(new SemanticError(super.row, super.column, " " + this.id + " undeclared"));
 		} 
@@ -41,12 +41,11 @@ public class IdNode extends Exp {
         return indent + "ID: " + this.id;
     }
 
-
 	@Override
 	public Type typeCheck() {
-		if (this.stEntry == null)
-            return null;
-        return this.stEntry.getType();
+		if (this.entry == null)
+            System.exit(0);
+        return this.entry.getType();
 	}
 
 

@@ -10,4 +10,8 @@ public class BoolType extends Type {
         super(row, column, "Bool");
     }
 
+    public boolean isSubtype(Type type) {
+    	return (type != null ? (type instanceof BoolType ? true : false) : false);
+    }
+    
 }

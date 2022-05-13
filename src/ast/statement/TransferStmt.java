@@ -7,6 +7,7 @@ import ast.type.Type;
 import ast.type.AssetType;
 import ast.type.VoidType;
 import util.SemanticError;
+import util.TypeError;
 import util.Environment;
 
 //Used for rule like "transfer ID"
@@ -35,9 +36,12 @@ public class TransferStmt extends Statement {
 	public Type typeCheck() {
 		Type typeId = this.id.typeCheck();
 		
-		if (!(typeId != null && this.id.getSTentry().getType() instanceof AssetType))
-			return null;
-		
+		if (!(typeId != null && this.id.getSTentry().getType() instanceof AssetType)) {
+			System.out.println(new TypeError(super.row, super.column,
+								"Cannot transfer from [" + typeId.getType() + "] to [" + typeId.getType() + "]").toPrint());
+			// DA CAMBIARE IL SECONOD PARAMETRO NEL MESSAGGIO, SCRIVERE L'ASSET GLOBALE DEL PROGRAMMA
+			System.exit(0);
+		}
 		return new VoidType();
 	}
 

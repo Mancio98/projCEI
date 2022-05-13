@@ -30,42 +30,26 @@ public class ReturnStmt extends Statement {
         return indent + "Return" + (this.exp != null ? ":\n" + this.exp.toPrint(indent + "\t") : "");
     }
 
-	// DA FARE IL CONTROLLO SUL TIPO DI RITORNO RICERCANDO LA FUNZIONE
 	@Override
 	public ArrayList<SemanticError> checkSemantics(Environment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		if (this.exp != null)
             errors.addAll(this.exp.checkSemantics(env));
 		
-		// FARE QUI IL CONTROLLO DELLA FUNZIONE A CUI PASSARE IL VALORE DI RETURN
-		// functionStEntry = null;
-		
 		return errors;
 	}
-	/*
+	
 	@Override
 	public Type typeCheck() {
-		Type functionType;
-        if (functionStEntry == null)
-            functionType = new VoidType();
-        else
-        	// DA SISTEMARE
-        	
-        	functionType = null;
-            // functionType = ((FunType) functionStEntry.getType()).getType();
-        
         Type returnType;
         if (this.exp == null)
             returnType = new VoidType();
         else
             returnType = this.exp.typeCheck();
-
-        if (!functionType.equals(returnType)) {
-            new TypeError(super.row, super.column, "Return type must be [" + functionType.getType() + "]");
-        }
+        
         return returnType;
 	}
-	*/
+	
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub

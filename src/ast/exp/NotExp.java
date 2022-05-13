@@ -1,9 +1,11 @@
 package ast.exp;
 
+import ast.type.BoolType;
 import ast.type.Type;
 import java.util.ArrayList;
 import util.Environment;
 import util.SemanticError;
+import util.TypeError;
 
 //Used for expression of type "! exp" 
 public class NotExp extends Exp {
@@ -28,10 +30,14 @@ public class NotExp extends Exp {
     public ArrayList<SemanticError> checkSemantics(Environment env) {
         return this.child.checkSemantics(env);
     }
-
+    
 	@Override
 	public Type typeCheck() {
-		return this.child.typeCheck();
+		if (!(this.child.typeCheck() instanceof BoolType)) {
+			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+            System.exit(0);
+        }
+        return new BoolType();
 	}
 
 	@Override

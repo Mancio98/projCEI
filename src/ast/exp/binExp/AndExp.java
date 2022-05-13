@@ -27,8 +27,8 @@ public class AndExp extends BinExp {
 	@Override
 	public Type typeCheck() {
 		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
-            new TypeError(super.row, super.column, "expecting an integer value");
-            return null;
+			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+            System.exit(0);
         }
         return new BoolType();
 	}

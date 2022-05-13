@@ -25,13 +25,14 @@ public abstract class Node {
 		return this.column;
 	}
    
-  public abstract String toPrint(String indent);
-
-  public abstract Type typeCheck();
-  
-  public abstract String codeGeneration();
-  
-  public abstract ArrayList<SemanticError> checkSemantics(Environment env);
-  
-  
+	public abstract String toPrint(String indent);
+	
+	public abstract ArrayList<SemanticError> checkSemantics(Environment env);
+	
+	public abstract Type typeCheck();
+	
+	// VEDERE SE SISTEMARE
+	//public abstract void analizeEffect();
+	  
+	public abstract String codeGeneration();
 }  

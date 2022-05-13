@@ -22,9 +22,25 @@ public class FunType extends Type {
 		this.type = type;
 	}
 
-	public String getType() {
-		return this.type.getType();
+	public Type getReturnType() {
+		return this.type;
 	}
+	
+	public ArrayList<Type> getParTypes() {
+		return this.parTypes;
+	}
+	
+	public ArrayList<Type> getParATypes() {
+		return this.parATypes;
+	}
+	/*
+	public int getArgumentsNumber() {
+		return this.parTypes.size() + this.parATypes.size();
+	}
+	*/
+	public boolean isSubtype(Type type) {
+    	return true;
+    }
 	
 	@Override
 	public String toPrint(String indent) {

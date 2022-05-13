@@ -8,6 +8,8 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.ParseTree;
 
 import ast.Node;
+import ast.type.Type;
+import ast.type.VoidType;
 import ast.AssetLanVisitorImpl;
 
 import parser.AssetLanLexer;
@@ -45,19 +47,31 @@ public class Test {
 	        Node ast = visitor.visit(tree);
 	        
 	        //Check number errors 
-			if (lexicalErrors > 0 || syntaxErrors > 0){
+			if (lexicalErrors > 0 || syntaxErrors > 0) {
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
-			} else {
+			} 
+			else {
 				Environment env = new Environment();
 				ArrayList<SemanticError> err = ast.checkSemantics(env);
-				if(err.size()>0){
+				if(err.size() > 0) {
 					System.out.println("You had: " +err.size()+" errors:");
 					for(SemanticError e : err)
 						System.out.println("\t" + e);
-				} else {
+				} 
+				else {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
-			
+					
+					
+					System.out.println("TEST");
+					Type programType = ast.typeCheck();
+					System.out.println("TEST");
+					if (programType instanceof VoidType) {
+						System.out.println("Il programma è ben tipato");
+					}
+					else {
+						System.out.println("ERRORE nel TypeCheck");
+					}
 				}
 			}
 	  }
