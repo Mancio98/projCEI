@@ -1,6 +1,7 @@
 package ast.statement;
 
 import java.util.ArrayList;
+
 import ast.type.Type;
 import ast.type.FunType;
 import ast.type.VoidType;
@@ -42,7 +43,7 @@ public class ReturnStmt extends Statement {
 		
 		return errors;
 	}
-	/*
+	
 	@Override
 	public Type typeCheck() {
 		Type functionType;
@@ -65,11 +66,15 @@ public class ReturnStmt extends Statement {
         }
         return returnType;
 	}
-	*/
+	
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+
+
+	
 
 }
