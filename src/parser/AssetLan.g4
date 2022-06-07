@@ -39,12 +39,13 @@ transfer    : 'transfer' ID;
 
 ret	   		: 'return' (exp)?;
 
-ite         : 'if' '(' exp ')' statement ('else' statement)?;
+ite         : 'if' '(' exp ')' '{' statement* '}' ('else' '{' statement* '}')?;
 
 call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 
 //initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
 initcall    : ID '(' (expinit (',' expinit)* )? ')' '[' (expinit (',' expinit)* )? ']' ;
+
 
 // VEDERE SE SI PUO FARE MEGLIO
 
@@ -81,6 +82,7 @@ ID          : CHAR (CHAR | DIGIT)* ;
 
 //Numbers
 fragment DIGIT	    : '0'..'9';
+
 NUMBER      : DIGIT+;
 
 //ESCAPE SEQUENCES

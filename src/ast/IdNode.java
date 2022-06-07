@@ -14,7 +14,8 @@ public class IdNode extends Exp {
 
 	private final String id;
     private STentry entry;
-
+    
+    
     public IdNode(int row, int column, String id) {
     	super(row,column);
     	this.id = id;
@@ -24,9 +25,15 @@ public class IdNode extends Exp {
     	return this.entry;
     }
     
+    public String getId() {
+    	return this.id;
+    }
+    
     @Override
     public ArrayList<SemanticError> checkSemantics(Environment env) {
+    	
         ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
+        
         try {
 			this.entry = env.lookUp(this.id);
 		} catch (UndeclaredIdException e) {

@@ -3,6 +3,8 @@ package ast.dec;
 import java.util.ArrayList;
 
 import util.Environment;
+import util.EnvironmentAsset;
+import util.EnvironmentAsset.DuplicateEntryException;
 import util.SemanticError;
 import ast.Node;
 import ast.type.Type;
@@ -59,6 +61,15 @@ public class AdecNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		for(AssetNode node : adec)
+			env.addDeclaration(node.getId());
+			
+		
+		return null;
 	}
 
 }

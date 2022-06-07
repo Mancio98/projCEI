@@ -5,6 +5,7 @@ import java.util.List;
 import ast.exp.Exp;
 import util.Environment;
 import util.Environment.UndeclaredIdException;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import ast.type.Type;
 import ast.type.VoidType;
@@ -148,6 +149,12 @@ public class CallStmt extends Statement {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

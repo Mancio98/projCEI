@@ -8,6 +8,7 @@ int g()[] {
 void f()[asset u, asset v] {
 	u -o y ;
 	v -o x ;
+	g()[];
 	return ;
 }
 

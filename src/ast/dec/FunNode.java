@@ -3,8 +3,10 @@ package ast.dec;
 import java.util.ArrayList;
 
 import ast.Node;
+import util.AssetLanlib;
 import util.Environment;
 import util.Environment.DuplicateEntryException;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import util.TypeError;
 import ast.statement.CallStmt;
@@ -137,8 +139,73 @@ public class FunNode extends Node {
 	}
 
 	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		
+		
+			
+		parAdec.analyzeEffect(env);
+	
+		
+		for(Statement stm : statementList)
+			stm.analyzeEffect(env);
+					
+		
+		return null;
+	}
+	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
+		
+		String declcode = "";
+		
+		
+		for(DecNode node : this.decList) {
+			
+			declcode += node.codeGeneration();
+			
+			
+		}
+		
+		String popdeclbody = "";
+		for(DecNode node : this.decList) {
+			
+			for(VarNode var : node.getListDec())
+				popdeclbody += "pop\n";
+			
+			
+		}
+		
+		String popdecl = "";
+		for(VarNode var : this.parDec.getListDec()) {
+			popdecl+="pop\n";
+		}
+		
+		for(AssetNode var : this.parAdec.getListAdec()) {
+			popdecl+="pop\n";
+		}
+		
+		String stmcode = "";
+		for(Statement stm : this.statementList) {
+			stmcode = stm.codeGeneration();
+		}
+		
+		String labelfun = AssetLanlib.freshFunLabel();
+		AssetLanlib.putCode(labelfun+":\n"+
+		
+			"cfp\n"+ 		// setta $fp a $sp				
+			"lra\n"+ 		// inserimento return address
+			declcode+ 		// inserimento dichiarazioni locali
+			stmcode+
+			"srv\n"+ 		// pop del return value
+			popdeclbody+
+			"sra\n"+ 		// pop del return address
+			"pop\n"+ 		// pop di AL
+			popdecl+
+			"sfp\n"+  	
+			"lrv\n"+ 		
+			"lra\n"+
+			"js\n"		
+				
+		);
 		return null;
 	}
 
@@ -178,6 +245,7 @@ public class FunNode extends Node {
 		
 		return semErrors;
 	}
+	
 	
 	
 }

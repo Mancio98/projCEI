@@ -9,6 +9,7 @@ import ast.type.VoidType;
 import util.SemanticError;
 import util.TypeError;
 import util.Environment;
+import util.EnvironmentAsset;
 
 //Used for rule like "transfer ID"
 public class TransferStmt extends Statement {
@@ -48,6 +49,12 @@ public class TransferStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		env.update(id.getId(), 0);
 		return null;
 	}
 

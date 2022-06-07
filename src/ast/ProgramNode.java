@@ -3,6 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import util.Environment;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import ast.dec.FieldNode;
 import ast.dec.AssetNode;
@@ -96,5 +97,19 @@ public class ProgramNode extends Node {
         env.exitScope();
 		return errors;
 	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		
+		for(AssetNode node : this.asset)
+            env.addDeclaration(node.getId());
+		
+		for(FunNode node : this.function)
+            mappa.(node.id, node)
+		
+		return null;
+	}
+	
+	
 
 }

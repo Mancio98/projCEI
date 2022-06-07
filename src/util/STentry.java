@@ -7,16 +7,18 @@ public class STentry {
 	
 	private int nl;
 	private Type type;
+	private int offset;
 	
 	public STentry(int nl)
 	{
 		this.nl = nl;
 	} 
 	   
-	public STentry(int nl, Type type)
+	public STentry(int nl, Type type, int offset)
 	{
 		this.nl = nl;
 		this.type = type;
+		this.setOffset(offset);
 	}
 	  
 	public void addType(Type type)
@@ -36,7 +38,17 @@ public class STentry {
 	  
 	public String toPrint(String s) { 
 		return s + "STentry: nestlev " + Integer.toString(this.nl) + "\n" +
+				s + "STentry: offset " + Integer.toString(this.offset) + "\n" +
 				s + "STentry: type\n" + this.type.toPrint(s + "  ") + "\n";
 	}
+
+	public int getOffset() {
+		return offset;
+	}
+
+	public void setOffset(int offset) {
+		this.offset = offset;
+	}
+	
 
 }  

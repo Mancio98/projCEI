@@ -3,6 +3,7 @@ package ast;
 import java.util.ArrayList;
 
 import util.Environment;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import ast.type.Type;
 
@@ -30,6 +31,8 @@ public abstract class Node {
 	public abstract ArrayList<SemanticError> checkSemantics(Environment env);
 	
 	public abstract Type typeCheck();
+	
+	public abstract String analyzeEffect(EnvironmentAsset env);
 	
 	// VEDERE SE SISTEMARE
 	//public abstract void analizeEffect();

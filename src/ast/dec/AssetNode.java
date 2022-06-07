@@ -26,6 +26,10 @@ public class AssetNode extends Node {
 		return this.id;
 	}
 	
+	public Type getType() {
+		return this.type;
+	}
+	
 	@Override
 	public String toPrint(String indent) {
 		return indent + "Var: " + this.id + " " + this.type.toPrint("");
@@ -54,6 +58,12 @@ public class AssetNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(Node adec) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -8,6 +8,7 @@ import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
 import util.Environment;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for rule like "ID -o ID"
@@ -53,6 +54,21 @@ public class MoveStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		
+		
+		if(env.getState(left.getId()) == 0)
+			env.update(right.getId(), 0);
+		
+		else {
+			env.update(left.getId(), 0);
+			env.update(right.getId(), 1);
+		}
+		
 		return null;
 	}
 
