@@ -28,7 +28,19 @@ public class EqualExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String eqCGen = "";
+
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		eqCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"eq t1 a0 a0 /n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return eqCGen;
 	}
 }

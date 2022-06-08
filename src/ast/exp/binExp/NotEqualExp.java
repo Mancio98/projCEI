@@ -28,7 +28,19 @@ public class NotEqualExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String neCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		neCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"ne t1 a0 a0 /n"; // ne LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return neCGen;
 	}
 }

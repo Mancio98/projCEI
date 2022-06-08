@@ -28,7 +28,19 @@ public class SumExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String sumCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		sumCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"sum t1 a0 a0 /n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return sumCGen;
 	}
 }

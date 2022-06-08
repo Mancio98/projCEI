@@ -29,7 +29,19 @@ public class GreaterExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String greCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		greCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"gre t1 a0 a0 /n"; // gre LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return greCGen;
 	}
 }

@@ -28,7 +28,19 @@ public class MulExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String mulCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		mulCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"mul t1 a0 a0 /n"; // mul LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return mulCGen;
 	}
 }

@@ -28,7 +28,19 @@ public class LessExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String lessCGen = "";
+
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		lessCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"less t1 a0 a0 /n"; // less LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return lessCGen;
 	}
 }

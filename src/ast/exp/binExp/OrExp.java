@@ -28,7 +28,19 @@ public class OrExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String orCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		orCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"or t1 a0 a0 /n"; // or LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return orCGen;
 	}
 }
