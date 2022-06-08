@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.IntType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp - exp" 
@@ -42,5 +43,11 @@ public class SubExp extends BinExp {
 				"sub t1 a0 a0 /n"; // sub LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return subCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

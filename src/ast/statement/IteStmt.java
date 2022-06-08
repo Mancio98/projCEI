@@ -97,8 +97,6 @@ public class IteStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
-		
-		String ifcgen = exp.codeGeneration()+
 						
 		
 		return null;

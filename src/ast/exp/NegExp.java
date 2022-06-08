@@ -5,6 +5,7 @@ import ast.type.IntType;
 import ast.type.Type;
 import java.util.ArrayList;
 import util.Environment;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import util.TypeError;
 
@@ -43,6 +44,12 @@ public class NegExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

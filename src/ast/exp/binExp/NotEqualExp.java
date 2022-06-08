@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp != exp" 
@@ -42,5 +43,11 @@ public class NotEqualExp extends BinExp {
 				"ne t1 a0 a0 /n"; // ne LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return neCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

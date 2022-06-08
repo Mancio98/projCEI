@@ -6,6 +6,7 @@ import util.SemanticError;
 import ast.type.Type;
 import ast.type.IntType;
 import util.Environment;
+import util.EnvironmentAsset;
 
 //Used for NUMBER
 public class ValExp extends Exp {
@@ -38,6 +39,12 @@ public class ValExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

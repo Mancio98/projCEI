@@ -1,4 +1,4 @@
-grammar SVM;
+grammar AVM;
 
 @header {
 
@@ -24,7 +24,14 @@ instruction:
 	  | ADD		    
 	  | SUB		    
 	  | MULT	    
-	  | DIV		    
+	  | DIV
+	  | AND
+	  | OR
+	  | EQUAL
+	  | NOTEQUAL
+	  | GREATER
+	  | LESS
+	  | LESSOREQUAL		    
 	  | STOREW	  
 	  | LOADW           
 	  | l=LABEL COL     
@@ -51,10 +58,18 @@ instruction:
  
 PUSH	: 'push' ; 	// pushes constant in the stack
 POP		: 'pop' ; 	// pops from stack
-ADD	 	: 'add' ;  	// add two values from the stack
-SUB	 	: 'sub' ;	// add two values from the stack
-MULT 	: 'mult' ;  	// add two values from the stack
-DIV	 	: 'div' ;	// add two values from the stack
+ADD	 	: 'add' input1 = REGISTER input2 = REGISTER output = REGISTER;  	// add two values from the stack
+SUB	 	: 'sub' input1 = REGISTER input2 = REGISTER output = REGISTER ;	// add two values from the stack
+MULT 	: 'mult' input1 = REGISTER input2 = REGISTER output = REGISTER;  	// add two values from the stack
+DIV	 	: 'div' input1 = REGISTER input2 = REGISTER output = REGISTER;	// add two values from the stack
+AND		: 'and' input1 = REGISTER input2 = REGISTER output = REGISTER;	// AND INSTRUCTION
+OR		: 'or' input1 = REGISTER input2 = REGISTER output = REGISTER;	// OR INSTRUCTION
+EQUAL 	: 'eq' input1 = REGISTER input2 = REGISTER output = REGISTER;		//EQUAL INSTRUCTION
+NOTEQUAL	: 'ne' input1 = REGISTER input2 = REGISTER output = REGISTER;	//NOT EQUAL INSTRUCTION
+GREATER : 'gre' input1 = REGISTER input2 = REGISTER output = REGISTER;	//GREATER INSTRUCTION
+GREATEROREQUAL	: 'goe' input1 = REGISTER input2 = REGISTER output = REGISTER; 	// GREATER OR EQUAL INSTRUCTION
+LESS	: 'less' input1 = REGISTER input2 = REGISTER output = REGISTER;	// LESS INSTRUCTION
+LESSOREQUAL		: 'loe' input1 = REGISTER input2 = REGISTER output = REGISTER;	//LESS OR EQUAL INSTRUCTION	
 STOREW	: 'sw' ; 	// store in the memory cell pointed by top the value next
 LOADW	: 'lw' ;	// load a value from the memory cell pointed by top
 BRANCH	: 'b' ;	// jump to label
@@ -76,6 +91,18 @@ HALT	: 'halt' ;	// stop execution
 COL		: ':' ;
 LABEL	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')* ;
 NUMBER	: '0' | ('-')?(('1'..'9')('0'..'9')*) ;
+
+//REGISTERS
+REGISTER:
+	'$a0'  //results in the accumulators
+	| '$t1' //tmp register
+	| '$sp' //top of the stack
+	| '$fp' //points to al relative to the active frame
+	| '$al' //static chain for scopes
+	| '$ra' //return address where the address of the next instruction is saved
+	| '$hp' //pointer for the heap
+	| '$cl' //control link, points at the previous frame (basically is the previous sp)
+	;
 
 WHITESP	: ( '\t' | ' ' | '\r' | '\n' )+   -> channel(HIDDEN);
 

@@ -6,6 +6,7 @@ import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import util.EnvironmentAsset;
 
 //Used for rule like "print exp"
 public class PrintStmt extends Statement {
@@ -38,6 +39,12 @@ public class PrintStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

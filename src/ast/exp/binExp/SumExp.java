@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.IntType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp + exp" 
@@ -39,8 +40,14 @@ public class SumExp extends BinExp {
 				rightCGen +
 				"lw t1 0(sp) /n" +
 				"pop /n"+
-				"sum t1 a0 a0 /n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"add t1 a0 a0 /n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return sumCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

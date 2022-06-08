@@ -6,6 +6,7 @@ import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
 import util.Environment.UndeclaredIdException;
+import util.EnvironmentAsset;
 import ast.type.Type;
 import util.STentry;
 
@@ -70,6 +71,12 @@ public class IdNode extends Exp {
 						"lw a0 "+this.entry.getOffset()+"(al)\n";
 		
 		return idcgen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
     
 }
