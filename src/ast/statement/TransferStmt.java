@@ -48,8 +48,8 @@ public class TransferStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return this.id.codeGeneration()+"sw a0 0(asset)\n"; //definire dove mettere l'asset iniziale (push all'inizio di program)"
 	}
 
 	@Override

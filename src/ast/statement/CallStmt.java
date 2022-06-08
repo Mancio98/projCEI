@@ -180,7 +180,6 @@ public class CallStmt extends Statement {
 			errors.addAll(nodeId.checkSemantics(env));
 		}
 		
-		
 		return errors;
 	}
 

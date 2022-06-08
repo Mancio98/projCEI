@@ -6,6 +6,7 @@ import util.SemanticError;
 import ast.type.Type;
 import ast.type.BoolType;
 import util.Environment;
+import util.EnvironmentAsset;
 
 
 //Used for BOOL 
@@ -46,8 +47,18 @@ public class BoolExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
+		
 		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+
+		if(bool)
+			return "li a0 1\n";
+		else
+			return "li a0 0\n";
+		
 	}
 
     

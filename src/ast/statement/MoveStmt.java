@@ -16,6 +16,7 @@ public class MoveStmt extends Statement {
 
 	private final IdNode left;
 	private final IdNode right;
+	private int nestingLevel;
 
 	public MoveStmt(int row,int column,IdNode left, IdNode right) {
 		super(row, column);
@@ -34,6 +35,8 @@ public class MoveStmt extends Statement {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.right.checkSemantics(env));
+		
+		this.nestingLevel = env.getNestingLevel();
 		return errors;
 	}
 
@@ -53,8 +56,29 @@ public class MoveStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		String alcgenright="";
+		
+		for(int i=0; i < (this.nestingLevel - this.right.getSTentry().getNestinglevel()); i++) {
+			alcgenright += "lw al 0(al)\n";
+		}
+		
+		String alcgenleft="";
+		
+		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
+			alcgenleft += "lw al 0(al)\n";
+		}
+		
+		String movecgen = this.left.codeGeneration()+
+						  "move al fp\n"+
+						  alcgenright+
+						  "sw a0 "+this.right.getSTentry().getOffset()+"(al)\n"+
+						  "move al fp\n"+
+						  alcgenleft+
+						  "sw 0 "+this.left.getSTentry().getOffset()+"(al)\n";
+		
+		return movecgen;
 	}
 
 	@Override

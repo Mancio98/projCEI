@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.AssetLanlib;
 import util.Environment;
 import util.EnvironmentAsset;
 import ast.type.Type;
@@ -98,10 +99,19 @@ public class IteStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		
-		String ifcgen = exp.codeGeneration()+
-						
+		String truelabel = AssetLanlib.freshLabel();
+		String endlabel = AssetLanlib.freshLabel();
 		
-		return null;
+		String ifcgen = this.exp.codeGeneration()+
+						"li t1 1\n"+
+						"beq a0 t1"+truelabel+"\n"+
+						this.elseStmt.codeGeneration()+
+						"b "+endlabel+"\n"+
+						truelabel+":\n"+
+						this.thenStmt.codeGeneration()+
+						endlabel+":\n";
+
+		return ifcgen;
 	}
 
 	@Override

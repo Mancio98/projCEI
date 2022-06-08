@@ -8,6 +8,7 @@ import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import util.EnvironmentAsset;
 import util.STentry;
 import util.TypeError;
 
@@ -53,6 +54,12 @@ public class ReturnStmt extends Statement {
 	
 	@Override
 	public String codeGeneration() {
+		
+		return this.exp.codeGeneration();
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

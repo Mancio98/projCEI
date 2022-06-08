@@ -38,8 +38,8 @@ public class ValExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return "li a0 "+this.value+"\n";
 	}
     
 }

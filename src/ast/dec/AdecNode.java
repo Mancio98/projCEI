@@ -71,7 +71,6 @@ public class AdecNode extends Node {
 		for(AssetNode node : adec)
 			env.addDeclaration(node.getId());
 			
-		
 		return null;
 	}
 
