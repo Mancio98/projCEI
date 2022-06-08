@@ -14,7 +14,7 @@ public class IdNode extends Exp {
 
 	private final String id;
     private STentry entry;
-    
+    private int nestingLevel;
     
     public IdNode(int row, int column, String id) {
     	super(row,column);
@@ -39,7 +39,7 @@ public class IdNode extends Exp {
 		} catch (UndeclaredIdException e) {
 			errors.add(new SemanticError(super.row, super.column, " " + this.id + " undeclared"));
 		} 
-            
+        this.nestingLevel = env.getNestingLevel();  
         return errors;
     }
     
@@ -58,8 +58,18 @@ public class IdNode extends Exp {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		String alcgen = "";
+		
+		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
+			alcgen += "lw al 0(al)\n";
+		}
+		String idcgen = "move al fp\n"+
+						alcgen+
+						"lw a0 "+this.entry.getOffset()+"(al)\n";
+		
+		return idcgen;
 	}
     
 }

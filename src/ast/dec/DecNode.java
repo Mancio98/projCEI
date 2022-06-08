@@ -3,8 +3,10 @@ package ast.dec;
 import java.util.ArrayList;
 
 import util.Environment;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import ast.Node;
+import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 
@@ -46,8 +48,12 @@ public class DecNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String decgen = "";
+		for(VarNode node : this.dec) {
+			decgen += node.codeGeneration();
+		}
+		return decgen;
 	}
 	
 	@Override
@@ -59,6 +65,12 @@ public class DecNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

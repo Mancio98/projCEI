@@ -2,21 +2,26 @@ asset x ;
 asset y ;
 
 int g()[] {
+	function 1
+	
+	int k;
 	return 1;
-}
+} 
+
 
 void f()[asset u, asset v] {
+	function 2
 	u -o y ;
 	v -o x ;
-	g()[];
+	g()[];     
 	return ;
-}
+} 
 
 void main()[asset u, asset v] {
     u -o x ;
 	u -o y ;
-	f()[x,y] ;
-	g()[] ;
+	f()[x,y] jal function 2
+	g()[] ;  jal function 1
 	return ;
 }
 

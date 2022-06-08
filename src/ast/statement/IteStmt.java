@@ -6,6 +6,7 @@ import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import util.EnvironmentAsset;
 import ast.type.Type;
 import ast.type.VoidType;
 import ast.type.BoolType;
@@ -96,6 +97,15 @@ public class IteStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
+		
+		String ifcgen = exp.codeGeneration()+
+						
+		
+		return null;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

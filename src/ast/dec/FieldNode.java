@@ -6,6 +6,7 @@ import ast.exp.Exp;
 import util.Environment;
 import util.SemanticError;
 import util.TypeError;
+import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 
@@ -39,7 +40,7 @@ public class FieldNode extends VarNode {
 	public Type typeCheck() {
 		if (this.exp != null) {
 			Type expType = this.exp.typeCheck();
-
+			
 	        if (!super.type.equals(expType)) {
 	            System.out.println(new TypeError(this.exp.getRow(), this.exp.getColumn(), "Expression type ["
 	                    + expType.getType() + "] is not equal to declared type [" + super.type.getType() + "]").toPrint());
@@ -52,8 +53,21 @@ public class FieldNode extends VarNode {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String addcgen;
+		if(this.type.isSubtype(new BoolType())) {
+			addcgen = "addi sp sp -1\n"; 
+		}
+		else
+			addcgen = "addi sp sp -4\n";
+		
+		if(exp != null) {
+			
+			String expcgen = exp.codeGeneration();
+			
+			return addcgen+expcgen+"sw a0 0(sp)\n";
+		}
+		return addcgen;
 	}
 
 	@Override

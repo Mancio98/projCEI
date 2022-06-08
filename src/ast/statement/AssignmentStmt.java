@@ -6,6 +6,7 @@ import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.Environment;
+import util.EnvironmentAsset;
 import util.TypeError;
 import ast.type.Type;
 import ast.type.VoidType;
@@ -16,6 +17,7 @@ public class AssignmentStmt extends Statement {
 	private final IdNode left;
 	//private final String id;
 	private final Exp exp;
+	private int nestingLevel;
 
 	
 	public AssignmentStmt(int row,int column,IdNode left, Exp exp) {
@@ -35,6 +37,7 @@ public class AssignmentStmt extends Statement {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.exp.checkSemantics(env));
+		this.nestingLevel = env.getNestingLevel();
 		return errors;
 	}
 
@@ -54,6 +57,24 @@ public class AssignmentStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
+		
+		String expcgen = this.exp.codeGeneration();
+		
+		String alcgen = "";
+		
+		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
+			alcgen += "lw al 0(al)\n";
+		}
+		String asgmcgen = expcgen+
+						"move al fp\n"+
+						alcgen+
+						"sw a0 "+this.left.getSTentry().getOffset()+"(al)\n";
+		
+		return asgmcgen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -3,6 +3,7 @@ package ast.statement;
 import java.util.ArrayList;
 import java.util.List;
 import ast.exp.Exp;
+import util.AssetLanlib;
 import util.Environment;
 import util.Environment.UndeclaredIdException;
 import util.EnvironmentAsset;
@@ -22,6 +23,7 @@ public class CallStmt extends Statement {
 	private List<Exp> expList;
 	private List<IdNode> idList;
 	private STentry entry;
+	private int nestingLevel;
 
 	public CallStmt(int row, int column, String id, ArrayList<Exp> exp, ArrayList<IdNode> idList) {
 		super(row, column);
@@ -124,8 +126,37 @@ public class CallStmt extends Statement {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String paramcgen = "";
+		
+		for(int i = this.idList.size()-1; i>= 0; i--) {
+			
+			paramcgen += this.idList.get(i).codeGeneration();
+			paramcgen += "push a0\n";
+		}
+		
+		for(int i = this.expList.size()-1; i>= 0; i--) {
+			
+			paramcgen += this.expList.get(i).codeGeneration();
+			paramcgen += "push a0\n";
+		}
+		
+		
+		String alcgen = "";
+		
+		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
+			
+			alcgen += "lw al 0(al)\n";
+		}
+		
+		String callcgen ="push fp\n"+
+						paramcgen+
+						"lw al 0(fp)\n"+
+						alcgen+
+						"push al\n"+
+						"jal "+this.entry.getLabel();
+						
+		return callcgen;
 	}
 
 	@Override
@@ -133,6 +164,7 @@ public class CallStmt extends Statement {
 		
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
+		this.nestingLevel = env.getNestingLevel();
 		try {
 			this.entry = env.lookUp(this.id);
 		}
@@ -147,6 +179,7 @@ public class CallStmt extends Statement {
 		for(IdNode nodeId : this.idList) {
 			errors.addAll(nodeId.checkSemantics(env));
 		}
+		
 		
 		return errors;
 	}

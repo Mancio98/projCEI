@@ -56,6 +56,7 @@ public class EnvironmentAsset {
 		return symTable.get(i-1).get(id).getEffect();
 		
 	}
+	
 	public void update(String id, int state) {
 		
 		int i = 0;

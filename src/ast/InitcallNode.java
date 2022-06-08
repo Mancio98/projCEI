@@ -6,6 +6,7 @@ import ast.exp.Exp;
 import util.Environment;
 import util.STentry;
 import util.Environment.UndeclaredIdException;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import util.TypeError;
 import ast.type.FunType;
@@ -21,6 +22,7 @@ public class InitcallNode extends Node {
 	private ArrayList<Exp> exp1List;
 	private ArrayList<Exp> exp2List;
 	private STentry entry;
+	private int nestingLevel;
 
 	public InitcallNode(int row, int column, String id, ArrayList<Exp> exp1List, ArrayList<Exp> exp2List) {
 		super(row, column);
@@ -158,8 +160,38 @@ public class InitcallNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String paramcgen = "";
+				
+		for(int i = this.exp2List.size()-1; i>= 0; i--) {
+			
+			paramcgen += this.exp2List.get(i).codeGeneration();
+			paramcgen += "push a0\n";
+		}
+		
+		for(int i = this.exp1List.size()-1; i>= 0; i--) {
+			
+			paramcgen += this.exp1List.get(i).codeGeneration();
+			paramcgen += "push a0\n";
+		}
+		
+		/*
+		String alcgen = "";
+		
+		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
+			
+			alcgen += "lw al 0(al)\n";
+		}*/
+		
+		String callcgen ="push fp\n"+
+						paramcgen+
+						/*
+						"lw al 0(fp)\n"+ //forse si può fare a meno
+						alcgen+
+						"push al\n"+*/
+						"jal "+this.entry.getLabel();
+						
+		return callcgen;
 	}
 
 	@Override
@@ -180,8 +212,16 @@ public class InitcallNode extends Node {
 		for(Exp nodeExp : this.exp2List) {
 			errors.addAll(nodeExp.checkSemantics(env));
 		}
+		
+		this.nestingLevel = env.getNestingLevel();
 			
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

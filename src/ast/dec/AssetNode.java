@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.Environment.DuplicateEntryException;
+import util.EnvironmentAsset;
 import util.SemanticError;
 import ast.Node;
 import ast.type.Type;
@@ -42,8 +43,8 @@ public class AssetNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		return "addi sp sp -4";
 	}
 
 	@Override
@@ -60,8 +61,9 @@ public class AssetNode extends Node {
 		return errors;
 	}
 
+
 	@Override
-	public String analyzeEffect(Node adec) {
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

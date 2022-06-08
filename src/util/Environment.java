@@ -4,18 +4,24 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import ast.type.Type;
+import ast.type.AssetType;
+import ast.type.BoolType;
 import ast.type.FunType;
+import ast.type.IntType;
 
 public class Environment {
 	
 	private ArrayList<HashMap<String,STentry>>  symTable = new ArrayList<HashMap<String,STentry>>();
 	private int nestingLevel = -1;
+	private int labelCount = 0;
+	private int offset = 0;
 	
 	//Add new HashMap when new scope is entered
 	public void entryScope(){
 		HashMap<String, STentry> hm = new HashMap<String,STentry>();
 		symTable.add(0,hm); 
 		nestingLevel++;
+		offset = 0;
 	}
 	
 	//Remove current HashMap of the scope when scope is left
@@ -33,12 +39,28 @@ public class Environment {
 	}
 	
 	//Add of a new id if it isn't already declared
-	public void addDeclaration(String id, Type node) throws DuplicateEntryException {
+	public STentry addDeclaration(String id, Type node) throws DuplicateEntryException {
 		STentry value = symTable.get(0).get(id);
 		//There is already an entry
 		if (value != null)
 			throw new DuplicateEntryException();
-		symTable.get(0).put(id, new STentry(nestingLevel, node));
+		
+		if(node.isSubtype(new BoolType()))
+			symTable.get(0).put(id, new STentry(nestingLevel, node, offset++, labelCount));
+		else if(node.isSubtype(new IntType()) || node.isSubtype(new AssetType())) {
+			
+			symTable.get(0).put(id, new STentry(nestingLevel, node, offset,labelCount));
+			offset += 4;
+		}
+		else {
+			STentry stentry =  new STentry(nestingLevel, node, 0,labelCount++);
+			symTable.get(0).put(id, stentry);
+			
+			return stentry;
+		}
+		
+		return null;
+		
 	}
 	
 	//Look if an id is already declared in any HashMap of symbol table else we raise an exceptions

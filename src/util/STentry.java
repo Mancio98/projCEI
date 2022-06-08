@@ -8,17 +8,19 @@ public class STentry {
 	private int nl;
 	private Type type;
 	private int offset;
+	private String label;
 	
 	public STentry(int nl)
 	{
 		this.nl = nl;
 	} 
 	   
-	public STentry(int nl, Type type, int offset)
+	public STentry(int nl, Type type, int offset, int labelcount)
 	{
 		this.nl = nl;
 		this.type = type;
 		this.setOffset(offset);
+		this.label = "function"+labelcount;
 	}
 	  
 	public void addType(Type type)
@@ -48,6 +50,10 @@ public class STentry {
 
 	public void setOffset(int offset) {
 		this.offset = offset;
+	}
+
+	public String getLabel() {
+		return label;
 	}
 	
 

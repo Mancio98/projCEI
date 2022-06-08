@@ -2,9 +2,12 @@ package ast.dec;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.Environment.DuplicateEntryException;
+import util.EnvironmentAsset;
 import util.SemanticError;
+import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 import ast.Node;
@@ -41,8 +44,13 @@ public class VarNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		
+		if(this.type.isSubtype(new BoolType()))
+			return "addi sp sp -1\n";
+		else
+			return "addi sp sp -4\n";
+		
 	}
 
 	@Override
@@ -57,6 +65,12 @@ public class VarNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

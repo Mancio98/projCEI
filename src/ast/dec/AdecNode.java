@@ -48,8 +48,11 @@ public class AdecNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		String adeccgen = "";
+		
+		for(AssetNode node : adec)
+			adeccgen += node.codeGeneration();
+		return adeccgen;
 	}
 	
 	@Override

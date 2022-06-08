@@ -2,6 +2,7 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.AssetLanlib;
 import util.Environment;
 import util.EnvironmentAsset;
 import util.SemanticError;
@@ -75,8 +76,29 @@ public class ProgramNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
-		return null;
+		
+		String fieldcgen = "";
+		
+		for(FieldNode node : this.field)
+			fieldcgen += node.codeGeneration();
+		
+		String assetcgen = "";
+		
+		for(AssetNode node : this.asset)
+			assetcgen += node.codeGeneration();
+		
+		String funcgen = "";
+				
+			for(FunNode node : this.function)
+				funcgen += node.codeGeneration();
+			
+		String initcgen = this.initcall.codeGeneration();
+				
+		String progcgen = fieldcgen+assetcgen+funcgen+initcgen+
+							"halt\n"+
+							AssetLanlib.getCode();
+		
+		return progcgen;
 	}
 
 
@@ -101,11 +123,7 @@ public class ProgramNode extends Node {
 	@Override
 	public String analyzeEffect(EnvironmentAsset env) {
 		
-		for(AssetNode node : this.asset)
-            env.addDeclaration(node.getId());
-		
-		for(FunNode node : this.function)
-            mappa.(node.id, node)
+	
 		
 		return null;
 	}

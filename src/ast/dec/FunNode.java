@@ -7,6 +7,7 @@ import util.AssetLanlib;
 import util.Environment;
 import util.Environment.DuplicateEntryException;
 import util.EnvironmentAsset;
+import util.STentry;
 import util.SemanticError;
 import util.TypeError;
 import ast.statement.CallStmt;
@@ -29,6 +30,7 @@ public class FunNode extends Node {
 	private ArrayList<DecNode> decList;
 	private ArrayList<Statement> statementList;
 	private FunType funType;
+	private STentry stentry;
 
 	public FunNode(int row, int column, Type type, String id) {
 		super(row, column);
@@ -157,11 +159,9 @@ public class FunNode extends Node {
 		
 		String declcode = "";
 		
-		
 		for(DecNode node : this.decList) {
 			
 			declcode += node.codeGeneration();
-			
 			
 		}
 		
@@ -185,28 +185,28 @@ public class FunNode extends Node {
 		
 		String stmcode = "";
 		for(Statement stm : this.statementList) {
-			stmcode = stm.codeGeneration();
+			stmcode += stm.codeGeneration();
 		}
 		
-		String labelfun = AssetLanlib.freshFunLabel();
+		String labelfun = this.stentry.getLabel();
+		
 		AssetLanlib.putCode(labelfun+":\n"+
 		
-			"cfp\n"+ 		// setta $fp a $sp				
-			"lra\n"+ 		// inserimento return address
+			"move fp sp\n"+ 		// setta $fp a $sp				
+			"push ra\n"+ 		// inserimento return address
 			declcode+ 		// inserimento dichiarazioni locali
-			stmcode+
-			"srv\n"+ 		// pop del return value
+			stmcode+		// cgen body
 			popdeclbody+
-			"sra\n"+ 		// pop del return address
-			"pop\n"+ 		// pop di AL
+			"lw ra 0(sp)\n"+ 	//lw ra top\n"	 store return address
+			"pop\n"+		//pop di ra
+			"pop\n"+ 		// pop di al
 			popdecl+
-			"sfp\n"+  	
-			"lrv\n"+ 		
-			"lra\n"+
-			"js\n"		
+			"lw fp 0(sp)\n"+  //lw fp top
+			"pop\n"+		//pop old fp
+			"jr ra\n"		
 				
 		);
-		return null;
+		return "";
 	}
 
 	@Override
@@ -214,13 +214,14 @@ public class FunNode extends Node {
 		
 		ArrayList<SemanticError> semErrors = new  ArrayList<SemanticError>();
 		
+		
 		try {
-			env.addDeclaration(this.id, this.funType);
+			this.stentry = env.addDeclaration(this.id, this.funType);
 		}
 		catch (DuplicateEntryException e) {
 			semErrors.add(new SemanticError(super.row, super.column, "id "+ this.id + " already declared"));
 		}
-			
+		
 		env.entryScope();
 			
 		/*for(VarNode n : this.parDec.getListDec()) {
