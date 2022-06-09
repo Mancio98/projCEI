@@ -54,11 +54,6 @@ public class BaseExp extends Exp {
 		return null;
 	}
 
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 	
 }
