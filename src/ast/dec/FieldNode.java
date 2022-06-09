@@ -65,7 +65,7 @@ public class FieldNode extends VarNode {
 			
 			String expcgen = exp.codeGeneration();
 			
-			return addcgen+expcgen+"sw a0 0(sp)\n";
+			return addcgen+expcgen+"push a0\n";
 		}
 		return addcgen;
 	}

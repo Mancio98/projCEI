@@ -197,11 +197,11 @@ public class FunNode extends Node {
 			declcode+ 		// inserimento dichiarazioni locali
 			stmcode+		// cgen body
 			popdeclbody+
-			"lw ra 0(sp)\n"+ 	//lw ra top\n"	 store return address
+			"lw ra sp 0\n"+ 	//lw ra top\n"	 store return address
 			"pop\n"+		//pop di ra
 			"pop\n"+ 		// pop di al
 			popdecl+
-			"lw fp 0(sp)\n"+  //lw fp top
+			"lw fp sp 0\n"+  //lw fp top
 			"pop\n"+		//pop old fp
 			"jr ra\n"		
 				

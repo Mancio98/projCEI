@@ -61,22 +61,22 @@ public class MoveStmt extends Statement {
 		String alcgenright="";
 		
 		for(int i=0; i < (this.nestingLevel - this.right.getSTentry().getNestinglevel()); i++) {
-			alcgenright += "lw al 0(al)\n";
+			alcgenright += "lw al al 0\n";
 		}
 		
 		String alcgenleft="";
 		
 		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
-			alcgenleft += "lw al 0(al)\n";
+			alcgenleft += "lw al al 0\n";
 		}
 		
 		String movecgen = this.left.codeGeneration()+
 						  "move al fp\n"+
 						  alcgenright+
-						  "sw a0 "+this.right.getSTentry().getOffset()+"(al)\n"+
+						  "sw a0 al"+this.right.getSTentry().getOffset()+"\n"+
 						  "move al fp\n"+
 						  alcgenleft+
-						  "sw 0 "+this.left.getSTentry().getOffset()+"(al)\n";
+						  "sw 0 al"+this.left.getSTentry().getOffset()+"\n";
 		
 		return movecgen;
 	}

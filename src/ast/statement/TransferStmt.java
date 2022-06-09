@@ -49,7 +49,7 @@ public class TransferStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		
-		return this.id.codeGeneration()+"sw a0 0(asset)\n"; //definire dove mettere l'asset iniziale (push all'inizio di program)"
+		return this.id.codeGeneration()+"transf a0\n"; //definire dove mettere l'asset iniziale (push all'inizio di program)"
 	}
 
 	@Override
