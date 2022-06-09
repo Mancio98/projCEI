@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp > exp" 
@@ -29,6 +30,24 @@ public class GreaterExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
+		String greCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		greCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"gre t1 a0 a0 /n"; // gre LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return greCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

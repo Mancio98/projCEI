@@ -2,6 +2,8 @@ package ast.type;
 
 import java.util.ArrayList;
 
+import util.EnvironmentAsset;
+
 public class FunType extends Type {
     
 	private ArrayList<Type> parTypes;
@@ -71,6 +73,12 @@ public class FunType extends Type {
 	    }
 	    
 		return indent + super.toPrint("") + s + type.toPrint(indent + " -> ") ; 
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

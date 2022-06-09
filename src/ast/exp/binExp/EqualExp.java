@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp == exp" 
@@ -28,6 +29,24 @@ public class EqualExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
+		String eqCGen = "";
+
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		eqCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"eq t1 a0 a0 /n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return eqCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

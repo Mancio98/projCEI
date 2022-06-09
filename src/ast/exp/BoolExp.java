@@ -54,11 +54,14 @@ public class BoolExp extends Exp {
 	@Override
 	public String analyzeEffect(EnvironmentAsset env) {
 
+
 		if(bool)
 			return "li a0 1\n";
 		else
 			return "li a0 0\n";
 		
+
+
 	}
 
     

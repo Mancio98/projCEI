@@ -50,4 +50,10 @@ public class PrintStmt extends Statement {
 		return null;
 	}
 
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

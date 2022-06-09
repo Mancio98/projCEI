@@ -3,6 +3,8 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
+import util.AssetLanlib;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp && exp" 
@@ -35,6 +37,25 @@ public class AndExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
+		
+		String andCGen = "";
+		
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		andCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"and t1 a0 a0 /n"; // and LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return andCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

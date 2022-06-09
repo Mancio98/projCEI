@@ -3,6 +3,7 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
+import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp < exp" 
@@ -28,6 +29,24 @@ public class LessExp extends BinExp {
 
 	@Override
 	public String codeGeneration() {
+		String lessCGen = "";
+
+		String leftCGen = this.left.codeGeneration();
+		
+		String rightCGen = this.right.codeGeneration();
+		
+		lessCGen += leftCGen +
+				"push a0 /n"+
+				rightCGen +
+				"lw t1 0(sp) /n" +
+				"pop /n"+
+				"less t1 a0 a0 /n"; // less LEFTVALUE RIGHTVALUE RETURNADDRESS
+		
+		return lessCGen;
+	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
 		// TODO Auto-generated method stub
 		return null;
 	}

@@ -63,6 +63,12 @@ public class ReturnStmt extends Statement {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public String analyzeEffect(EnvironmentAsset env) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 
 
