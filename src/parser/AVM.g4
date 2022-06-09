@@ -1,5 +1,15 @@
 grammar AVM;
 
+@header {
+
+import java.util.HashMap;
+}
+
+@lexer::members {
+
+
+public int lexicalErrors=0;
+}
 
 /*------------------------------------------------------------------
  * PARSER RULES
@@ -105,5 +115,5 @@ REGISTER:'a0'  //results in the accumulators
 
 WHITESP	: ( '\t' | ' ' | '\r' | '\n' )+   -> channel(HIDDEN);
 
-ERR		: . { System.err.println("Invalid char: "+ getText());} -> channel(HIDDEN); 
+ERR		: . { System.err.println("Invalid char: "+ getText()); lexicalErrors++;} -> channel(HIDDEN); 
 

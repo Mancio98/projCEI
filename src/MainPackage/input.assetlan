@@ -1,28 +1,8 @@
-asset x ;
-asset y ;
-
-int g()[] {
-	function 1
-	
-	int k;
-	return 1;
-} 
-
-
-void f()[asset u, asset v] {
-	function 2
-	u -o y ;
-	v -o x ;
-	g()[];     
-	return ;
-} 
-
-void main()[asset u, asset v] {
-    u -o x ;
-	u -o y ;
-	f()[x,y] jal function 2
-	g()[] ;  jal function 1
-	return ;
+int x = 1;
+void f(int n)[]{ 
+	if (n == 0) 
+		print(x); 
+	else 
+		f(n-1)[];	
 }
-
-main()[2,3]
+f(10)[];

@@ -39,7 +39,7 @@ transfer    : 'transfer' ID;
 
 ret	   		: 'return' (exp)?;
 
-ite         : 'if' '(' exp ')' '{' statement* '}' ('else' '{' statement* '}')?;
+ite         : 'if' '(' exp ')'  statement  ('else' statement )?;
 
 call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 

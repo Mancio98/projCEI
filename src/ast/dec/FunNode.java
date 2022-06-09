@@ -6,6 +6,7 @@ import ast.Node;
 import util.AssetLanlib;
 import util.Environment;
 import util.Environment.DuplicateEntryException;
+import util.Environment.UndeclaredIdException;
 import util.EnvironmentAsset;
 import util.STentry;
 import util.SemanticError;
@@ -216,12 +217,19 @@ public class FunNode extends Node {
 		
 		
 		try {
-			this.stentry = env.addDeclaration(this.id, this.funType);
+			env.addDeclaration(this.id, this.funType);
+			
 		}
 		catch (DuplicateEntryException e) {
 			semErrors.add(new SemanticError(super.row, super.column, "id "+ this.id + " already declared"));
 		}
 		
+		try {
+			this.stentry = env.lookUp(this.id);
+		} catch (UndeclaredIdException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		env.entryScope();
 			
 		/*for(VarNode n : this.parDec.getListDec()) {

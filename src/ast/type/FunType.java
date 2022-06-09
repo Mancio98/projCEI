@@ -41,7 +41,7 @@ public class FunType extends Type {
 	}
 	*/
 	public boolean isSubtype(Type type) {
-    	return true;
+    	return false;
     }
 	
 	@Override

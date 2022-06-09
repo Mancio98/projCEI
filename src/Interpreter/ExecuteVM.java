@@ -3,8 +3,8 @@ package Interpreter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import ast.LineCode;
 import parser.AVMParser;
+import util.LineCode;
 
 public class ExecuteVM {
     
@@ -77,71 +77,123 @@ public class ExecuteVM {
                   break;
               case AVMParser.MOVE :
             	  
-			                  
+			      registers.put(args[0], registers.get(args[1]));            
                   break;
               case AVMParser.NOT :
 			    
+            	  registers.put(args[0], (registers.get(args[1]) == 1) ? 0 : 1);
 			    break;
+			    
               case AVMParser.OR :
   			    
+            	  if(registers.get(args[0]) == 1)
+            		  registers.put(args[2], 1);
+            	  else
+            		  registers.put(args[2], registers.get(args[1]));
+            	  
   			    break;
               case AVMParser.MULT :
                
+            	  int mult = registers.get(args[0]) * registers.get(args[1]);
+            	  registers.put(args[2],mult); 
                 break;
               case AVMParser.DIV :
                 
+            	  int div = registers.get(args[0]) / registers.get(args[1]);
+            	  registers.put(args[2], div); 
                 break;
               case AVMParser.SUB :
                
+            	  int sub = registers.get(args[0]) - registers.get(args[1]);
+            	  registers.put(args[2], sub); 
                 break;
-              case AVMParser.STOREW : //
-                   
+              case AVMParser.STOREW : 
+                   int possw = registers.get("al")+offset;
+                   stack[possw] = registers.get(args[0]);
                 break;
-              case AVMParser.LOADW : //
-            	
+                
+              case AVMParser.LOADW : 
+            	  int poslw = registers.get("al")+offset;
+                  registers.put(args[0], stack[poslw]);
                 break;
+                
               case AVMParser.LOADI :
-  			    
+            	  registers.put(args[0], Integer.parseInt(args[1]));
   			    break;
+  			    
               case AVMParser.BRANCH : 
                 
+            	  ip = Integer.parseInt(arg);
+           
                 break;
-              case AVMParser.BRANCHEQ : //
+              case AVMParser.BRANCHEQ :
+                if(registers.get(args[0])==registers.get(args[1]))
+                	ip = Integer.parseInt(args[2]);
+                break;
                 
-                break;
               case AVMParser.BRANCHLESSEQ :
-               
+            	  if(registers.get(args[0])<=registers.get(args[1]))
+              		ip = Integer.parseInt(args[2]);
                 break;
               case AVMParser.EQUAL :
-                  
+            	  if(registers.get(args[0]) == registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
                   break;
               case AVMParser.NOTEQUAL :
-                  
+            	  if(registers.get(args[0]) != registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
                   break;
+                  
               case AVMParser.GREATEROREQUAL:
+            	  if(registers.get(args[0]) >= registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
             	  break;
               case AVMParser.GREATER:
+            	  if(registers.get(args[0]) > registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
+            	  break;
+              case AVMParser.LESS:
+            	  if(registers.get(args[0]) < registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
+            	  break;
+              case AVMParser.LESSOREQUAL:
+            	  if(registers.get(args[0]) <= registers.get(args[1]))
+            		  registers.put(args[2],1);
+            	  else
+            		  registers.put(args[2],0);
             	  break;
               case AVMParser.JUMPALABEL:
+            	  
+            	  registers.put("ra", ip);
+            	  ip = Integer.parseInt(arg);
             	  break;
-             case AVMParser.PRINT :
-                System.out.println((sp<MEMSIZE)?memory[sp]:"Empty stack!");
+            	  
+              case AVMParser.TRANSFER:
+            	  stack[hp] = registers.get(arg);
+            	  break;
+              case AVMParser.JUMPREG:
+            	  ip = registers.get("ra");
+              case AVMParser.PRINT :
+                System.out.println((registers.get("sp")<MEMSIZE) ? stack[registers.get("sp")]:"Empty stack!");
                 break;
-             case AVMParser.HALT :
+              case AVMParser.HALT :
             	//to print the result 
-             	System.out.println("\nResult: " + memory[sp] + "\n");
+             	System.out.println("\nResult: " + stack[registers.get("sp")] + "\n");
              	return;
             }
     	} 
       }
     } 
     
-    private int pop() {
-      return memory[sp++];
-    }
-    
-    private void push(LineCode v) {
-      memory[--sp] = v;
-    }
     
 }

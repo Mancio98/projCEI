@@ -39,27 +39,24 @@ public class Environment {
 	}
 	
 	//Add of a new id if it isn't already declared
-	public STentry addDeclaration(String id, Type node) throws DuplicateEntryException {
+	public void addDeclaration(String id, Type node) throws DuplicateEntryException {
 		STentry value = symTable.get(0).get(id);
 		//There is already an entry
 		if (value != null)
 			throw new DuplicateEntryException();
 		
-		if(node.isSubtype(new BoolType()))
+		if(node.isSubtype(new BoolType()) || node.isSubtype(new IntType()) || node.isSubtype(new AssetType())) {
 			symTable.get(0).put(id, new STentry(nestingLevel, node, offset++, labelCount));
-		else if(node.isSubtype(new IntType()) || node.isSubtype(new AssetType())) {
 			
-			symTable.get(0).put(id, new STentry(nestingLevel, node, offset,labelCount));
-			offset += 4;
 		}
 		else {
+			
+			
 			STentry stentry =  new STentry(nestingLevel, node, 0,labelCount++);
 			symTable.get(0).put(id, stentry);
 			
-			return stentry;
 		}
 		
-		return null;
 		
 	}
 	

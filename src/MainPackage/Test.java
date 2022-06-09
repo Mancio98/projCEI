@@ -1,17 +1,26 @@
 package MainPackage;
 
+import java.io.BufferedWriter;
+
+import java.io.FileInputStream;
+import java.io.FileWriter;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.CommonTokenStream;
+import org.antlr.v4.runtime.ANTLRInputStream;
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.ParseTree;
 
+import Interpreter.ExecuteVM;
 import ast.Node;
+
 import ast.type.Type;
 import ast.type.VoidType;
+import ast.AVMVisitorImpl;
 import ast.AssetLanVisitorImpl;
-
+import parser.AVMLexer;
+import parser.AVMParser;
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
 import util.Environment;
@@ -62,16 +71,40 @@ public class Test {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
 					
-					
+					/*
 					System.out.println("TEST");
 					Type programType = ast.typeCheck();
 					System.out.println("TEST");
-					if (programType instanceof VoidType) {
-						System.out.println("Il programma è ben tipato");
-					}
+					if (programType instanceof VoidType) {*/
+						System.out.println("Il programma ï¿½ ben tipato");
+						
+						String cgen = ast.codeGeneration();
+						BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
+						out.write(cgen);
+						out.close(); 
+						System.out.println("Code generated! Assembling and running generated code.");
+
+						FileInputStream isASM = new FileInputStream(fileName+".asm");
+						ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
+						AVMLexer lexerASM = new AVMLexer(inputASM);
+						CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
+						AVMParser parserASM = new AVMParser(tokensASM);
+
+						//parserASM.assembly();
+
+						AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
+						visitorAVM.visit(parserASM.assembly());
+						
+						System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
+						if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
+
+						System.out.println("Starting Virtual Machine...");
+						ExecuteVM vm = new ExecuteVM(visitorAVM.getCode());
+						vm.cpu();
+					/*}
 					else {
 						System.out.println("ERRORE nel TypeCheck");
-					}
+					}*/
 				}
 			}
 	  }

@@ -37,6 +37,7 @@ import parser.AVMParser.PushContext;
 import parser.AVMParser.StoreWContext;
 import parser.AVMParser.SubContext;
 import parser.AVMParser.TransferContext;
+import util.LineCode;
 
 public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 
@@ -47,7 +48,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
     private HashMap<Integer,String> labelRef = new HashMap<Integer,String>();
 
     
-	public List<LineCode> getCode() {
+	public ArrayList<LineCode> getCode() {
 		return code;
 	}
 
