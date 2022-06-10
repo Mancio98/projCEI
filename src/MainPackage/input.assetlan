@@ -9,7 +9,7 @@ void f(int n)[] {
 
 void main()[asset u, asset v] {
 	u -o x ;
-	v -o y ;
+	//v -o y ;
 	return ;
 }
 

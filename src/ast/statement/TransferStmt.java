@@ -62,4 +62,10 @@ public class TransferStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
+		return ;
+	}
+
 }

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import ast.dec.AdecNode;
 import ast.dec.AssetNode;
 import ast.exp.Exp;
 import util.EEntry;
@@ -345,4 +346,35 @@ public class InitcallNode extends Node {
 		return ;
 	}
 
+	public void analizeLiquidity(EEnvironment env) {
+		/*for (String i : env.getAllFun().keySet()) {
+			System.out.println(i);
+			System.out.println(((EEntryFun)(env.lookUp(i))).getFunNode());
+		}*/
+		Exp exp;
+		EEntryAsset par;
+		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+		//ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
+		
+		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();
+		for (int pos = adec.getListAdec().size() - 1; pos >= 0; pos--) {
+			AssetNode a = adec.getListAdec().get(pos);
+			exp = this.exp2List.get(pos);
+			int valExp = exp.calculateExp();
+			if (valExp > 0) {
+				((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState("1");
+			}
+			else {
+				((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState("0");
+			}
+			
+		}
+		/*
+		for (String s : env0.getAllAsset().keySet()) {
+			System.out.println(s);
+			System.out.println(((EEntryAsset)(env0.lookUp(s))).getEffectState());
+		}
+		*/
+		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
+	}
 }

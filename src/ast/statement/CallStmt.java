@@ -287,4 +287,9 @@ public class CallStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		return ;
+	}
+
 }

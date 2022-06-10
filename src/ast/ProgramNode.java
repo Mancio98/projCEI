@@ -12,6 +12,7 @@ import ast.dec.AssetNode;
 import ast.dec.FunNode;
 import ast.statement.CallStmt;
 import ast.statement.IteStmt;
+import ast.type.FunType;
 import ast.type.Type;
 import ast.type.VoidType;
 
@@ -130,8 +131,25 @@ public class ProgramNode extends Node {
 			}
 		}
 		*/
-		this.initcall.getId();
+		/*
+		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
 		
+		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
+			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
+			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
+			
+			par.updateEffectState(asset.getEffectState());
+			//System.out.println(par.getEffectState());
+			asset.updateEffectState("0");
+		}
+		
+		((EEntryFun)(env.lookUp(this.initcall.getId()))).getFunNode().analyzeLiquidity(env);
+		*/
+		EEnvironment envLiq = env.clone();
+		for(FunNode f : this.function) {
+			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);
+		}
+		this.initcall.analizeLiquidity(envLiq);
 		this.initcall.analizeEffect(env);
 		
 		env.exitScope();

@@ -67,4 +67,9 @@ public class AssignmentStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		return ;
+	}
+
 }

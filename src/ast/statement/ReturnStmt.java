@@ -66,4 +66,12 @@ public class ReturnStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		if (exp != null) {
+            exp.analizeEffect(env);
+        }
+		return ;
+	}
+
 }

@@ -67,4 +67,11 @@ public class MoveStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
+	}
+
 }

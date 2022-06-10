@@ -8,6 +8,7 @@ import util.EEntry;
 import util.EEntryAsset;
 import util.EEntryFun;
 import util.EEnvironment;
+import util.EffectError;
 import util.Environment;
 import util.STEnvironment.DuplicateEntryException;
 import util.STEnvironment;
@@ -70,6 +71,13 @@ public class FunNode extends Node {
 	public void addBody(ArrayList<DecNode> decList, ArrayList<Statement> stmt) {
 		this.decList = decList;
 		this.statementList = stmt;
+	}
+	public String getId() {
+		return this.id;
+	}
+	
+	public AdecNode getParAdec() {
+		return this.parAdec;
 	}
 	
 	@Override
@@ -175,6 +183,45 @@ public class FunNode extends Node {
 		return semErrors;
 	}
 
+	public void analyzeLiquidity(EEnvironment env) {
+		env.entryScope();
+		/*
+		this.parDec.analizeEffect(env);
+		this.parAdec.analizeEffect(env);
+		
+		for(DecNode n : this.decList) {
+			n.analizeEffect(env);
+		}
+		*/
+		EEnvironment env0 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0();
+		for (String g : env.getAllAsset().keySet()) {
+			((EEntryAsset)(env0.lookUp(g))).updateEffectState(((EEntryAsset)(env.lookUp(g))).getEffectState());
+		}
+		/*
+		System.out.println("LLLLLLLLLLLLLLLLLLLL");
+		for (String id : ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().getAllAsset().keySet()) {
+			System.out.println(id);
+			System.out.println(((EEntryAsset)(((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().lookUp(id))).getEffectState());
+		}
+		System.out.println("LLLLLLLLLLLLLLLLLLLL");
+		*/
+		for(Statement stmt : this.statementList) {
+			stmt.analizeLiquidity(env0);
+		}
+		System.out.println("LLLLLLLLLLLLLLLLLLLL");
+		for (String id : ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().getAllAsset().keySet()) {
+			System.out.println(id);
+			System.out.println(((EEntryAsset)(((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().lookUp(id))).getEffectState());
+		}
+		System.out.println("LLLLLLLLLLLLLLLLLLLL");
+		for (AssetNode an : this.parAdec.getListAdec()) {
+			if (((EEntryAsset)(((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().lookUp(an.getId()))).getEffectState() != "0") {
+				System.out.println(new EffectError(row, column, "Function [" + this.id + "] is not liquid").toPrint());
+				System.exit(0);
+			}
+		}
+	}
+	
 	private boolean isRecursive(Statement stmt) {
 		boolean isRec = false;
 		

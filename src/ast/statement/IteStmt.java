@@ -178,4 +178,23 @@ public class IteStmt extends Statement {
 		return null;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		this.exp.analizeEffect(env);
+		
+		EEnvironment tmpEnv = env.clone();
+        
+        for(Statement stmt : this.thenStmtList) {
+        	stmt.analizeEffect(env);
+		}
+        
+        for(Statement stmt : this.elseStmtList) {
+        	stmt.analizeEffect(tmpEnv);
+		}
+        
+        env.maxModifyEnv(tmpEnv);
+        
+        return ;
+	}
+
 }

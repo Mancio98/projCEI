@@ -49,4 +49,9 @@ public class PrintStmt extends Statement {
 		return ;
 	}
 
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		return ;
+	}
+
 }
