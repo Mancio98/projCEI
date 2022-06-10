@@ -12,6 +12,10 @@ public class GreaterExp extends BinExp {
         super(row, column, left, right);
     }
     
+    public int calculateExp() {
+    	return 0;
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: Greater\n" + indent + "\tLeft:\n" + super.left.toPrint(indent + "\t\t") + "\n" + indent + "\tRight:\n" + super.right.toPrint(indent + "\t\t");

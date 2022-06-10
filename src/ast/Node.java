@@ -2,7 +2,9 @@ package ast;
 
 import java.util.ArrayList;
 
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.type.Type;
 
@@ -27,12 +29,11 @@ public abstract class Node {
    
 	public abstract String toPrint(String indent);
 	
-	public abstract ArrayList<SemanticError> checkSemantics(Environment env);
+	public abstract ArrayList<SemanticError> checkSemantics(STEnvironment env);
 	
 	public abstract Type typeCheck();
 	
-	// VEDERE SE SISTEMARE
-	//public abstract void analizeEffect();
+	public abstract void analizeEffect(EEnvironment env);
 	  
 	public abstract String codeGeneration();
 }  

@@ -2,7 +2,10 @@ package ast;
 
 import java.util.ArrayList;
 
-import util.Environment;
+import util.EEntryAsset;
+import util.EEntryFun;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.dec.FieldNode;
 import ast.dec.AssetNode;
@@ -80,7 +83,7 @@ public class ProgramNode extends Node {
 
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		env.entryScope();
@@ -97,4 +100,42 @@ public class ProgramNode extends Node {
 		return errors;
 	}
 
+	// FARE I CONTROLLI SULLA LIQUIDITY
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		env.entryScope();
+		
+		for(FieldNode f : this.field) {
+			// VEDERE SE SI PUò FARE MEGLIO
+			f.analizeEffect(env);
+		}
+		for(AssetNode a : this.asset) {
+			a.analizeEffect(env);
+		}
+		for(FunNode f : this.function) {
+			f.analizeEffect(env);
+		}
+		/*
+		for (String fu : env.getAllFun().keySet()) {
+			System.out.println(fu);
+			EEnvironment e0 = ((EEntryFun)(env.lookUp(fu))).getEnv0();
+			for (String i : e0.getAllAsset().keySet()) {
+				System.out.println(i);
+				System.out.println(((EEntryAsset)(e0.lookUp(i))).getEffectState());
+			}
+			EEnvironment e1 = ((EEntryFun)(env.lookUp(fu))).getEnv1();
+			for (String i : e0.getAllAsset().keySet()) {
+				System.out.println(i);
+				System.out.println(((EEntryAsset)(e1.lookUp(i))).getEffectState());
+			}
+		}
+		*/
+		this.initcall.getId();
+		
+		this.initcall.analizeEffect(env);
+		
+		env.exitScope();
+		
+		return ;
+	}
 }

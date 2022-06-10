@@ -3,19 +3,18 @@ package util;
 import ast.type.Type;
 
 //Used for the insertion of an ID in the HashMap
-public class STentry {
+public class STentry extends Entry {
 	
-	private int nl;
 	private Type type;
 	
 	public STentry(int nl)
 	{
-		this.nl = nl;
+		super(nl);
 	} 
 	   
 	public STentry(int nl, Type type)
 	{
-		this.nl = nl;
+		super(nl);
 		this.type = type;
 	}
 	  
@@ -31,7 +30,7 @@ public class STentry {
 	  
 	public int getNestinglevel()
 	{
-		return this.nl;
+		return super.getNestinglevel();
 	}
 	  
 	public String toPrint(String s) { 

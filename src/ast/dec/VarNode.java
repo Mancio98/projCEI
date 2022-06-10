@@ -2,8 +2,10 @@ package ast.dec;
 
 import java.util.ArrayList;
 
+import util.EEnvironment;
 import util.Environment;
-import util.Environment.DuplicateEntryException;
+import util.STEnvironment.DuplicateEntryException;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.type.Type;
 import ast.type.VoidType;
@@ -46,7 +48,7 @@ public class VarNode extends Node {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		try {
@@ -57,6 +59,11 @@ public class VarNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		return ;
 	}
 
 }

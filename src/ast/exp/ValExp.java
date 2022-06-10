@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import util.SemanticError;
 import ast.type.Type;
 import ast.type.IntType;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 
 //Used for NUMBER
 public class ValExp extends Exp {
@@ -18,7 +20,11 @@ public class ValExp extends Exp {
     }
 
     public int getValue() {
-        return value;
+        return this.value;
+    }
+    
+    public int calculateExp() {
+    	return this.value;
     }
 
     @Override
@@ -27,7 +33,7 @@ public class ValExp extends Exp {
     }
 
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         return new ArrayList<SemanticError>();
     }
     
@@ -35,6 +41,11 @@ public class ValExp extends Exp {
     public Type typeCheck() {
     	return new IntType();
     }
+    
+    @Override
+	public void analizeEffect(EEnvironment env) {
+		return ;
+	}
 
 	@Override
 	public String codeGeneration() {

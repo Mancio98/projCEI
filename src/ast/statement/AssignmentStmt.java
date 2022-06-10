@@ -5,10 +5,14 @@ import java.util.ArrayList;
 import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.TypeError;
 import ast.type.Type;
 import ast.type.VoidType;
+
+// CONTROLLARE ASSEGNAMENTO DI ASSET VERSO INTERI!!!
 
 //Used for rule like "ID = exp"
 public class AssignmentStmt extends Statement {
@@ -31,7 +35,7 @@ public class AssignmentStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.exp.checkSemantics(env));
@@ -49,13 +53,18 @@ public class AssignmentStmt extends Statement {
             System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		return ;
 	}
 
 }

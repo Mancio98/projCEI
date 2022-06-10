@@ -11,6 +11,10 @@ public class LessOrEqualExp extends BinExp {
     public LessOrEqualExp(int row, int column, Exp left, Exp right) {
         super(row, column, left, right);
     }
+    
+    public int calculateExp() {
+    	return 0;
+    }
 
     @Override
     public String toPrint(String indent) {

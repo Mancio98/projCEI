@@ -11,6 +11,10 @@ public class DivExp extends BinExp {
     public DivExp(int row, int column, Exp left, Exp right) {
         super(row, column, left, right);
     }
+    
+    public int calculateExp() {
+    	return (super.left.calculateExp() / super.right.calculateExp());
+    }
 
     @Override
     public String toPrint(String indent) {

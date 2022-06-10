@@ -3,7 +3,9 @@ package ast.dec;
 import java.util.ArrayList;
 
 import ast.exp.Exp;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.SemanticError;
 import util.TypeError;
 import ast.type.Type;
@@ -40,7 +42,7 @@ public class FieldNode extends VarNode {
 		if (this.exp != null) {
 			Type expType = this.exp.typeCheck();
 
-	        if (!super.type.equals(expType)) {
+	        if (!super.type.isSubtype(expType)) {
 	            System.out.println(new TypeError(this.exp.getRow(), this.exp.getColumn(), "Expression type ["
 	                    + expType.getType() + "] is not equal to declared type [" + super.type.getType() + "]").toPrint());
 	            System.exit(0);
@@ -57,12 +59,19 @@ public class FieldNode extends VarNode {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = super.checkSemantics(env);
-		if(exp != null)
+		if (exp != null)
 			errors.addAll(exp.checkSemantics(env));
 		return errors;
 	}
 
+	
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		if (exp != null)
+			this.exp.analizeEffect(env);
+		return ;
+	}
 }
 

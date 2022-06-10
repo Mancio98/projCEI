@@ -2,7 +2,8 @@ package ast.exp;
 
 import ast.type.Type;
 import java.util.ArrayList;
-import util.Environment;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 
 //Used for expression of type "( exp )" 
@@ -19,6 +20,10 @@ public class BaseExp extends Exp {
 		return this.child;
 	}
     
+    public int calculateExp() {
+    	return this.child.calculateExp();
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: Base\n" + this.child.toPrint(indent + "\t");
@@ -32,7 +37,7 @@ public class BaseExp extends Exp {
     */
 
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         return this.child.checkSemantics(env);
     }
 
@@ -42,10 +47,15 @@ public class BaseExp extends Exp {
 	}
 
 	@Override
+	public void analizeEffect(EEnvironment env) {
+		this.child.analizeEffect(env);
+		return ;
+	}
+	
+	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
 	
 }

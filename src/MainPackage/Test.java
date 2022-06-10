@@ -14,7 +14,9 @@ import ast.AssetLanVisitorImpl;
 
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.SemanticError;
 
 
@@ -51,7 +53,7 @@ public class Test {
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
 			} 
 			else {
-				Environment env = new Environment();
+				STEnvironment env = new STEnvironment();
 				ArrayList<SemanticError> err = ast.checkSemantics(env);
 				if(err.size() > 0) {
 					System.out.println("You had: " +err.size()+" errors:");
@@ -62,15 +64,16 @@ public class Test {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
 					
-					
-					System.out.println("TEST");
 					Type programType = ast.typeCheck();
-					System.out.println("TEST");
-					if (programType instanceof VoidType) {
-						System.out.println("Il programma è ben tipato");
+					if (!(programType instanceof VoidType)) {
+						System.out.println("ERRORE nel TypeCheck");
 					}
 					else {
-						System.out.println("ERRORE nel TypeCheck");
+						System.out.println("Il programma è ben tipato");
+						System.out.println("TEST");
+						EEnvironment eenv = new EEnvironment();
+						ast.analizeEffect(eenv);
+						System.out.println("TEST");
 					}
 				}
 			}

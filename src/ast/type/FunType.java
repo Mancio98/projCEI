@@ -2,24 +2,30 @@ package ast.type;
 
 import java.util.ArrayList;
 
+import ast.dec.AdecNode;
+import ast.dec.AssetNode;
+
 public class FunType extends Type {
     
 	private ArrayList<Type> parTypes;
 	private ArrayList<Type> parATypes;
 	private Type type;
+	private ArrayList<AssetNode> parAsset;
 
-	public FunType(ArrayList<Type> parTypes, ArrayList<Type> parATypes, Type type) {
+	public FunType(ArrayList<Type> parTypes, ArrayList<Type> parATypes, Type type, ArrayList<AssetNode> parAsset) {
 		super(-1, -1, "Fun");
 		this.parTypes = parTypes;
 		this.parATypes = parATypes;
 		this.type = type;
+		this.parAsset = parAsset;
 	}
 	
-	public FunType(int row, int column, ArrayList<Type> parTypes, ArrayList<Type> parATypes, Type type) {
+	public FunType(int row, int column, ArrayList<Type> parTypes, ArrayList<Type> parATypes, Type type, ArrayList<AssetNode> parAsset) {
 		super(row, column, "Fun");
 		this.parTypes = parTypes;
 		this.parATypes = parATypes;
 		this.type = type;
+		this.parAsset = parAsset;
 	}
 
 	public Type getReturnType() {
@@ -33,13 +39,20 @@ public class FunType extends Type {
 	public ArrayList<Type> getParATypes() {
 		return this.parATypes;
 	}
+	
+	public ArrayList<AssetNode> getParAsset() {
+		return this.parAsset;
+	}
+	
 	/*
 	public int getArgumentsNumber() {
 		return this.parTypes.size() + this.parATypes.size();
 	}
 	*/
+	
+	// VEDERE SE SERVE
 	public boolean isSubtype(Type type) {
-    	return true;
+    	return false;
     }
 	
 	@Override

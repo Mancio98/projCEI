@@ -249,12 +249,22 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	}
 	
 	public Node visitIte(IteContext ctx) {
-			if(ctx.statement().size()>1){
-				
-				return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement) visit(ctx.statement().get(0)),
-						(Statement) visit(ctx.statement().get(1)));
+		ArrayList<Statement> thenStatement = new ArrayList<Statement>();
+		ArrayList<Statement> elseStatement = new ArrayList<Statement>();
+		
+		for(StatementContext sc: ctx.statement()) {
+			if(sc.invokingState == 165) {
+				thenStatement.add((Statement)visit(sc));
 			}
-			else return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)));
+			else if (sc.invokingState == 174) {
+				elseStatement.add((Statement)visit(sc));
+			}
+			else {
+				return null;
+			}
+		}
+	
+		return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.exp()), thenStatement, elseStatement);
 	}
 
 	public Node visitCall(CallContext ctx) {

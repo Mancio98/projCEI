@@ -5,7 +5,9 @@ import ast.type.Type;
 import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 
 //Used for rule like "print exp"
 public class PrintStmt extends Statement {
@@ -23,7 +25,7 @@ public class PrintStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.exp.checkSemantics(env));
 		return errors;
@@ -31,15 +33,20 @@ public class PrintStmt extends Statement {
 
 	@Override
 	public Type typeCheck() {
-		Type typeExp = this.exp.typeCheck();
+		this.exp.typeCheck();
 		//VEDERE SE VA FATTO CONTROLLO INT OR BOOL
-		return new VoidType();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		return ;
 	}
 
 }

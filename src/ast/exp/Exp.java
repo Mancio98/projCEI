@@ -1,6 +1,7 @@
 package ast.exp;
 
 import ast.Node;
+import util.EEnvironment;
 
 //Extension of class Node used for readability
 public abstract class Exp extends Node {
@@ -13,6 +14,8 @@ public abstract class Exp extends Node {
     public String toPrint(String indent) {
         return indent + "Exp: (Generic)\n";
     }
+	
+	public abstract int calculateExp();
 	
 	// public abstract String toPrintInFun(String indent);
 }

@@ -7,8 +7,12 @@ import ast.type.Type;
 import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
+import util.EEntryAsset;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.TypeError;
+import util.EEnvironment.EffectState;
 
 //Used for rule like "ID -o ID"
 public class MoveStmt extends Statement {
@@ -29,7 +33,7 @@ public class MoveStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.right.checkSemantics(env));
@@ -47,13 +51,20 @@ public class MoveStmt extends Statement {
 			System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
 	}
 
 }

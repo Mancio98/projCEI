@@ -2,8 +2,10 @@ package ast.dec;
 
 import java.util.ArrayList;
 
-import util.Environment;
-import util.Environment.DuplicateEntryException;
+import util.EEnvironment;
+import util.EEnvironment.EffectState;
+import util.STEnvironment.DuplicateEntryException;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.Node;
 import ast.type.Type;
@@ -43,7 +45,7 @@ public class AssetNode extends Node {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		try {
@@ -54,6 +56,12 @@ public class AssetNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		env.addDeclarationAsset(this.id, "0");
+		return ;
 	}
 
 }

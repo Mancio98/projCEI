@@ -1,11 +1,19 @@
 package ast;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.regex.Pattern;
 
+import ast.dec.AssetNode;
 import ast.exp.Exp;
-import util.Environment;
+import util.EEntry;
+import util.EEntryAsset;
+import util.EEntryFun;
+import util.EEnvironment;
+import util.EffectError;
+import util.STEnvironment;
 import util.STentry;
-import util.Environment.UndeclaredIdException;
+import util.STEnvironment.UndeclaredIdException;
 import util.SemanticError;
 import util.TypeError;
 import ast.type.FunType;
@@ -28,6 +36,10 @@ public class InitcallNode extends Node {
 		this.exp1List = exp1List;
 		this.exp2List = exp2List;
 		this.entry = null;
+	}
+	
+	public String getId() {
+		return this.id;
 	}
 	
 	/*
@@ -163,7 +175,7 @@ public class InitcallNode extends Node {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		try {
@@ -182,6 +194,155 @@ public class InitcallNode extends Node {
 		}
 			
 		return errors;
+	}
+
+	private void substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+		//EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+		Exp exp;
+		EEntryAsset par;
+		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
+		
+		for (int pos = this.exp2List.size() - 1; pos >= 0; pos--) {
+			exp = this.exp2List.get(pos);
+			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
+			int valExp = exp.calculateExp();
+			if (valExp > 0) {
+				par.updateEffectState("1");
+			}
+			else {
+				par.updateEffectState("0");
+			}
+		}
+		/*
+		HashMap<String, EEntry> map = env0.getAllAsset();
+		for (String id : map.keySet()) {
+			if (((EEntryAsset)(map.get(id))).getEffectState() != "1" || ((EEntryAsset)(map.get(id))).getEffectState() != "0") {
+				if (env.lookUp(id) != null) {
+					((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env.lookUp(id))).getEffectState());
+				}
+			}
+		}
+		*/
+		return ;
+	}
+	
+	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+		//EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+		//EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
+		
+		int i;
+		String[] split;
+		HashMap<String, EEntry> subs = env0.getAllAsset();
+		HashMap<String, EEntry> map = env1.getAllAsset();
+		for (String id : map.keySet()) {
+			if (((EEntryAsset)(map.get(id))).getEffectState() != "1" && ((EEntryAsset)(map.get(id))).getEffectState() != "0") {
+				split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
+				//split = ((((EEntryAsset)(map.get(id))).getEffectState()).contains("+") ? (((EEntryAsset)(map.get(id))).getEffectState()).split("+") : new String[] {((EEntryAsset)(map.get(id))).getEffectState()});
+				/*
+				System.out.println("sp");
+				for (int b=0; b < split.length; b++) {
+					System.out.println(split[b]);
+				}
+				*/
+				i = 1;
+				String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
+				while (i < split.length) { // (((EEntryAsset)(map.get(id))).getEffectState()).length() > 1 && 
+					//System.out.println(((EEntryAsset)(subs.get(split[i]))).getEffectState());
+					EEntryAsset.effectStatePlus(res, ((EEntryAsset)(subs.get(split[i]))).getEffectState());
+					//EEntryAsset.effectStatePlus(((EEntryAsset)(subs.get(split[i]))).getEffectState(), (((EEntryAsset)(map.get(id))).getEffectState()).substring((((EEntryAsset)(map.get(id))).getEffectState()).indexOf("+"), (((EEntryAsset)(map.get(id))).getEffectState()).length() - 1));
+					i++;
+				}
+				//System.out.println(res);
+				((EEntryAsset)(map.get(id))).updateEffectState(res);
+			}
+		}
+		/*
+		System.out.println("VED");
+		for (String st : map.keySet()) {
+			System.out.println(st);
+			System.out.println(((EEntryAsset)(map.get(st))).getEffectState());
+		}
+		System.out.println("VED");
+		*/
+		return ;
+	}
+	
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		boolean liquidity = true;
+		/*EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+		EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
+		
+		EEnvironment clone0 = env0.clone();
+		EEnvironment clone1 = env1.clone();
+		substituteEnv0(env, clone0, clone1);
+		calculateEnv1(env, clone0, clone1);
+		
+		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
+		
+		HashMap<String, EEntry> map0 = clone0.getAllAsset();
+		for (String id : map0.keySet()) {
+			if (env.lookUp(id) != null) {
+				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map0.get(id))).getEffectState());
+			}
+		}
+		
+		for (AssetNode parFor : parAsset) {
+			if (((EEntryAsset)(clone1.lookUp(parFor.getId()))).getEffectState() != "0") {
+				liquidity = false;
+			}
+		}
+		
+		HashMap<String, EEntry> map = clone1.getAllAsset();
+		for (String id : map.keySet()) {
+			if (env.lookUp(id) != null) {
+				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
+			}
+		}*/
+		/*System.out.println("INIT");
+		for (String as : env.getAllAsset().keySet()) {
+			System.out.println(as);
+			System.out.println(((EEntryAsset)(env.lookUp(as))).getEffectState());
+		}
+		System.out.println("INIT");*/
+		EEnvironment l0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0().clone();
+		EEnvironment l1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1().clone();
+		
+		substituteEnv0(env, l0, l1);
+		calculateEnv1(env, l0, l1);
+		
+		HashMap<String, EEntry> map = l1.getAllAsset();
+		for (String id : map.keySet()) {
+			//System.out.println(id);
+			//System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
+			if (env.lookUp(id) != null) {
+				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
+			}
+		}
+		
+		HashMap<String, EEntry> envAsset = env.getAllAsset();
+		for (String id : envAsset.keySet()) {
+			if (l1.lookUp(id) != null) {
+				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
+				//System.out.println(id);
+				//System.out.println(((EEntryAsset)(envAsset.get(id))).getEffectState());
+			}
+		}
+		
+		for (String as : env.getAllAsset().keySet()) {
+			System.out.println(as);
+			System.out.println(((EEntryAsset)(env.lookUp(as))).getEffectState());
+			if (((EEntryAsset)(env.lookUp(as))).getEffectState() != "0") {
+				liquidity = false;
+			}
+		}
+		
+		if (!liquidity) {
+			System.out.println(new EffectError(row, column, "Program is not liquid").toPrint());
+			System.exit(0);
+		}
+		
+		return ;
 	}
 
 }

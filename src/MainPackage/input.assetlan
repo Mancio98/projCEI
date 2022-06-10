@@ -1,21 +1,15 @@
 asset x ;
 asset y ;
 
-int g()[] {
-	return 1;
-}
-
-void f()[asset u, asset v] {
-	u -o y ;
-	v -o x ;
+void f(int n)[] {
+	int m
+	transfer x ;
 	return ;
 }
 
 void main()[asset u, asset v] {
-    u -o x ;
-	u -o y ;
-	f()[x,y] ;
-	g()[] ;
+	u -o x ;
+	v -o y ;
 	return ;
 }
 

@@ -2,7 +2,8 @@ package ast.dec;
 
 import java.util.ArrayList;
 
-import util.Environment;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.Node;
 import ast.type.Type;
@@ -51,7 +52,7 @@ public class DecNode extends Node {
 	}
 	
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		for (VarNode node : this.dec) {
@@ -59,6 +60,14 @@ public class DecNode extends Node {
 		}
 		
 		return errors;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		for (VarNode node : this.dec) {
+			node.analizeEffect(env);
+		}
+		return ;
 	}
 
 }

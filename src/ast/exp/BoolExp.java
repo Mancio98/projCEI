@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import util.SemanticError;
 import ast.type.Type;
 import ast.type.BoolType;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 
 
 //Used for BOOL 
@@ -22,6 +24,10 @@ public class BoolExp extends Exp {
         return this.bool;
     }
 
+    public int calculateExp() {
+    	return 0;
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Bool(" + String.valueOf(this.bool) + ")";
@@ -35,7 +41,7 @@ public class BoolExp extends Exp {
     */
 
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         return new ArrayList<SemanticError>();
     }
 
@@ -44,6 +50,11 @@ public class BoolExp extends Exp {
 		return new BoolType();
 	}
 
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		return ;
+	}
+	
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub

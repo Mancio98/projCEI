@@ -6,7 +6,9 @@ import ast.type.FunType;
 import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.STentry;
 import util.TypeError;
 
@@ -31,7 +33,7 @@ public class ReturnStmt extends Statement {
     }
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		if (this.exp != null)
             errors.addAll(this.exp.checkSemantics(env));
@@ -54,6 +56,14 @@ public class ReturnStmt extends Statement {
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		if (exp != null) {
+            exp.analizeEffect(env);
+        }
+		return ;
 	}
 
 }

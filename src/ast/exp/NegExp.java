@@ -4,7 +4,10 @@ import ast.type.BoolType;
 import ast.type.IntType;
 import ast.type.Type;
 import java.util.ArrayList;
+
+import util.EEnvironment;
 import util.Environment;
+import util.STEnvironment;
 import util.SemanticError;
 import util.TypeError;
 
@@ -22,13 +25,17 @@ public class NegExp extends Exp {
 		return this.child;
 	}
     
+    public int calculateExp() {
+    	return 0;
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: Neg\n" + this.child.toPrint(indent + "\t");
     }
 
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         return this.child.checkSemantics(env);
     }
 
@@ -41,6 +48,12 @@ public class NegExp extends Exp {
         return new IntType();
 	}
 
+	@Override
+	public void analizeEffect(EEnvironment env) {
+		this.child.analizeEffect(env);
+		return ;
+	}
+	
 	@Override
 	public String codeGeneration() {
 		// TODO Auto-generated method stub
