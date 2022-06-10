@@ -154,7 +154,7 @@ public class CallStmt extends Statement {
 						"lw al fp 0\n"+
 						alcgen+
 						"push al\n"+
-						"jal "+this.entry.getLabel();
+						"jal "+this.entry.getLabel()+"\n";
 						
 		return callcgen;
 	}

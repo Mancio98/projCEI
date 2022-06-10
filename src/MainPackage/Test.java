@@ -84,8 +84,8 @@ public class Test {
 						out.close(); 
 						System.out.println("Code generated! Assembling and running generated code.");
 
-						FileInputStream isASM = new FileInputStream(fileName+".asm");
-						ANTLRInputStream inputASM = new ANTLRInputStream(isASM);
+						
+						CharStream inputASM = CharStreams.fromFileName(fileName+".asm");
 						AVMLexer lexerASM = new AVMLexer(inputASM);
 						CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
 						AVMParser parserASM = new AVMParser(tokensASM);

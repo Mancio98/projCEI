@@ -36,11 +36,11 @@ public class SumExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		sumCGen += leftCGen +
-				"push a0 /n"+
+				"push a0\n"+
 				rightCGen +
-				"lw t1 0(sp) /n" +
-				"pop /n"+
-				"add t1 a0 a0 /n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"lw t1 sp 0\n" +
+				"pop\n"+
+				"add t1 a0 a0\n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return sumCGen;
 	}

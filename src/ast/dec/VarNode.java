@@ -45,11 +45,9 @@ public class VarNode extends Node {
 	@Override
 	public String codeGeneration() {
 		
+
+		return "addi sp sp -1\n";
 		
-		if(this.type.isSubtype(new BoolType()))
-			return "addi sp sp -1\n";
-		else
-			return "addi sp sp -4\n";
 		
 	}
 

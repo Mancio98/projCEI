@@ -36,11 +36,11 @@ public class EqualExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		eqCGen += leftCGen +
-				"push a0 /n"+
+				"push a0\n"+
 				rightCGen +
-				"lw t1 0(sp) /n" +
-				"pop /n"+
-				"eq t1 a0 a0 /n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"lw t1 sp 0\n" +
+				"pop\n"+
+				"eq t1 a0 a0\n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return eqCGen;
 	}

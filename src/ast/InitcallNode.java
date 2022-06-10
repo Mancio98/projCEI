@@ -189,7 +189,7 @@ public class InitcallNode extends Node {
 						"lw al 0(fp)\n"+ //forse si può fare a meno
 						alcgen+
 						"push al\n"+*/
-						"jal "+this.entry.getLabel();
+						"jal "+this.entry.getLabel()+"\n";
 						
 		return callcgen;
 	}

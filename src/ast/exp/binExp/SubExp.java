@@ -36,11 +36,11 @@ public class SubExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		subCGen += leftCGen +
-				"push a0 /n"+
+				"push a0\n"+
 				rightCGen +
-				"lw t1 0(sp) /n" +
-				"pop /n"+
-				"sub t1 a0 a0 /n"; // sub LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"lw t1 sp 0\n" +
+				"pop \n"+
+				"sub t1 a0 a0 \n"; // sub LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return subCGen;
 	}

@@ -55,11 +55,9 @@ public class FieldNode extends VarNode {
 	public String codeGeneration() {
 		
 		String addcgen;
-		if(this.type.isSubtype(new BoolType())) {
-			addcgen = "addi sp sp -1\n"; 
-		}
-		else
-			addcgen = "addi sp sp -4\n";
+		
+		addcgen = "addi sp sp -1\n"; 
+	
 		
 		if(exp != null) {
 			

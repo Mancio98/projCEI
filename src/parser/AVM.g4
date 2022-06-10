@@ -24,7 +24,7 @@ instruction:
 				PUSH input1 = (REGISTER|NUMBER)													#Push     
 			  | POP																				#Pop	    
 			  | ADD	input1 = REGISTER input2 = REGISTER output = REGISTER						#Add
-	  		  | ADDI input1 = REGISTER input2 = REGISTER input3 = NUMBER output = REGISTER		#Addi
+	  		  | ADDI input1 = REGISTER input2 = REGISTER input3 = NUMBER						#Addi
 			  |	MOVE input1 = REGISTER input2 = REGISTER output = REGISTER						#Move
 			  | NOT	input1 = REGISTER input2 = REGISTER 										#Not	    
 			  | SUB	input1 = REGISTER input2 = REGISTER output = REGISTER						#Sub	    
@@ -103,7 +103,8 @@ LABEL	: ('a'..'z'|'A'..'Z')('a'..'z' | 'A'..'Z' | '0'..'9')* ;
 NUMBER	: '0' | ('-')?(('1'..'9')('0'..'9')*) ;
 
 //REGISTERS
-REGISTER:'a0'  //results in the accumulators
+REGISTER:
+	'a0'  //results in the accumulators
 	| 't1' //tmp register
 	| 'sp' //top of the stack
 	| 'fp' //points to al relative to the active frame
