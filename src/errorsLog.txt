@@ -1,0 +1,10 @@
+line 5:10: no viable alternative at input 'function1'
+
+line 7:6: mismatched input ';' expecting '('
+
+line 13:10: no viable alternative at input 'function2'
+
+line 23:10: missing ';' at 'jal'
+
+line 24:14: no viable alternative at input 'jalfunction'
+

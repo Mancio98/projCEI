@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import util.Environment;
 import util.EnvironmentAsset;
-import util.EnvironmentAsset.DuplicateEntryException;
 import util.SemanticError;
 import ast.Node;
 import ast.type.Type;
