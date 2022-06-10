@@ -51,7 +51,6 @@ public class Environment {
 		}
 		else {
 			
-			
 			STentry stentry =  new STentry(nestingLevel, node, 0,labelCount++);
 			symTable.get(0).put(id, stentry);
 			

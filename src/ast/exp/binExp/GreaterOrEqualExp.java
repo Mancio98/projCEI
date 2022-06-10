@@ -40,11 +40,11 @@ public class GreaterOrEqualExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		goeCGen += leftCGen +
-				"push a0\n"+
+				"push $a0\n"+
 				rightCGen +
-				"lw t1 sp 0\n" +
+				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"goe t1 a0 a0\n"; // goe LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"goe $t1 $a0 $a0\n"; // goe LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return goeCGen;
 	}

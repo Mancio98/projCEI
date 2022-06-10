@@ -38,6 +38,14 @@ public class LineCode {
 		return arg;
 	}
 	
-	
+	public void toPrint() {
+		
+		String printargs = "";
+		
+		for(String s : args) {
+			printargs += s+" ";
+		}
+		System.out.println(command+" "+printargs+" "+offset+" "+arg+"\n");
+	}
 	
 }

@@ -63,12 +63,12 @@ public class AssignmentStmt extends Statement {
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
-			alcgen += "lw al al 0\n";
+			alcgen += "lw $al $al 0\n";
 		}
 		String asgmcgen = expcgen+
-						"move al fp\n"+
+						"move $al $fp\n"+
 						alcgen+
-						"sw a0 al"+this.left.getSTentry().getOffset()+"\n";
+						"sw $a0 $al "+this.left.getSTentry().getOffset()+"\n";
 		
 		return asgmcgen;
 	}

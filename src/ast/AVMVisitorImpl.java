@@ -1,9 +1,8 @@
 package ast;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
+import java.util.HashMap;
 import Interpreter.ExecuteVM;
 import parser.AVMBaseVisitor;
 import parser.AVMLexer;
@@ -49,6 +48,12 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 
     
 	public ArrayList<LineCode> getCode() {
+		
+		/*
+		for(int i=0; i<code.size(); i++) {
+			System.out.println(i+": ");
+			code.get(i).toPrint();
+		}*/
 		return code;
 	}
 
@@ -66,8 +71,9 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
             if (line.getCommand() == AVMLexer.BRANCHEQ || line.getCommand() == AVMLexer.BRANCHLESSEQ) {
             	
             	String[] args = line.getArgs();
-            		
+            	
                 code.set(labelInt, new LineCode(line.getCommand(), new String[] {args[0], args[1],labelAdd.get(labelString).toString()}));
+                
                 
             } else if (line.getCommand() == AVMLexer.BRANCH || line.getCommand() == AVMLexer.JUMPALABEL) {
                 code.set(labelInt,
@@ -109,6 +115,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 
 	@Override
 	public Void visitLabel(LabelContext ctx) {
+		
 		
 		labelAdd.put(ctx.LABEL().getText(), code.size());
 		return null;
@@ -190,14 +197,14 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitLess(LessContext ctx) {
 		
-		code.add(new LineCode(AVMLexer.NOTEQUAL, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
+		code.add(new LineCode(AVMLexer.LESS, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
 		return null;
 	}
 
 	@Override
 	public Void visitSub(SubContext ctx) {
 		
-		code.add(new LineCode(AVMLexer.NOTEQUAL, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
+		code.add(new LineCode(AVMLexer.SUB, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
 		return super.visitSub(ctx);
 	}
 
@@ -210,7 +217,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 
 	@Override
 	public Void visitGreaterOrEq(GreaterOrEqContext ctx) {
-		code.add(new LineCode(AVMLexer.NOTEQUAL, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
+		code.add(new LineCode(AVMLexer.GREATEROREQUAL, new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.output.getText()}));
 		return super.visitGreaterOrEq(ctx);
 	}
 
@@ -218,7 +225,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	public Void visitBranchQ(BranchQContext ctx) {
 		
 		labelRef.put(code.size(), ctx.label.getText());
-		code.add(new LineCode(AVMLexer.BRANCHEQ,new String[] {ctx.input1.getText(), ctx.input2.getText()}));
+		code.add(new LineCode(AVMLexer.BRANCHEQ,new String[] {ctx.input1.getText(), ctx.input2.getText(), ctx.label.getText()}));
 		return super.visitBranchQ(ctx);
 	}
 

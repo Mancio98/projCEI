@@ -46,7 +46,7 @@ public class VarNode extends Node {
 	public String codeGeneration() {
 		
 
-		return "addi sp sp -1\n";
+		return "addi $sp $sp -1\n";
 		
 		
 	}

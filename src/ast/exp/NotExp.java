@@ -45,7 +45,7 @@ public class NotExp extends Exp {
 	public String codeGeneration() {
 		
 		
-		return this.child.codeGeneration()+"not a0 a0\n";
+		return this.child.codeGeneration()+"not $a0 $a0\n";
 	}
 
 	@Override

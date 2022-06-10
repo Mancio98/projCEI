@@ -95,7 +95,7 @@ public class ProgramNode extends Node {
 		String initcgen = this.initcall.codeGeneration();
 				
 		String progcgen = fieldcgen+assetcgen+funcgen+initcgen+
-							"halt\n"+
+							"halt"+
 							AssetLanlib.getCode();
 		
 		return progcgen;

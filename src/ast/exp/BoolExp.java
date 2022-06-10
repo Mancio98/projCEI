@@ -49,9 +49,9 @@ public class BoolExp extends Exp {
 	public String codeGeneration() {
 		
 		if(bool)
-			return "li a0 1\n";
+			return "li $a0 1\n";
 		else
-			return "li a0 0\n";
+			return "li $a0 0\n";
 	}
 
 	@Override

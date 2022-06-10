@@ -56,14 +56,14 @@ public class FieldNode extends VarNode {
 		
 		String addcgen;
 		
-		addcgen = "addi sp sp -1\n"; 
+		addcgen = "addi $sp $sp -1\n"; 
 	
 		
 		if(exp != null) {
 			
 			String expcgen = exp.codeGeneration();
 			
-			return addcgen+expcgen+"push a0\n";
+			return addcgen+expcgen+"push $a0\n";
 		}
 		return addcgen;
 	}

@@ -2,12 +2,11 @@ package MainPackage;
 
 import java.io.BufferedWriter;
 
-import java.io.FileInputStream;
 import java.io.FileWriter;
 import java.util.ArrayList;
 
 import org.antlr.v4.runtime.CommonTokenStream;
-import org.antlr.v4.runtime.ANTLRInputStream;
+
 import org.antlr.v4.runtime.CharStream;
 import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.tree.ParseTree;
@@ -79,6 +78,8 @@ public class Test {
 						System.out.println("Il programma � ben tipato");
 						
 						String cgen = ast.codeGeneration();
+						
+						
 						BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
 						out.write(cgen);
 						out.close(); 
@@ -90,7 +91,6 @@ public class Test {
 						CommonTokenStream tokensASM = new CommonTokenStream(lexerASM);
 						AVMParser parserASM = new AVMParser(tokensASM);
 
-						//parserASM.assembly();
 
 						AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
 						visitorAVM.visit(parserASM.assembly());

@@ -36,11 +36,11 @@ public class LessOrEqualExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		loeCGen += leftCGen +
-				"push a0\n"+
+				"push $a0\n"+
 				rightCGen +
-				"lw t1 sp 0\n" +
+				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"loe t1 a0 a0\n"; // loe LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"loe $t1 $a0 $a0\n"; // loe LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return loeCGen;
 	}

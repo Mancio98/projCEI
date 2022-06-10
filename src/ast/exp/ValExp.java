@@ -40,7 +40,7 @@ public class ValExp extends Exp {
 	@Override
 	public String codeGeneration() {
 		
-		return "li a0 "+this.value+"\n";
+		return "li $a0 "+this.value+"\n";
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class PrintStmt extends Statement {
 	public String codeGeneration() {
 		
 		
-		return this.exp.codeGeneration()+"print a0\n";
+		return this.exp.codeGeneration()+"print $a0\n";
 	}
 
 	@Override

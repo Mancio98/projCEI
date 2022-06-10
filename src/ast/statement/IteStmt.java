@@ -103,8 +103,8 @@ public class IteStmt extends Statement {
 		String endlabel = AssetLanlib.freshLabel();
 		
 		String ifcgen = this.exp.codeGeneration()+
-						"li t1 1\n"+
-						"beq a0 t1"+truelabel+"\n"+
+						"li $t1 1\n"+
+						"beq $a0 $t1 "+truelabel+"\n"+
 						this.elseStmt.codeGeneration()+
 						"b "+endlabel+"\n"+
 						truelabel+":\n"+

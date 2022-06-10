@@ -1,6 +1,7 @@
 package Interpreter;
 
 import java.util.ArrayList;
+
 import java.util.HashMap;
 
 import parser.AVMParser;
@@ -23,19 +24,20 @@ public class ExecuteVM {
     public ExecuteVM(ArrayList<LineCode> code) {
       this.code = code;
       
-      registers.put("sp", MEMSIZE);
+      registers.put("$sp", MEMSIZE);
       
-      registers.put("fp", MEMSIZE);
-      registers.put("ra", 0);
-      registers.put("a0", 0);
-      registers.put("t1", 0);
+      registers.put("$fp", MEMSIZE);
+      registers.put("$ra", 0);
+      registers.put("$a0", 0);
+      registers.put("$t1", 0);
+      registers.put("$al", 0);
      
     }
     
     public void cpu() {
       while ( true ) {
     	  
-    	if(hp+1>=registers.get("sp")) {
+    	if(hp+9500>=registers.get("$sp")) {
     		System.out.println("\nError: Out of memory");
             return;
     	}
@@ -43,27 +45,41 @@ public class ExecuteVM {
     		LineCode bytecode = code.get(ip++); // fetch
             String[] args = bytecode.getArgs();
             String arg = bytecode.getArg();
+            
             int offset = bytecode.getOffset();
+            bytecode.toPrint();
+            
+            if(arg != "")
+            	System.out.println("arg "+arg+" "+registers.get(arg)+"\n");
+            for(String x : args) {
+            	
+            	if(registers.get(x)!= null)
+            		System.out.println("args "+x+" "+registers.get(x)+"\n");
+            }
+            System.out.println("offset "+offset+"\n");
             
             switch (bytecode.getCommand()) {
               case AVMParser.PUSH:
+            	  System.out.println("push");
             	  
-            	  registers.put("sp", registers.get("sp")-1);
-            	  stack[registers.get("sp")] = registers.get(arg);
+            	  registers.put("$sp", registers.get("$sp")-1);
+            	  stack[registers.get("$sp")] = registers.get(arg);
+            	  
             	  
                 break;
               case AVMParser.POP:
-            	  registers.put("sp", registers.get("sp")+1);
+            	  System.out.println("pop");
+            	  registers.put("$sp", registers.get("$sp")+1);
             	  
                 break;
               case AVMParser.ADD :
-               
+            	  System.out.println("add");
             	  int sum = registers.get(args[0]) + registers.get(args[1]);
             	  registers.put(args[2],sum); 
                 break;
               case AVMParser.ADDI :
-                 
-            	  int sumi = registers.get(args[1]) + registers.get(args[2]);
+            	  System.out.println("addi");
+            	  int sumi = registers.get(args[1]) + Integer.parseInt(args[2]);
             	  registers.put(args[0], sumi);
                   break;
               case AVMParser.AND :
@@ -104,31 +120,47 @@ public class ExecuteVM {
                 break;
               case AVMParser.SUB :
                
+            	  System.out.println("faccio sub:");
             	  int sub = registers.get(args[0]) - registers.get(args[1]);
+            	  /*
+            	  System.out.println(sub+"\n");
+            	  System.out.println("args0: "+registers.get(args[0])+"\n");
+            	  System.out.println("args1: "+registers.get(args[1])+"\n");*/
             	  registers.put(args[2], sub); 
+            	  
+            	 // System.out.println("args2: "+registers.get(args[2])+"\n");
                 break;
+                
               case AVMParser.STOREW : 
-                   int possw = registers.get("al")+offset;
+            	  System.out.println("sw");
+                   int possw = registers.get(args[1])+offset;
                    stack[possw] = registers.get(args[0]);
                 break;
                 
               case AVMParser.LOADW : 
-            	  int poslw = registers.get("al")+offset;
+            	  System.out.println("lw");
+            	  int poslw = registers.get(args[1])+offset;
+
                   registers.put(args[0], stack[poslw]);
+                          	  
                 break;
                 
               case AVMParser.LOADI :
+            	  System.out.println("li");
             	  registers.put(args[0], Integer.parseInt(args[1]));
   			    break;
   			    
-              case AVMParser.BRANCH : 
-                
+              case AVMParser.BRANCH :
+            	  
+            	  System.out.println("branch");
             	  ip = Integer.parseInt(arg);
            
                 break;
               case AVMParser.BRANCHEQ :
+            	  System.out.println("beq");
                 if(registers.get(args[0])==registers.get(args[1]))
                 	ip = Integer.parseInt(args[2]);
+             
                 break;
                 
               case AVMParser.BRANCHLESSEQ :
@@ -136,8 +168,12 @@ public class ExecuteVM {
               		ip = Integer.parseInt(args[2]);
                 break;
               case AVMParser.EQUAL :
-            	  if(registers.get(args[0]) == registers.get(args[1]))
+            	  System.out.println("eq");
+            	  if(registers.get(args[0]) == registers.get(args[1])) {
+            		  
+            		  
             		  registers.put(args[2],1);
+            	  }
             	  else
             		  registers.put(args[2],0);
                   break;
@@ -173,8 +209,8 @@ public class ExecuteVM {
             		  registers.put(args[2],0);
             	  break;
               case AVMParser.JUMPALABEL:
-            	  
-            	  registers.put("ra", ip);
+            	  System.out.println("jal");
+            	  registers.put("$ra", ip);
             	  ip = Integer.parseInt(arg);
             	  break;
             	  
@@ -182,15 +218,24 @@ public class ExecuteVM {
             	  stack[hp] = registers.get(arg);
             	  break;
               case AVMParser.JUMPREG:
-            	  ip = registers.get("ra");
+            	  System.out.println("jr");
+            	  ip = registers.get("$ra");
+            	  
               case AVMParser.PRINT :
-                System.out.println((registers.get("sp")<MEMSIZE) ? stack[registers.get("sp")]:"Empty stack!");
+            	  System.out.println("print");
+                System.out.println("print:"+((registers.get("$sp")<MEMSIZE) ? stack[registers.get("$sp")]:"Empty stack!"));
                 break;
               case AVMParser.HALT :
+            	  System.out.println("halt");
             	//to print the result 
-             	System.out.println("\nResult: " + stack[registers.get("sp")] + "\n");
+             	System.out.println("\nResult: " + stack[registers.get("$sp")] + "\n");
              	return;
+             	
+             	
             }
+            
+            
+            
     	} 
       }
     } 

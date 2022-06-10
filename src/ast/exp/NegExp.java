@@ -46,7 +46,7 @@ public class NegExp extends Exp {
 	public String codeGeneration() {
 		
 		String expcgen = this.child.codeGeneration();
-		return "li a0 -"+expcgen;
+		return "li $a0 -"+expcgen;
 	}
 
 	@Override

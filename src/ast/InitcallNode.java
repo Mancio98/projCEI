@@ -166,13 +166,13 @@ public class InitcallNode extends Node {
 		for(int i = this.exp2List.size()-1; i>= 0; i--) {
 			
 			paramcgen += this.exp2List.get(i).codeGeneration();
-			paramcgen += "push a0\n";
+			paramcgen += "push $a0\n";
 		}
 		
 		for(int i = this.exp1List.size()-1; i>= 0; i--) {
 			
 			paramcgen += this.exp1List.get(i).codeGeneration();
-			paramcgen += "push a0\n";
+			paramcgen += "push $a0\n";
 		}
 		
 		/*
@@ -183,7 +183,7 @@ public class InitcallNode extends Node {
 			alcgen += "lw al 0(al)\n";
 		}*/
 		
-		String callcgen ="push fp\n"+
+		String callcgen ="push $fp\n"+
 						paramcgen+
 						/*
 						"lw al 0(fp)\n"+ //forse si può fare a meno

@@ -36,11 +36,11 @@ public class OrExp extends BinExp {
 		String rightCGen = this.right.codeGeneration();
 		
 		orCGen += leftCGen +
-				"push a0\n"+
+				"push $a0\n"+
 				rightCGen +
-				"lw t1 sp 0\n" +
-				"pop \n"+
-				"or t1 a0 a0\n"; // or LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"lw $t1 $sp 0\n" +
+				"pop\n"+
+				"or $t1 $a0 $a0\n"; // or LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return orCGen;
 	}

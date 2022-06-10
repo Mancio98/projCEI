@@ -44,7 +44,7 @@ public class AssetNode extends Node {
 	@Override
 	public String codeGeneration() {
 		
-		return "addi sp sp -1";
+		return "addi $sp $sp -1";
 	}
 
 	@Override

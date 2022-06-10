@@ -132,13 +132,13 @@ public class CallStmt extends Statement {
 		for(int i = this.idList.size()-1; i>= 0; i--) {
 			
 			paramcgen += this.idList.get(i).codeGeneration();
-			paramcgen += "push a0\n";
+			paramcgen += "push $a0\n";
 		}
 		
 		for(int i = this.expList.size()-1; i>= 0; i--) {
 			
 			paramcgen += this.expList.get(i).codeGeneration();
-			paramcgen += "push a0\n";
+			paramcgen += "push $a0\n";
 		}
 		
 		
@@ -146,14 +146,14 @@ public class CallStmt extends Statement {
 		
 		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
 			
-			alcgen += "lw al al 0\n";
+			alcgen += "lw $al $al 0\n";
 		}
 		
-		String callcgen ="push fp\n"+
+		String callcgen ="push $fp\n"+
 						paramcgen+
-						"lw al fp 0\n"+
+						"lw $al $fp 0\n"+
 						alcgen+
-						"push al\n"+
+						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						
 		return callcgen;
