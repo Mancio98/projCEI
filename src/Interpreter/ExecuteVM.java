@@ -26,18 +26,18 @@ public class ExecuteVM {
       
       registers.put("$sp", MEMSIZE);
       
-      registers.put("$fp", MEMSIZE);
-      registers.put("$ra", 0);
-      registers.put("$a0", 0);
-      registers.put("$t1", 0);
-      registers.put("$al", 0);
+      registers.put("$fp", MEMSIZE-1);
+      registers.put("$ra", null);
+      registers.put("$a0", null);
+      registers.put("$t1", null);
+      registers.put("$al", null);
      
     }
     
     public void cpu() {
       while ( true ) {
     	  
-    	if(hp+9500>=registers.get("$sp")) {
+    	if(hp+9960>=registers.get("$sp")) {
     		System.out.println("\nError: Out of memory");
             return;
     	}
@@ -47,8 +47,7 @@ public class ExecuteVM {
             String arg = bytecode.getArg();
             
             int offset = bytecode.getOffset();
-            bytecode.toPrint();
-            
+            /*
             if(arg != "")
             	System.out.println("arg "+arg+" "+registers.get(arg)+"\n");
             for(String x : args) {
@@ -56,8 +55,19 @@ public class ExecuteVM {
             	if(registers.get(x)!= null)
             		System.out.println("args "+x+" "+registers.get(x)+"\n");
             }
-            System.out.println("offset "+offset+"\n");
+            System.out.println("offset "+offset+"\n");*/
             
+            System.out.println("fp "+registers.get("$fp")+"\n");
+            System.out.println("sp "+registers.get("$sp")+"\n");
+            System.out.println("al "+registers.get("$al")+"\n");
+            System.out.println("a0 "+registers.get("$a0")+"\n");
+            System.out.println("ra "+registers.get("$ra")+"\n");
+            
+            for(int i=registers.get("$sp")-1; i<10000;i++) {
+
+                System.out.println(i + " : " +stack[i]);
+
+            }
             switch (bytecode.getCommand()) {
               case AVMParser.PUSH:
             	  System.out.println("push");
@@ -93,6 +103,7 @@ public class ExecuteVM {
                   break;
               case AVMParser.MOVE :
             	  
+            	  System.out.println("move");
 			      registers.put(args[0], registers.get(args[1]));            
                   break;
               case AVMParser.NOT :
@@ -140,9 +151,9 @@ public class ExecuteVM {
               case AVMParser.LOADW : 
             	  System.out.println("lw");
             	  int poslw = registers.get(args[1])+offset;
-
+            	  
                   registers.put(args[0], stack[poslw]);
-                          	  
+                  System.out.println(args[0]+": "+registers.get(args[0])+" "+poslw+"\n");       	  
                 break;
                 
               case AVMParser.LOADI :
@@ -219,23 +230,24 @@ public class ExecuteVM {
             	  break;
               case AVMParser.JUMPREG:
             	  System.out.println("jr");
-            	  ip = registers.get("$ra");
+            	  ip = registers.get(arg);
             	  
               case AVMParser.PRINT :
             	  System.out.println("print");
-                System.out.println("print:"+((registers.get("$sp")<MEMSIZE) ? stack[registers.get("$sp")]:"Empty stack!"));
+                System.out.println("print:"+((registers.get("$sp")<MEMSIZE) ? registers.get("$a0"):"Empty stack!"));
                 break;
               case AVMParser.HALT :
             	  System.out.println("halt");
             	//to print the result 
-             	System.out.println("\nResult: " + stack[registers.get("$sp")] + "\n");
+             	System.out.println("\nResult: " + registers.get("$a0") + "\n");
              	return;
              	
              	
             }
             
             
-            
+            bytecode.toPrint();
+            System.out.println("-------------------------\n");
     	} 
       }
     } 

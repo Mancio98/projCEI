@@ -65,6 +65,7 @@ public class IdNode extends Exp {
 		
 		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
 			alcgen += "lw $al $al 0\n";
+			//alcgen += "move $al $al\n";
 		}
 		String idcgen = "move $al $fp\n"+
 						alcgen+

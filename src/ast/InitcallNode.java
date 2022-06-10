@@ -175,20 +175,21 @@ public class InitcallNode extends Node {
 			paramcgen += "push $a0\n";
 		}
 		
-		/*
+		
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
 			
-			alcgen += "lw al 0(al)\n";
-		}*/
+			alcgen += "lw $al $al 0\n";
+		}
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
-						/*
-						"lw al 0(fp)\n"+ //forse si può fare a meno
+						//"lw $al $fp 0\n"+ //forse si può fare a meno
+						"move $al $fp\n"+
 						alcgen+
-						"push al\n"+*/
+						"move $fp $sp\n"+
+						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						
 		return callcgen;

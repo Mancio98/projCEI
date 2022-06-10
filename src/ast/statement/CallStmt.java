@@ -147,12 +147,15 @@ public class CallStmt extends Statement {
 		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
 			
 			alcgen += "lw $al $al 0\n";
+			//alcgen += "move $al $al\n";
 		}
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
-						"lw $al $fp 0\n"+
+						//"lw $al $fp 0\n"+
+						"move $al $fp\n"+
 						alcgen+
+						"move $fp $sp\n"+
 						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						

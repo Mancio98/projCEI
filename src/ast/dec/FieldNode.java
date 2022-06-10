@@ -54,18 +54,18 @@ public class FieldNode extends VarNode {
 	@Override
 	public String codeGeneration() {
 		
-		String addcgen;
 		
-		addcgen = "addi $sp $sp -1\n"; 
 	
 		
 		if(exp != null) {
 			
 			String expcgen = exp.codeGeneration();
 			
-			return addcgen+expcgen+"push $a0\n";
+			return expcgen+"push $a0\n";
 		}
-		return addcgen;
+		else
+			return "addi $sp $sp -1\n";
+		
 	}
 
 	@Override

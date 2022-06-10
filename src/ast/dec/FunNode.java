@@ -189,6 +189,7 @@ public class FunNode extends Node {
 			stmcode += stm.codeGeneration();
 		}
 		
+		
 		String labelfun = this.stentry.getLabel();
 		
 		AssetLanlib.putCode(labelfun+":\n"+
@@ -197,11 +198,11 @@ public class FunNode extends Node {
 			"push $ra\n"+ 		// inserimento return address
 			declcode+		// inserimento dichiarazioni locali
 			stmcode+		// cgen body
-			popdeclbody+
 			"lw $ra $sp 0\n"+ 	//lw ra top\n"	 store return address
 			"pop\n"+		//pop di ra
 			"pop\n"+ 		// pop di al
 			popdecl+
+			popdeclbody+
 			"lw $fp $sp 0\n"+  //lw fp top
 			"pop\n"+		//pop old fp
 			"jr $ra\n"		
