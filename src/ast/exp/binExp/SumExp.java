@@ -3,7 +3,6 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.IntType;
 import ast.exp.Exp;
-import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp + exp" 
@@ -13,6 +12,10 @@ public class SumExp extends BinExp {
         super(row, column, left, right);
     }
 
+    public int calculateExp() {
+    	return (super.left.calculateExp() + super.right.calculateExp());
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: Sum\n" + indent + "\tLeft:\n" + super.left.toPrint(indent + "\t\t") + "\n" + indent + "\tRight:\n" + super.right.toPrint(indent + "\t\t");
@@ -43,11 +46,5 @@ public class SumExp extends BinExp {
 				"add $t1 $a0 $a0\n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return sumCGen;
-	}
-
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }

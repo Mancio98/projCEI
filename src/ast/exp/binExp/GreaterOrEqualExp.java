@@ -3,7 +3,6 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
-import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp >= exp" 
@@ -13,7 +12,10 @@ public class GreaterOrEqualExp extends BinExp {
         super(row, column, left, right);
     }
 
-
+    public int calculateExp() {
+    	return 0;
+    }
+    
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: GreaterOrEq\n" + indent + "\tLeft:\n" + super.left.toPrint(indent + "\t\t") + "\n" + indent + "\tRight:\n" + super.right.toPrint(indent + "\t\t");
@@ -49,10 +51,4 @@ public class GreaterOrEqualExp extends BinExp {
 		return goeCGen;
 	}
 
-
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

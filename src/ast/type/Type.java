@@ -2,7 +2,8 @@ package ast.type;
 
 import java.util.ArrayList;
 
-import util.Environment;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 import ast.Node;
 
@@ -29,19 +30,21 @@ public abstract class Type extends Node {
 
 	@Override
 	public Type typeCheck() {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		// TODO Auto-generated method stub
 		return "";
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
-		// TODO Auto-generated method stub
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		return null;
+	}
+	
+	@Override
+	public void analyzeEffect(EEnvironment env) {
+		return ;
 	}
 }

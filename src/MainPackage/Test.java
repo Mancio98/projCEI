@@ -14,15 +14,13 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import Interpreter.ExecuteVM;
 import ast.Node;
 
-import ast.type.Type;
-import ast.type.VoidType;
 import ast.AVMVisitorImpl;
 import ast.AssetLanVisitorImpl;
 import parser.AVMLexer;
 import parser.AVMParser;
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
-import util.Environment;
+import util.STEnvironment;
 import util.SemanticError;
 
 
@@ -59,7 +57,7 @@ public class Test {
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
 			} 
 			else {
-				Environment env = new Environment();
+				STEnvironment env = new STEnvironment();
 				ArrayList<SemanticError> err = ast.checkSemantics(env);
 				if(err.size() > 0) {
 					System.out.println("You had: " +err.size()+" errors:");

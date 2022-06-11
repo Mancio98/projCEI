@@ -3,10 +3,10 @@ package ast.dec;
 import java.util.ArrayList;
 
 import ast.exp.Exp;
-import util.Environment;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 import util.TypeError;
-import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 
@@ -40,8 +40,8 @@ public class FieldNode extends VarNode {
 	public Type typeCheck() {
 		if (this.exp != null) {
 			Type expType = this.exp.typeCheck();
-			
-	        if (!super.type.equals(expType)) {
+
+	        if (!super.type.isSubtype(expType)) {
 	            System.out.println(new TypeError(this.exp.getRow(), this.exp.getColumn(), "Expression type ["
 	                    + expType.getType() + "] is not equal to declared type [" + super.type.getType() + "]").toPrint());
 	            System.exit(0);
@@ -53,10 +53,7 @@ public class FieldNode extends VarNode {
 
 	@Override
 	public String codeGeneration() {
-		
-		
 	
-		
 		if(exp != null) {
 			
 			String expcgen = exp.codeGeneration();
@@ -68,11 +65,19 @@ public class FieldNode extends VarNode {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = super.checkSemantics(env);
-		if(exp != null)
+		if (exp != null)
 			errors.addAll(exp.checkSemantics(env));
 		return errors;
+	}
+
+	
+	@Override
+	public void analyzeEffect(EEnvironment env) {
+		if (exp != null)
+			this.exp.analyzeEffect(env);
+		return ;
 	}
 
 }

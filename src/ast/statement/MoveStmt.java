@@ -7,8 +7,9 @@ import ast.type.Type;
 import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEntryAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.TypeError;
 
 //Used for rule like "ID -o ID"
@@ -31,7 +32,7 @@ public class MoveStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.right.checkSemantics(env));
@@ -98,20 +99,13 @@ public class MoveStmt extends Statement {
 		
 		return movecgen;
 	}
-
+	
+	
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		
-		
-		if(env.getState(left.getId()) == 0)
-			env.update(right.getId(), 0);
-		
-		else {
-			env.update(left.getId(), 0);
-			env.update(right.getId(), 1);
-		}
-		
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
 	}
 
 }

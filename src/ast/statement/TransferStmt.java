@@ -8,8 +8,9 @@ import ast.type.AssetType;
 import ast.type.VoidType;
 import util.SemanticError;
 import util.TypeError;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEntryAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 
 //Used for rule like "transfer ID"
 public class TransferStmt extends Statement {
@@ -27,7 +28,7 @@ public class TransferStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.id.checkSemantics(env));
 		return errors;
@@ -72,9 +73,9 @@ public class TransferStmt extends Statement {
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		env.update(id.getId(), 0);
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
+		return ;
 	}
 
 }

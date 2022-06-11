@@ -2,7 +2,9 @@ package ast.exp.binExp;
 
 import ast.exp.Exp;
 import java.util.ArrayList;
-import util.Environment;
+
+import util.EEnvironment;
+import util.STEnvironment;
 import util.SemanticError;
 
 //Extension of class Exp used for readability and binary expressions
@@ -26,11 +28,18 @@ public abstract class BinExp extends Exp {
 	}
     
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         ArrayList<SemanticError> leftErrors = this.left.checkSemantics(env);
         ArrayList<SemanticError> rightErrors = this.right.checkSemantics(env);
         leftErrors.addAll(rightErrors);
         return leftErrors;
     }
+    
+    @Override
+	public void analyzeEffect(EEnvironment env) {
+    	this.left.analyzeEffect(env);
+    	this.right.analyzeEffect(env);
+		return ;
+	}
 	
 }

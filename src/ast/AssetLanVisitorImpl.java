@@ -64,7 +64,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		for(FunctionContext func : ctx.function()) {
 			function.add((FunNode) visit(func));
 		}
-		
+
 		InitcallNode init = (InitcallNode) visit(ctx.initcall());
 		
 		res = new ProgramNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),field, asset, function, init);
@@ -72,8 +72,9 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return res;
 	}
 	
+	@Override
 	public Node visitField(FieldContext ctx) {
-	
+		
 		FieldNode field;
 		
 		Type type = (Type) visit(ctx.type());
@@ -89,83 +90,84 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return field;
 	}
 	
+	@Override
 	public Node visitAsset(AssetContext ctx) {
 				
 		return new AssetNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText());
 		
 	}
-	
+	@Override
 	public Node visitFunction(FunctionContext ctx) {
-		
-		FunNode res;
-		if(ctx.type() != null) {
-			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Type) visit(ctx.type()), ctx.ID().getText());
-		}
-		else
-			// CONTROLLARE LA CORRETTEZA
-			res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine()), ctx.ID().getText());
-		
-		List<DecContext> decls = ctx.dec();
-		int decSize = decls.size();
-		
-		if (decSize > 0 && ctx.adec() == null) {
 			
-			DecContext decParams = decls.get(0);
-			
-			
-			if(decParams.invokingState == 74 ){
-				
-				res.addPar((DecNode)visit(decls.get(0)), null);
-				decls.remove(0);
+			FunNode res;
+			if(ctx.type() != null) {
+				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Type) visit(ctx.type()), ctx.ID().getText());
 			}
-			else {
-				res.addPar(null, null);
+			else
+				// CONTROLLARE LA CORRETTEZA
+				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine()), ctx.ID().getText());
+			
+			List<DecContext> decls = ctx.dec();
+			int decSize = decls.size();
+			
+			if (decSize > 0 && ctx.adec() == null) {
+				
+				DecContext decParams = decls.get(0);
+				
+				if(decParams.invokingState == 72 ){
+					
+					res.addPar((DecNode)visit(decls.get(0)), null);
+					decls.remove(0);
+				}
+				else {
+					res.addPar(null, null);
+				}
 			}
-		}
-		else if (decSize == 0 && ctx.adec() != null) {
-			
-			res.addPar(null, (AdecNode)visit(ctx.adec()));
-		}
-		else if (decSize > 0 && ctx.adec() != null) {
-			
-			
-			DecContext decParams = decls.get(0);
-			
-			
-			if(decParams.invokingState == 74 ){
+			else if (decSize == 0 && ctx.adec() != null) {
 				
-				res.addPar((DecNode)visit(decls.get(0)), (AdecNode)visit(ctx.adec()));
-				
-				decls.remove(0);
-				
-			}
-			else {
 				res.addPar(null, (AdecNode)visit(ctx.adec()));
 			}
+			else if (decSize > 0 && ctx.adec() != null) {
+				
+				
+				DecContext decParams = decls.get(0);
+				
+				
+				if(decParams.invokingState == 72 ){
+					
+					res.addPar((DecNode)visit(decls.get(0)), (AdecNode)visit(ctx.adec()));
+					
+					decls.remove(0);
+					
+				}
+				else {
+					res.addPar(null, (AdecNode)visit(ctx.adec()));
+				}
+				
+			}
+			else
+				res.addPar(null, null);
 			
-		}
-		else
-			res.addPar(null, null);
-		
-		
-		ArrayList<DecNode> innerDec = new ArrayList<DecNode>();
-		
-		
-		for(DecContext dc: decls) {
-			innerDec.add((DecNode)visit(dc));
-		}
-		
-		ArrayList<Statement> innerStatement = new ArrayList<Statement>();
-		
-		for(StatementContext sc: ctx.statement()) {
-			innerStatement.add((Statement) visit(sc));
-		}
-		
-		res.addBody(innerDec,innerStatement);
-		
-		return res;
+			
+			ArrayList<DecNode> innerDec = new ArrayList<DecNode>();
+			
+			
+			for(DecContext dc: decls) {
+				innerDec.add((DecNode)visit(dc));
+			}
+			
+			ArrayList<Statement> innerStatement = new ArrayList<Statement>();
+			
+			for(StatementContext sc: ctx.statement()) {
+				innerStatement.add((Statement) visit(sc));
+			}
+			
+			res.addBody(innerDec,innerStatement);
+			
+			return res;
 	}
 	
+	@Override
 	public DecNode visitDec(DecContext ctx){
 		
 		ArrayList<VarNode> dec = new ArrayList<VarNode>();
@@ -177,6 +179,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return new DecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), dec);
 	}
 	
+	@Override
 	public AdecNode visitAdec(AdecContext ctx) {
 		ArrayList<AssetNode> adec = new ArrayList<AssetNode>();
 		
@@ -189,6 +192,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return new AdecNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), adec);
 	}
 	
+	@Override
 	public Node visitStatement(StatementContext ctx){
 		if(ctx.assignment()!=null) {
 			return visit(ctx.assignment());
@@ -215,6 +219,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return null;
 	}
 	
+	@Override
 	public Node visitType(TypeContext ctx) {
 		if(ctx.getText().equals("int")) 
 			return new IntType(ctx.start.getLine(), ctx.start.getCharPositionInLine());
@@ -226,38 +231,56 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return null;
 	}
 	
+	@Override
 	public Node visitAssignment(AssignmentContext ctx) {
 		return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
 	}
 	
+	@Override
 	public Node visitMove(MoveContext ctx) {
 		return new MoveStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().get(0).getSymbol().getLine(), ctx.ID().get(0).getSymbol().getCharPositionInLine(),ctx.ID().get(0).getText()), new IdNode(ctx.ID().get(1).getSymbol().getLine(), ctx.ID().get(1).getSymbol().getCharPositionInLine(),ctx.ID().get(1).getText()));
 	
 	}
 	
+	@Override
 	public Node visitPrint(PrintContext ctx) {
 		return new PrintStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()));
 	}
 	
+	@Override
 	public Node visitTransfer(TransferContext ctx) {
 		return new TransferStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()));
 	}
 	
+	@Override
 	public Node visitRet(RetContext ctx) {
 		if(ctx.exp()!=null)
 			return new ReturnStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()));
 		else return new ReturnStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine());
 	}
 	
+	
+	@Override
 	public Node visitIte(IteContext ctx) {
-			if(ctx.statement().size()>1){
-				
-				return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement) visit(ctx.statement().get(0)),
-						(Statement) visit(ctx.statement().get(1)));
+		ArrayList<Statement> thenStatement = new ArrayList<Statement>();
+		ArrayList<Statement> elseStatement = new ArrayList<Statement>();
+		
+		for(StatementContext sc: ctx.statement()) {
+			if(sc.invokingState == 165) {
+				thenStatement.add((Statement)visit(sc));
 			}
-			else return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp)visit(ctx.exp()),(Statement)visit(ctx.statement().get(0)));
+			else if (sc.invokingState == 174) {
+				elseStatement.add((Statement)visit(sc));
+			}
+			else {
+				return null;
+			}
+		}
+	
+		return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.exp()), thenStatement, elseStatement);
 	}
 
+	@Override
 	public Node visitCall(CallContext ctx) {
 		
 		ArrayList<IdNode> id = new ArrayList<IdNode>();
@@ -280,7 +303,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
 	}
 	
-	
+	@Override
 	public Node visitBinExpInit(BinExpInitContext ctx) {
 		switch(ctx.op.getText()) {
 			case "*":
@@ -297,57 +320,66 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return null;
 	}
 	
+	@Override
 	public Node visitBaseExpInit(BaseExpInitContext ctx) {
 		return new BaseExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp) visit(ctx.expinit()));
 	}
 	
+	@Override
 	public Node visitValExpInit(ValExpInitContext ctx) {
 		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), Integer.parseInt(ctx.NUMBER().getText()));
 	}
 	
-	
-	public Node visitInitcall(InitcallContext ctx) {
-		
-		ArrayList<Exp> exp1 = new ArrayList<Exp>();
-		ArrayList<Exp> exp2 = new ArrayList<Exp>();
-		
-		for(ExpinitContext ec: ctx.expinit()) {
-			if(ec.invokingState == 197 || ec.invokingState == 199) {
-				exp1.add((Exp)visit(ec));
-			}
-			else {
-				exp2.add((Exp)visit(ec));
-			}
-		}
-		
-		/*for(ExpContext ec: ctx.exp()) {
+	@Override
+	public Node visitInitcall(InitcallContext ctx) {			
+			System.out.println(ctx);
+			System.out.println("PROVA");
+			System.out.println(ctx.ID());
+			ArrayList<Exp> exp1 = new ArrayList<Exp>();
+			ArrayList<Exp> exp2 = new ArrayList<Exp>();
 			
-			if(ec.invokingState == 195 || ec.invokingState == 197)
-				exp1.add((Exp)visit(ec));
-			else
-				exp2.add((Exp)visit(ec));
-		}*/
+			for(ExpinitContext ec: ctx.expinit()) {
+				if(ec.invokingState == 211 || ec.invokingState == 213) {
+					exp1.add((Exp)visit(ec));
+				}
+				else {
+					exp2.add((Exp)visit(ec));
+				}
+			}
+			
+			/*for(ExpContext ec: ctx.exp()) {
+				
+				if(ec.invokingState == 195 || ec.invokingState == 197)
+					exp1.add((Exp)visit(ec));
+				else
+					exp2.add((Exp)visit(ec));
+			}*/
 
-		return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
+			return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}
-	
+
+	@Override
 	public Node visitBaseExp(BaseExpContext ctx) {
 		return new BaseExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
+	@Override
 	public Node visitNegExp(NegExpContext ctx) {
 		return new NegExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
+	@Override
 	public Node visitNotExp(NotExpContext ctx) {
 		return new NotExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Exp) visit(ctx.exp()));
 	}
 	
+	@Override
 	public Node visitIdExp(IdExpContext ctx) {
 		return new IdNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),ctx.ID().getText());
 	}
 	
 
+	@Override
 	public Node visitBinExp(BinExpContext ctx) {
 
 		switch(ctx.op.getText()) {
@@ -383,6 +415,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 
 	}
 	
+	@Override
 	public Node visitCallExp(CallExpContext ctx) {
 		ArrayList<IdNode> id = new ArrayList<IdNode>();
 		ArrayList<Exp> exp = new ArrayList<Exp>();
@@ -403,11 +436,13 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
 	}
 	
+	@Override
 	public Node visitBoolExp(BoolExpContext ctx) {
 		return new BoolExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(),Boolean.parseBoolean(ctx.getText()));
 		
 	}
 	
+	@Override
 	public Node visitValExp(ValExpContext ctx) {
 		return new ValExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), Integer.parseInt(ctx.NUMBER().getText()));
 	

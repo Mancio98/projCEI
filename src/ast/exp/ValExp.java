@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import util.SemanticError;
 import ast.type.Type;
 import ast.type.IntType;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 
 //Used for NUMBER
 public class ValExp extends Exp {
@@ -21,6 +21,10 @@ public class ValExp extends Exp {
     public int getValue() {
         return value;
     }
+    
+    public int calculateExp() {
+    	return this.value;
+    }
 
     @Override
     public String toPrint(String indent) {
@@ -28,7 +32,7 @@ public class ValExp extends Exp {
     }
 
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
         return new ArrayList<SemanticError>();
     }
     
@@ -43,10 +47,9 @@ public class ValExp extends Exp {
 		return "li $a0 "+this.value+"\n";
 	}
 
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	   @Override
+		public void analyzeEffect(EEnvironment env) {
+			return ;
+		}
     
 }

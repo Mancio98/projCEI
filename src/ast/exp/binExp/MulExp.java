@@ -3,7 +3,6 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.IntType;
 import ast.exp.Exp;
-import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp * exp" 
@@ -11,6 +10,10 @@ public class MulExp extends BinExp {
 
     public MulExp(int row, int column, Exp left, Exp right) {
         super(row, column, left, right);
+    }
+    
+    public int calculateExp() {
+    	return (super.left.calculateExp() * super.right.calculateExp());
     }
 
     @Override
@@ -43,11 +46,5 @@ public class MulExp extends BinExp {
 				"mult $t1 $a0 $a0\n"; // mult LEFTVALUE RIGHTVALUE RETURNADDRESS
 		
 		return multCGen;
-	}
-
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 }
