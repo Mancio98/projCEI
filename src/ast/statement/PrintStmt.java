@@ -5,8 +5,8 @@ import ast.type.Type;
 import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 
 //Used for rule like "print exp"
 public class PrintStmt extends Statement {
@@ -24,7 +24,7 @@ public class PrintStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.exp.checkSemantics(env));
 		return errors;
@@ -45,9 +45,8 @@ public class PrintStmt extends Statement {
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		return ;
 	}
 
 

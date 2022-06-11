@@ -4,9 +4,9 @@ import java.util.ArrayList;
 
 import ast.exp.Exp;
 import util.SemanticError;
-import util.Environment;
-import util.Environment.UndeclaredIdException;
-import util.EnvironmentAsset;
+import util.EEnvironment;
+import util.STEnvironment;
+import util.STEnvironment.UndeclaredIdException;
 import ast.type.Type;
 import util.STentry;
 
@@ -30,8 +30,13 @@ public class IdNode extends Exp {
     	return this.id;
     }
     
+    public int getNestingLevel() {
+ 		return nestingLevel;
+ 	}
+
+    
     @Override
-    public ArrayList<SemanticError> checkSemantics(Environment env) {
+    public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
     	
         ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
         
@@ -69,15 +74,19 @@ public class IdNode extends Exp {
 		}
 		String idcgen = "move $al $fp\n"+
 						alcgen+
-						"lw $a0 $al "+this.entry.getOffset()+"\n";
+						"lw $a0 $al "+(this.entry.getOffset()+1)+"\n";
 		
 		return idcgen;
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		return ;
+	}
+
+	@Override
+	public int calculateExp() {
+		return 0;
 	}
     
 }

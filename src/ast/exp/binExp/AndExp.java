@@ -3,8 +3,6 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.BoolType;
 import ast.exp.Exp;
-import util.AssetLanlib;
-import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp && exp" 
@@ -12,6 +10,10 @@ public class AndExp extends BinExp {
 
     public AndExp(int row, int column, Exp left, Exp right) {
         super(row, column, left, right);
+    }
+    
+    public int calculateExp() {
+    	return 0;
     }
 
     @Override
@@ -54,9 +56,4 @@ public class AndExp extends BinExp {
 		return andCGen;
 	}
 
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

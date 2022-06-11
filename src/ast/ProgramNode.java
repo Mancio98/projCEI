@@ -2,17 +2,14 @@ package ast;
 
 import java.util.ArrayList;
 
-import util.AssetLanlib;
-import util.Environment;
-import util.EnvironmentAsset;
-import util.SemanticError;
-import ast.dec.FieldNode;
 import ast.dec.AssetNode;
+import ast.dec.FieldNode;
 import ast.dec.FunNode;
-import ast.statement.CallStmt;
-import ast.statement.IteStmt;
 import ast.type.Type;
-import ast.type.VoidType;
+import util.AssetLanlib;
+import util.EEnvironment;
+import util.STEnvironment;
+import util.SemanticError;
 
 //Used as the entry point of the program
 public class ProgramNode extends Node {
@@ -79,22 +76,28 @@ public class ProgramNode extends Node {
 		
 		String fieldcgen = "";
 		
-		for(FieldNode node : this.field)
-			fieldcgen += node.codeGeneration();
+		for(int i = this.field.size()-1; i>=0; i--)
+			fieldcgen += this.field.get(i).codeGeneration();
 		
 		String assetcgen = "";
 		
-		for(AssetNode node : this.asset)
-			assetcgen += node.codeGeneration();
+		for(int i = this.asset.size()-1; i>=0; i--)
+			assetcgen += this.asset.get(i).codeGeneration();
 		
 		String funcgen = "";
 				
-			for(FunNode node : this.function)
-				funcgen += node.codeGeneration();
+		for(FunNode node : this.function)
+			funcgen += node.codeGeneration();
 			
 		String initcgen = this.initcall.codeGeneration();
 				
-		String progcgen = fieldcgen+assetcgen+funcgen+initcgen+
+		String progcgen = 	assetcgen+
+							fieldcgen+
+							funcgen+
+							"move $fp $sp\n"+
+							"li $t1 1\n"+
+							"sub $fp $t1 $fp\n"+
+							initcgen+
 							"halt"+
 							AssetLanlib.getCode();
 		
@@ -103,7 +106,7 @@ public class ProgramNode extends Node {
 
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		env.entryScope();
@@ -120,12 +123,43 @@ public class ProgramNode extends Node {
 		return errors;
 	}
 
+	// FARE I CONTROLLI SULLA LIQUIDITY
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
+	public void analyzeEffect(EEnvironment env) {
+		env.entryScope();
 		
-	
+		for(FieldNode f : this.field) {
+			// VEDERE SE SI PUò FARE MEGLIO
+			f.analyzeEffect(env);
+		}
+		for(AssetNode a : this.asset) {
+			a.analyzeEffect(env);
+		}
+		for(FunNode f : this.function) {
+			f.analyzeEffect(env);
+		}
+		/*
+		for (String fu : env.getAllFun().keySet()) {
+			System.out.println(fu);
+			EEnvironment e0 = ((EEntryFun)(env.lookUp(fu))).getEnv0();
+			for (String i : e0.getAllAsset().keySet()) {
+				System.out.println(i);
+				System.out.println(((EEntryAsset)(e0.lookUp(i))).getEffectState());
+			}
+			EEnvironment e1 = ((EEntryFun)(env.lookUp(fu))).getEnv1();
+			for (String i : e0.getAllAsset().keySet()) {
+				System.out.println(i);
+				System.out.println(((EEntryAsset)(e1.lookUp(i))).getEffectState());
+			}
+		}
+		*/
+		this.initcall.getId();
 		
-		return null;
+		this.initcall.analyzeEffect(env);
+		
+		env.exitScope();
+		
+		return ;
 	}
 	
 	

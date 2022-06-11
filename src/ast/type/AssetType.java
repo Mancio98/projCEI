@@ -1,6 +1,5 @@
 package ast.type;
 
-import util.EnvironmentAsset;
 
 public class AssetType extends Type {
     
@@ -15,11 +14,5 @@ public class AssetType extends Type {
     public boolean isSubtype(Type type) {
     	return (type != null ? (type instanceof AssetType ? true : false) : false);
     }
-
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 
 }

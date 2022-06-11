@@ -2,65 +2,53 @@ package util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
-import ast.type.Type;
-import ast.type.AssetType;
-import ast.type.BoolType;
-import ast.type.FunType;
-import ast.type.IntType;
 
-public class Environment {
+public abstract class Environment<T> {
 	
-	private ArrayList<HashMap<String,STentry>>  symTable = new ArrayList<HashMap<String,STentry>>();
-	private int nestingLevel = -1;
-	private int labelCount = 0;
-	private int offset = 0;
+	protected ArrayList<HashMap<String, T>> symTable;
+	protected int nestingLevel;
+	protected int labelCount;
+	protected int offset;
+	
+	public Environment() {
+		this.symTable = new ArrayList<HashMap<String, T>>();
+		this.nestingLevel = -1;
+		this.labelCount = 0;
+		this.offset = 0;
+	}
 	
 	//Add new HashMap when new scope is entered
-	public void entryScope(){
-		HashMap<String, STentry> hm = new HashMap<String,STentry>();
-		symTable.add(0,hm); 
-		nestingLevel++;
-		offset = 0;
+	public void entryScope() {
+		this.symTable.add(0, new HashMap<String, T>()); 
+		this.nestingLevel++;
+		this.offset = 0;
 	}
 	
 	//Remove current HashMap of the scope when scope is left
-	public void exitScope(){
-		symTable.remove(0); 
-		nestingLevel--;
+	public void exitScope() {
+		this.symTable.remove(0); 
+		this.nestingLevel--;
 	}
 	
 	public int getNestingLevel(){
-		return nestingLevel;
+		return this.nestingLevel;
 	}
 	
-	public ArrayList<HashMap<String,STentry>> getSymTable(){
-		return symTable;
+	public ArrayList<HashMap<String, T>> getSymTable(){
+		return this.symTable;
 	}
 	
 	//Add of a new id if it isn't already declared
-	public void addDeclaration(String id, Type node) throws DuplicateEntryException {
+	/*public void addDeclaration(String id, Type node) throws DuplicateEntryException {
 		STentry value = symTable.get(0).get(id);
 		//There is already an entry
 		if (value != null)
 			throw new DuplicateEntryException();
-		
-		if(node.isSubtype(new BoolType()) || node.isSubtype(new IntType()) || node.isSubtype(new AssetType())) {
-			symTable.get(0).put(id, new STentry(nestingLevel, node, offset++, labelCount));
-			
-		}
-		else {
-			
-			STentry stentry =  new STentry(nestingLevel, node, 0,labelCount++);
-			symTable.get(0).put(id, stentry);
-			
-		}
-		
-		
-	}
+		symTable.get(0).put(id, new STentry(nestingLevel, node));
+	}*/
 	
 	//Look if an id is already declared in any HashMap of symbol table else we raise an exceptions
-	public STentry lookUp(String id) throws UndeclaredIdException {
+	/*public STentry lookUp(String id) throws UndeclaredIdException {
 		
 		STentry fun = null;
 		boolean foundId = false;
@@ -78,34 +66,6 @@ public class Environment {
 			throw new UndeclaredIdException();
 		
 		return fun;	
-	}
-	
-	/*
-	public STentry lookUpFun() {
-		
-		Iterator<STentry> entries = null;
-		STentry fun = null;
-		boolean found = false;
-		
-		HashMap<String, STentry> retTable = this.symTable.get(1);
-		
-		entries = retTable.values().iterator();
-		while(entries.hasNext() && !found) {
-			fun = entries.next();
-			if (fun.getType() instanceof FunType)
-				found = true;
-		}
-		
-		return fun;	
-	}
-	*/
-	
-	//Extensions of Exception class for duplicate declaration
-	public static class DuplicateEntryException extends Exception {
-	}
-	
-	//Extensions of Exception class for id not found in the HashMap
-	public static class UndeclaredIdException extends Exception {
-	}
+	}*/
 	
 }

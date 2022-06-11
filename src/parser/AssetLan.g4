@@ -39,22 +39,16 @@ transfer    : 'transfer' ID;
 
 ret	   		: 'return' (exp)?;
 
-ite         : 'if' '(' exp ')'  statement  ('else' statement )?;
+ite         : 'if' '(' exp ')' '{' statement* '}' ('else' '{' statement* '}')?;
 
 call        : ID '(' (exp (',' exp)* )? ')' '[' (ID (',' ID)* )? ']' ;
 
-//initcall    : ID '(' (exp (',' exp)* )? ')' '[' (exp (',' exp)* )? ']' ;
 initcall    : ID '(' (expinit (',' expinit)* )? ')' '[' (expinit (',' expinit)* )? ']' ;
-
-
-// VEDERE SE SI PUO FARE MEGLIO
 
 expinit	    : '(' expinit ')'				        				#baseExpInit
 	    | left=expinit op=('*' | '/')               right=expinit   #binExpInit
 	    | left=expinit op=('+' | '-')               right=expinit   #binExpInit
-	    //| call                                              #callExpInit   //FORSE DA LEVARE
 	    | NUMBER					        				#valExpInit;
-
 
 exp	    : '(' exp ')'				        				#baseExp
 	    | '-' exp					        				#negExp
@@ -82,7 +76,6 @@ ID          : CHAR (CHAR | DIGIT)* ;
 
 //Numbers
 fragment DIGIT	    : '0'..'9';
-
 NUMBER      : DIGIT+;
 
 //ESCAPE SEQUENCES
@@ -92,29 +85,21 @@ BLOCKCOMMENTS   : '/*'( ~('/'|'*')|'/'~'*'|'*'~'/'|BLOCKCOMMENTS)* '*/' -> skip;
 
 /*
 SEMANTICA DI ASSETLAN
-
-
 In AssetLan le funzioni possono essere dichiarate con asset. Ad esempio
-
 void f(int a, bool b)[asset u, asset v]{ Body }
-
 Quando la funzione viene invocata, ad esempio
-
 f(5,true)[x,y]
-
 quello che accade e` che l'asset x e y VENGONO SVUOTATI e memorizzati nei parametri 
 formali u e v, rispettivamente. Quindi, a seguito dell'invocazione, i valori di x e 
 di y sono 0.
-
 Gli asset possono essere spostati SOLAMENTE 
-
 * mediante l'operazione move x -o y il cui significato e` 
 	(a) il valore di x viene sommato a quello di y e il totale memorizzato in y 
 	(b) il valore di x diventa 0
   (i 2 argomenti di move devono essere 2 asset)
-
 * mediante l'operazione transfer:  transfer x significa che
 	(a) il valore di x viene trasferito al chiamante di initcall
 	(b) il valore di x diventa 0
-
 */
+
+

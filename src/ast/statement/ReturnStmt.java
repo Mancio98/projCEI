@@ -3,14 +3,11 @@ package ast.statement;
 import java.util.ArrayList;
 
 import ast.type.Type;
-import ast.type.FunType;
 import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
-import util.Environment;
-import util.EnvironmentAsset;
-import util.STentry;
-import util.TypeError;
+import util.EEnvironment;
+import util.STEnvironment;
 
 //Used for rule like "return (exp)?"
 public class ReturnStmt extends Statement {
@@ -33,7 +30,7 @@ public class ReturnStmt extends Statement {
     }
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		if (this.exp != null)
             errors.addAll(this.exp.checkSemantics(env));
@@ -59,9 +56,11 @@ public class ReturnStmt extends Statement {
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		if (exp != null) {
+            exp.analyzeEffect(env);
+        }
+		return ;
 	}
 
 

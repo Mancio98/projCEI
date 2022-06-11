@@ -2,12 +2,10 @@ package ast.dec;
 
 import java.util.ArrayList;
 
-import util.AssetLanlib;
-import util.Environment;
-import util.Environment.DuplicateEntryException;
-import util.EnvironmentAsset;
+import util.EEnvironment;
+import util.STEnvironment;
+import util.STEnvironment.DuplicateEntryException;
 import util.SemanticError;
-import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 import ast.Node;
@@ -44,15 +42,12 @@ public class VarNode extends Node {
 
 	@Override
 	public String codeGeneration() {
-		
 
 		return "addi $sp $sp -1\n";
-		
-		
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		
 		try {
@@ -66,9 +61,8 @@ public class VarNode extends Node {
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		return ;
 	}
 
 }

@@ -5,8 +5,8 @@ import java.util.ArrayList;
 import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.TypeError;
 import ast.type.Type;
 import ast.type.VoidType;
@@ -33,7 +33,7 @@ public class AssignmentStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.exp.checkSemantics(env));
@@ -63,21 +63,20 @@ public class AssignmentStmt extends Statement {
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
-			//alcgen += "lw $al $al 0\n";
-			alcgen += "move $al $al 0\n";
+			alcgen += "lw $al $al 0\n";
+			//alcgen += "move $al $al 0\n";
 		}
 		String asgmcgen = expcgen+
 						"move $al $fp\n"+
 						alcgen+
-						"sw $a0 $al "+this.left.getSTentry().getOffset()+"\n";
+						"sw $a0 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
 		
 		return asgmcgen;
 	}
 
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		return ;
 	}
 
 }

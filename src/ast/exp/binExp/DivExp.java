@@ -3,7 +3,6 @@ package ast.exp.binExp;
 import ast.type.Type;
 import ast.type.IntType;
 import ast.exp.Exp;
-import util.EnvironmentAsset;
 import util.TypeError;
 
 //Used for expression of type "exp / exp" 
@@ -16,6 +15,10 @@ public class DivExp extends BinExp {
     @Override
     public String toPrint(String indent) {
         return indent + "Exp: Div\n" + indent + "\tLeft:\n" + super.left.toPrint(indent + "\t\t") + "\n" + indent + "\tRight:\n" + super.right.toPrint(indent + "\t\t");
+    }
+    
+    public int calculateExp() {
+    	return (super.left.calculateExp() / super.right.calculateExp());
     }
 
 	@Override
@@ -44,9 +47,4 @@ public class DivExp extends BinExp {
 		return divCGen;
 	}
 
-	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		// TODO Auto-generated method stub
-		return null;
-	}
 }

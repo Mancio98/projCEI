@@ -7,8 +7,9 @@ import ast.type.Type;
 import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
-import util.Environment;
-import util.EnvironmentAsset;
+import util.EEntryAsset;
+import util.EEnvironment;
+import util.STEnvironment;
 import util.TypeError;
 
 //Used for rule like "ID -o ID"
@@ -31,7 +32,7 @@ public class MoveStmt extends Statement {
 	}
 
 	@Override
-	public ArrayList<SemanticError> checkSemantics(Environment env) {
+	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
 		errors.addAll(this.right.checkSemantics(env));
@@ -70,30 +71,41 @@ public class MoveStmt extends Statement {
 			alcgenleft += "lw $al $al 0\n";
 		}
 		
+		
 		String movecgen = this.left.codeGeneration()+
+						  "push $a0\n"+
 						  "move $al $fp\n"+
 						  alcgenright+
-						  "sw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
+						  "lw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "lw $t1 $sp 0\n"+
+						  "pop\n"+
+						  "add $a0 $t1 $a0\n"+
+						  "sw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
 						  "move $al $fp\n"+
 						  alcgenleft+
-						  "sw 0 $al "+this.left.getSTentry().getOffset()+"\n";
+						  "li $t1 0\n"+
+						  "sw $t1 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
+		
+		/*String movecgen = "move $al $fp\n"+
+							alcgenleft+
+							"addi $al $al "+(this.left.getSTentry().getOffset()+1)+"\n"+
+							"move $a0 $al\n"+
+							"move $al $fp\n"+
+							alcgenright+
+							"addi $al $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+							"mv $a0 $al\n";*/
+		
+		
 		
 		return movecgen;
 	}
-
+	
+	
 	@Override
-	public String analyzeEffect(EnvironmentAsset env) {
-		
-		
-		if(env.getState(left.getId()) == 0)
-			env.update(right.getId(), 0);
-		
-		else {
-			env.update(left.getId(), 0);
-			env.update(right.getId(), 1);
-		}
-		
-		return null;
+	public void analyzeEffect(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
 	}
 
 }
