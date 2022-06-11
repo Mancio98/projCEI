@@ -27,7 +27,7 @@ void f(int n)[]{
 		 f (n-1)[] ;	
 }
 f(10)[] ;
-*/
+
 
 int a; 
 int b = 0 ;
@@ -46,3 +46,15 @@ void f(int x)[asset y, asset k]{
 }
 
 f(1)[6, 10];
+*/
+
+asset x ;
+void f(int n)[asset u, asset v]{ 
+    if (n == 0) u -o x ; 
+	else { u -o x ; v -o x ; }
+}
+void main()[asset a]{
+	f(0)[a,a] ;
+	transfer x ;
+}
+main()[1] ;

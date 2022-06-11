@@ -36,8 +36,8 @@ instruction:
 			  | GREATEROREQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 			#GreaterOrEq 
 			  | LESS input1 = REGISTER input2 = REGISTER output = REGISTER						#Less
 			  | LESSOREQUAL	input1 = REGISTER input2 = REGISTER output = REGISTER 				#LessOrEq	    
-			  | STOREW	input1 = REGISTER input2 = REGISTER	offset=NUMBER						#StoreW				  
-			  | LOADW	input1 = REGISTER input2 = REGISTER offset=NUMBER						#LoadW				
+			  | STOREW	input1 = REGISTER input2 = NUMBER										#StoreW				  
+			  | LOADW	input1 = REGISTER input2 = NUMBER										#LoadW				
 			  | LOADI   input1 = REGISTER input2 = NUMBER 										#Loadi          
 			  | BRANCH  label = LABEL															#Branch
 			  | BRANCHEQ input1 = REGISTER input2 = REGISTER label=LABEL						#BranchQ

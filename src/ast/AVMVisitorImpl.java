@@ -258,7 +258,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitLoadW(LoadWContext ctx) {
 		
-		code.add(new LineCode(AVMLexer.LOADW, new String[]{ctx.input1.getText(),ctx.input2.getText()},Integer.parseInt(ctx.offset.getText())));
+		code.add(new LineCode(AVMLexer.LOADW, new String[]{ctx.input1.getText(),ctx.input2.getText()}, Integer.parseInt(ctx.offset.getText())));
 		return super.visitLoadW(ctx);
 	}
 
