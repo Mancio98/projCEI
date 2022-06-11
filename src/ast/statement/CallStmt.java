@@ -147,7 +147,9 @@ public class CallStmt extends Statement {
 		
 		
 		String alcgen = "";
-		
+		System.out.println("PROVA");
+		System.out.println(this.entry.getNestinglevel());
+		System.out.println(this.nestingLevel);
 		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
 			
 			alcgen += "lw $al $al 0\n";
@@ -170,6 +172,7 @@ public class CallStmt extends Statement {
 	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
+		this.nestingLevel = env.getNestingLevel();
 		
 		try {
 			this.entry = env.lookUp(this.id);

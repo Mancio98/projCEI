@@ -7,8 +7,8 @@ public abstract class Environment<T> {
 	
 	protected ArrayList<HashMap<String, T>> symTable;
 	protected int nestingLevel;
-	protected int labelCount;
-	protected int offset;
+	protected int labelCount = 0;
+	protected int offset = 0;
 	
 	public Environment() {
 		this.symTable = new ArrayList<HashMap<String, T>>();

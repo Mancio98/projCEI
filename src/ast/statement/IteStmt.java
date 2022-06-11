@@ -184,6 +184,25 @@ public class IteStmt extends Statement {
 				endlabel+":\n";
 
 		return ifcgen;
+		/*
+		
+		String truelabel = AssetLanlib.freshLabel();
+
+        String endlabel = AssetLanlib.freshLabel();
+
+        
+
+        String ifcgen = this.exp.codeGeneration()+
+                        "li $t1 1\n"+
+                        "beq $a0 $t1 "+truelabel+"\n"+
+                        this.elseStmt.codeGeneration()+
+                        "b "+endlabel+"\n"+
+                        truelabel+":\n"+
+                        this.thenStmt.codeGeneration()+
+                        endlabel+":\n";
+
+        return ifcgen;
+        */
 	}
 
 	@Override

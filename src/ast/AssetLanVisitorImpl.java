@@ -114,7 +114,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				
 				DecContext decParams = decls.get(0);
 				
-				if(decParams.invokingState == 72 ){
+				if(decParams.invokingState == 74 ){
 					
 					res.addPar((DecNode)visit(decls.get(0)), null);
 					decls.remove(0);
@@ -133,7 +133,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				DecContext decParams = decls.get(0);
 				
 				
-				if(decParams.invokingState == 72 ){
+				if(decParams.invokingState == 74 ){
 					
 					res.addPar((DecNode)visit(decls.get(0)), (AdecNode)visit(ctx.adec()));
 					

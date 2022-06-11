@@ -1,5 +1,4 @@
-/*
-int a; 
+/*int a; 
 int b = 0 ;
 asset z ;
 asset j;
@@ -16,11 +15,11 @@ void f(int x)[asset y, asset k]{
 }
 
 f(1)[6, 10];
-*/
 
+*/
 asset x ;
 void f(int n)[asset u, asset v]{ 
-    if (n == 0){ u -o x; } 
+    if (n == 0){ u -o x; print n; } 
 	else { u -o x ; v -o x ; }
 }
 void main()[asset a]{
@@ -28,3 +27,14 @@ void main()[asset a]{
 	transfer x ;
 }
 main()[1] ;
+
+/*
+int a = 1;
+
+void f()[]{
+	a=4;
+	print a;
+}
+
+f()[];
+*/

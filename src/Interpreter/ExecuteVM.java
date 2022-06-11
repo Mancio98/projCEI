@@ -140,19 +140,17 @@ public class ExecuteVM {
                 
               case AVMParser.STOREW : 
             	  System.out.println("sw");
+                   int possw = registers.get(args[1])+offset;
                    
-            	  int possw = registers.get(args[1])+offset;
-                  
-                  stack[possw] = registers.get(args[0]);
+                   stack[possw] = registers.get(args[0]);
                 break;
                 
               case AVMParser.LOADW : 
             	  System.out.println("lw");
-            	  
             	  int poslw = registers.get(args[1])+offset;
             	  
                   registers.put(args[0], stack[poslw]);
-                  
+                  System.out.println(args[0]+": "+registers.get(args[0])+" "+poslw+"\n");       	  
                 break;
                 
               case AVMParser.LOADI :
@@ -244,9 +242,7 @@ public class ExecuteVM {
 	              System.out.println("\nResult: " + stack[hp] + "\n");
 	              return;
              	
-             	
             }
-            
             
             bytecode.toPrint();
             System.out.println("-------------------------\n");

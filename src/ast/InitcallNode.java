@@ -209,6 +209,7 @@ public class InitcallNode extends Node {
 	@Override
 	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
+		this.nestingLevel = env.getNestingLevel();
 		
 		try {
 			this.entry = env.lookUp(this.id);
