@@ -79,22 +79,28 @@ public class ProgramNode extends Node {
 		
 		String fieldcgen = "";
 		
-		for(FieldNode node : this.field)
-			fieldcgen += node.codeGeneration();
+		for(int i = this.field.size()-1; i>=0; i--)
+			fieldcgen += this.field.get(i).codeGeneration();
 		
 		String assetcgen = "";
 		
-		for(AssetNode node : this.asset)
-			assetcgen += node.codeGeneration();
+		for(int i = this.asset.size()-1; i>=0; i--)
+			assetcgen += this.asset.get(i).codeGeneration();
 		
 		String funcgen = "";
 				
-			for(FunNode node : this.function)
-				funcgen += node.codeGeneration();
+		for(FunNode node : this.function)
+			funcgen += node.codeGeneration();
 			
 		String initcgen = this.initcall.codeGeneration();
 				
-		String progcgen = fieldcgen+assetcgen+funcgen+initcgen+
+		String progcgen = 	assetcgen+
+							fieldcgen+
+							funcgen+
+							"move $fp $sp\n"+
+							"li $t1 1\n"+
+							"sub $fp $t1 $fp\n"+
+							initcgen+
 							"halt"+
 							AssetLanlib.getCode();
 		

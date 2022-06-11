@@ -158,11 +158,11 @@ public class FunNode extends Node {
 	@Override
 	public String codeGeneration() {
 		
-		String declcode = "";
+		String declbody = "";
 		
 		for(DecNode node : this.decList) {
 			
-			declcode += node.codeGeneration();
+			declbody += node.codeGeneration();
 			
 		}
 		
@@ -196,13 +196,13 @@ public class FunNode extends Node {
 		
 			"move $fp $sp\n"+ 		// setta $fp a $sp				
 			"push $ra\n"+ 		// inserimento return address
-			declcode+		// inserimento dichiarazioni locali
+			declbody+		// inserimento dichiarazioni locali
 			stmcode+		// cgen body
+			popdeclbody+
 			"lw $ra $sp 0\n"+ 	//lw ra top\n"	 store return address
 			"pop\n"+		//pop di ra
 			"pop\n"+ 		// pop di al
 			popdecl+
-			popdeclbody+
 			"lw $fp $sp 0\n"+  //lw fp top
 			"pop\n"+		//pop old fp
 			"jr $ra\n"		

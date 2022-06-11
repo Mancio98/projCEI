@@ -155,7 +155,7 @@ public class CallStmt extends Statement {
 						//"lw $al $fp 0\n"+
 						"move $al $fp\n"+
 						alcgen+
-						"move $fp $sp\n"+
+						//"move $fp $sp\n"+
 						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						

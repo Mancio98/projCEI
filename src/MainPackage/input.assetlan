@@ -1,9 +1,48 @@
-int x = 1;
+/*
+asset x;
+asset y;
+void f()[asset u, asset v]{
+	u -o y;
+	v -o x;
+	print x;
+	print y;
+}
+void main()[asset u, asset v]{
+	u -o x;
+	u -o y;
+	print x;
+	print y;
+	f()[x,y];
+	
+}
+main()[2,3];
 
+
+
+int x = 1;
 void f(int n)[]{ 
 	if (n == 0) 
-		print(x); 
+		print(x) ;
 	else 
-		f(n-1)[];	
+		 f (n-1)[] ;	
 }
-f(10)[];
+f(10)[] ;
+*/
+
+int a; 
+int b = 0 ;
+asset z ;
+asset j;
+void g()[]{
+	transfer z ;
+	transfer j;
+}	
+void f(int x)[asset y, asset k]{
+	a = y ;		
+    b = b+x ;      
+    y -o z ;
+    k -o j;
+	g()[] ;
+}
+
+f(1)[6, 10];

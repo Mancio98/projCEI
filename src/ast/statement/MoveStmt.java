@@ -70,13 +70,31 @@ public class MoveStmt extends Statement {
 			alcgenleft += "lw $al $al 0\n";
 		}
 		
+		
 		String movecgen = this.left.codeGeneration()+
+						  "push $a0\n"+
 						  "move $al $fp\n"+
 						  alcgenright+
-						  "sw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
+						  "lw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "lw $t1 $sp 0\n"+
+						  "pop\n"+
+						  "add $a0 $t1 $a0\n"+
+						  "sw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
 						  "move $al $fp\n"+
 						  alcgenleft+
-						  "sw 0 $al "+this.left.getSTentry().getOffset()+"\n";
+						  "li $t1 0\n"+
+						  "sw $t1 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
+		
+		/*String movecgen = "move $al $fp\n"+
+							alcgenleft+
+							"addi $al $al "+(this.left.getSTentry().getOffset()+1)+"\n"+
+							"move $a0 $al\n"+
+							"move $al $fp\n"+
+							alcgenright+
+							"addi $al $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+							"mv $a0 $al\n";*/
+		
+		
 		
 		return movecgen;
 	}

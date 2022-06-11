@@ -17,7 +17,11 @@ public class IdNode extends Exp {
     private STentry entry;
     private int nestingLevel;
     
-    public IdNode(int row, int column, String id) {
+    public int getNestingLevel() {
+		return nestingLevel;
+	}
+
+	public IdNode(int row, int column, String id) {
     	super(row,column);
     	this.id = id;
     }
@@ -69,7 +73,7 @@ public class IdNode extends Exp {
 		}
 		String idcgen = "move $al $fp\n"+
 						alcgen+
-						"lw $a0 $al "+this.entry.getOffset()+"\n";
+						"lw $a0 $al "+(this.entry.getOffset()+1)+"\n";
 		
 		return idcgen;
 	}

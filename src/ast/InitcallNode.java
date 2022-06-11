@@ -188,7 +188,7 @@ public class InitcallNode extends Node {
 						//"lw $al $fp 0\n"+ //forse si può fare a meno
 						"move $al $fp\n"+
 						alcgen+
-						"move $fp $sp\n"+
+						//"move $fp $sp\n"+
 						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						

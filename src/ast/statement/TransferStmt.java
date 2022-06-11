@@ -49,7 +49,26 @@ public class TransferStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		
-		return this.id.codeGeneration()+"transf $a0\n"; //definire dove mettere l'asset iniziale (push all'inizio di program)"
+		String alcgen = "";
+		
+		for(int i=0; i < (this.id.getNestingLevel() - this.id.getSTentry().getNestinglevel()); i++) {
+			alcgen += "lw $al $al 0\n";
+		}
+		/*
+		String transfcgen = "move $al $fp\n"+
+						alcgen+
+						"lw $a0 $al "+(this.id.getSTentry().getOffset()+1)+"\n"+
+						"transf $a0\n"+
+						"li $t1 0\n"+
+						"sw $t1 $al "+(this.id.getSTentry().getOffset()+1)+"\n";*/
+		
+		String transfcgen = "move $al $fp\n"+
+				alcgen+
+				"addi $al $al "+(this.id.getSTentry().getOffset()+1)+"\n"+
+				"move $a0 $al\n"+
+				"transf $a0\n";
+		
+		return transfcgen;
 	}
 
 	@Override

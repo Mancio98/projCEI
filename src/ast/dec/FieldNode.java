@@ -60,7 +60,6 @@ public class FieldNode extends VarNode {
 		if(exp != null) {
 			
 			String expcgen = exp.codeGeneration();
-			
 			return expcgen+"push $a0\n";
 		}
 		else
