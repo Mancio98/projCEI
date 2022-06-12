@@ -5,7 +5,6 @@ package util;
 public abstract class Entry {
 	
 	protected int nl;
-	//private Type type;
 	
 	public Entry(int nl)
 	{

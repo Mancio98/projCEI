@@ -2,12 +2,16 @@ package ast.dec;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.regex.Pattern;
 
+import ast.IdNode;
 import ast.Node;
 import util.AssetLanlib;
 import util.EEntry;
 import util.EEntryAsset;
 import util.EEnvironment;
+import util.EffectError;
+import util.EEntryFun;
 import util.STEnvironment;
 import util.STEnvironment.DuplicateEntryException;
 import util.STEnvironment.UndeclaredIdException;
@@ -69,6 +73,14 @@ public class FunNode extends Node {
 	public void addBody(ArrayList<DecNode> decList, ArrayList<Statement> stmt) {
 		this.decList = decList;
 		this.statementList = stmt;
+	}
+	
+	public String getId() {
+		return this.id;
+	}
+	
+	public AdecNode getParAdec() {
+		return this.parAdec;
 	}
 	
 	@Override
@@ -232,12 +244,83 @@ public class FunNode extends Node {
 		
 		return semErrors;
 	}
+	
+	public void analyzeLiquidity(EEnvironment env) {
+		String[] split;
+		int i;
+		
+		for (String a : env.getAllFun().keySet()) {
+			EEnvironment e3 = ((EEntryFun)(env.getAllFun().get(a))).getEnv1();
+		}
+		
+		EEnvironment e0 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0();
+		EEnvironment env0 = e0.clone();
+		for (String g : env.getAllAsset().keySet()) {
+			((EEntryAsset)(env0.lookUp(g))).updateEffectState(((EEntryAsset)(env.lookUp(g))).getEffectState());
+		}
+		
+		EEnvironment e1 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv1();
+		EEnvironment env1 = e1.clone();
+		
+		for (String a : env1.getAllAsset().keySet()) {
+			if (!((EEntryAsset)(env1.lookUp(a))).getEffectState().equals("1") && !((EEntryAsset)(env1.lookUp(a))).getEffectState().equals("0")) {
+				split = ((EEntryAsset)(env1.lookUp(a))).getEffectState().split(Pattern.quote("+"));
+				
+				i = 1;
+				if (!split[0].equals("0") && !split[0].equals("1")) {
+					String res = ((EEntryAsset)(env0.getAllAsset().get(split[0]))).getEffectState();
+					while (!res.equals("1") && !res.equals("0") && i < split.length) { 
+						EEntryAsset.effectStatePlus(res, ((EEntryAsset)(env0.getAllAsset().get(split[i]))).getEffectState());
+						i++;
+					}
+					
+					((EEntryAsset)(env1.getAllAsset().get(a))).updateEffectState(res);
+				}
+			}
+			
+		}
+	
+		for (AssetNode an : this.parAdec.getListAdec()) {
+			if (!((EEntryAsset)(env1.lookUp(an.getId()))).getEffectState().equals("0")) {
+				System.out.println(new EffectError(row, column, "Function [" + this.id + "] is not liquid").toPrint());
+				System.exit(0);
+			}
+		}
+		
+		for(Statement stmt : this.statementList) {
+			
+			if (stmt instanceof CallStmt) {
+				if (!((CallStmt)(stmt)).getId().equals(this.id)) {
+					for (String g : env.getAllAsset().keySet()) {
+						((EEntryAsset)(env.lookUp(g))).updateEffectState(((EEntryAsset)(env0.lookUp(g))).getEffectState());
+					}
+					
+					env.entryScope();
+					for (String add : env0.getAllAsset().keySet()) {
+						if (env.getAllAsset().get(add) == null) {
+							env.addDeclarationAsset(add, ((EEntryAsset)(env0.getAllAsset().get(add))).getEffectState());
+						}	
+					}
+					
+					((CallStmt)(stmt)).analyzeLiquidity(env);
+					
+				}
+				
+			}
+			else if (stmt instanceof IteStmt) {
+				((IteStmt)(stmt)).analyzeLiquidity(env0, env, this.id);
+			}
+			else {
+				stmt.analyzeLiquidity(env0);
+			}
+		}
+	}
 
 	private boolean isRecursive(Statement stmt) {
-		boolean isRec = false;
+boolean isRec = false;
 		
 		for(Statement s : ((IteStmt)(stmt)).getThenStmt()) {
-			if (stmt instanceof CallStmt && ((((CallStmt)(stmt)).getId()).equals(this.id))) {
+			if (s instanceof CallStmt && ((((CallStmt)(s)).getId()).equals(this.id))) {
 				isRec = true;
 			}
 			else if (s instanceof IteStmt) {
@@ -246,7 +329,7 @@ public class FunNode extends Node {
 		}
 		if (!isRec) {
 			for(Statement s : ((IteStmt)(stmt)).getElseStmt()) {
-				if (stmt instanceof CallStmt && ((((CallStmt)(stmt)).getId()).equals(this.id))) {
+				if (s instanceof CallStmt && ((((CallStmt)(s)).getId()).equals(this.id))) {
 					isRec = true;
 				}
 				else if (s instanceof IteStmt) {
@@ -268,7 +351,7 @@ public class FunNode extends Node {
 				isRec = isRec || isRecursive(stmt);
 			}
 		}
-		
+		//System.out.println(isRec);
 		env.entryScope();
 		
 		this.parDec.analyzeEffect(env);
@@ -280,9 +363,6 @@ public class FunNode extends Node {
 		for(DecNode n : this.decList) {
 			n.analyzeEffect(env);
 		}
-		
-		//EEnvironment env0 = env.clone();
-		//EEnvironment env1 = env.clone();
 		
 		EEnvironment envFun = new EEnvironment();
 		EEnvironment env1 = new EEnvironment();
@@ -305,68 +385,85 @@ public class FunNode extends Node {
 		mapAsset.forEach((id, entry) -> { envFun.addDeclarationAsset(id, id); });
 		mapAsset1.forEach((id, entry) -> { env1.addDeclarationAsset(id, id); });
 		
-		/*
-		HashMap<String, EEntry> map0 = envFun.getAllAsset();
-		for (String id : map0.keySet()) {
-			if (env.lookUp(id) != null) {
-				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map0.get(id))).getEffectState());
-			}
-		}
-		*/
 		if (!isRec) {
 			for(Statement stmt : this.statementList) {
 				stmt.analyzeEffect(env1);
 			}
-			
-			/*System.out.println("ENV0");
+		
 			HashMap<String, EEntry> map3 = envFun.getAllAsset();
-			for (String id : map3.keySet()) {
-				System.out.println(id);
-				System.out.println(((EEntryAsset)(map3.get(id))).getEffectState());
-			}
-			System.out.println("ENV0");
 			
-			System.out.println("ENV1");
 			HashMap<String, EEntry> map2 = env1.getAllAsset();
-			for (String id : map2.keySet()) {
-				System.out.println(id);
-				System.out.println(((EEntryAsset)(map2.get(id))).getEffectState());
-			}
-			System.out.println("ENV1");*/
-
 			
-			/*
-			HashMap<String, EEntry> map1 = envFun.getAllAsset();
-			for (String id : map1.keySet()) {
-				if (env.lookUp(id) != null) {
-					((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map1.get(id))).getEffectState());
-				}
-			}
-			*/
 			env.exitScope();
 			env.addDeclarationFun(id, envFun, env1, this);
 		}
 		else {
-			analyzeEffectFixPoint(envFun, env1, env);
+			
+			for (String asst : envFun.getAllAsset().keySet()) {
+				((EEntryAsset)(envFun.getAllAsset().get(asst))).updateEffectState("1");
+				((EEntryAsset)(env1.getAllAsset().get(asst))).updateEffectState("1");
+			}
+			
+			env.exitScope();
+			env.addDeclarationFun(id, envFun, env1, this);
+			analyzeEffectFixPoint(envFun, env1.clone(), env);
 		}
-		
 		return ;
 	}
 	
 	private void analyzeEffectFixPoint(EEnvironment env0, EEnvironment env1, EEnvironment env) {
-		EEnvironment tmpEnv = env0.clone();
-		
+		EEnvironment newEnv0 = new EEnvironment();
+		newEnv0.entryScope();
+		EEnvironment tmpEnv = env.clone();
+		EEnvironment tmpEnv0 = ((EEntryFun)(tmpEnv.lookUp(this.id))).getEnv0();
 		for(Statement stmt : this.statementList) {
-			stmt.analyzeEffect(tmpEnv);
+			
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(this.id)) {
+				ArrayList<AssetNode> aList = this.parAdec.getListAdec();
+				ArrayList<IdNode> list = ((CallStmt)(stmt)).getIdList();
+				
+				for (int pos = list.size() - 1; pos >= 0; pos--) {
+					newEnv0.addDeclarationAsset(aList.get(pos).getId(), ((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).getEffectState());
+					((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).updateEffectState("0");
+					
+				}
+				for (String a0 : tmpEnv0.getAllAsset().keySet()) {
+					if (newEnv0.lookUp(a0) == null) {
+						newEnv0.addDeclarationAsset(a0, ((EEntryAsset)(tmpEnv0.getAllAsset().get(a0))).getEffectState());
+						}
+					
+				}
+				
+				HashMap<String, EEntry> map = env.getAllAsset();
+				for (String id : map.keySet()) {
+					((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env1.getAllAsset().get(id))).getEffectState());
+				}
+				
+				for (int pos = list.size() - 1; pos >= 0; pos--) {
+					((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).updateEffectState( ((EEntryAsset)( env1.lookUp( ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec().getListAdec().get(pos).getId() ))).getEffectState() );
+				}
+
+			}
+			else {
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeEffectFixPoint(tmpEnv0, env, this.id);
+				}
+				else {
+					stmt.analyzeEffect(tmpEnv0);
+				}
+
+			}
 		}
-	        
-	    if (EEnvironment.environmentEquality(env1, tmpEnv)) {
-	        env.addDeclarationFun(id, env0, env1);
+		
+	    if (EEnvironment.environmentEquality(env1, tmpEnv0)) {
+	    
 	        return ;
 	    }
-	        
-        env0.addDeclarationFun(id, env0.clone(), tmpEnv.clone());
-        analyzeEffectFixPoint(env0, tmpEnv.clone(), env); 
+	    
+	    ((EEntryFun)(env.lookUp(this.id))).setEnv0(newEnv0);
+	    ((EEntryFun)(env.lookUp(this.id))).setEnv1(tmpEnv0);
+	    
+        this.analyzeEffectFixPoint(env0, tmpEnv0.clone(), env); 
 		return ;
 	}
 	

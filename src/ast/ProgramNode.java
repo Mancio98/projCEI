@@ -7,6 +7,7 @@ import ast.dec.FieldNode;
 import ast.dec.FunNode;
 import ast.type.Type;
 import util.AssetLanlib;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
@@ -54,18 +55,14 @@ public class ProgramNode extends Node {
 	@Override
 	public Type typeCheck() {
 		for(FieldNode f : this.field) {
-			System.out.println("D");
 			f.typeCheck();
 		}
 		for(AssetNode a : this.asset) {
-			System.out.println("A");
 			a.typeCheck();
 		}
 		for(FunNode f : this.function) {
-			System.out.println("F");
 			f.typeCheck();
 		}
-		System.out.println("P");
 		Type programType = this.initcall.typeCheck();
 		return programType;
 	}
@@ -143,23 +140,12 @@ public class ProgramNode extends Node {
 		for(FunNode f : this.function) {
 			f.analyzeEffect(env);
 		}
-		/*
-		for (String fu : env.getAllFun().keySet()) {
-			System.out.println(fu);
-			EEnvironment e0 = ((EEntryFun)(env.lookUp(fu))).getEnv0();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e0.lookUp(i))).getEffectState());
-			}
-			EEnvironment e1 = ((EEntryFun)(env.lookUp(fu))).getEnv1();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e1.lookUp(i))).getEffectState());
-			}
-		}
-		*/
-		this.initcall.getId();
 		
+		EEnvironment envLiq = env.clone();
+		for(FunNode f : this.function) {
+			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);
+		}
+		this.initcall.analyzeLiquidity(envLiq);
 		this.initcall.analyzeEffect(env);
 		
 		env.exitScope();

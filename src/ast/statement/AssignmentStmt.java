@@ -17,7 +17,6 @@ import ast.type.VoidType;
 public class AssignmentStmt extends Statement {
 
 	private final IdNode left;
-	//private final String id;
 	private final Exp exp;
 	private int nestingLevel;
 
@@ -88,6 +87,11 @@ public class AssignmentStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		return ;
+	}
+	
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
 		return ;
 	}
 

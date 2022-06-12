@@ -5,6 +5,8 @@ import java.util.ArrayList;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.AssetLanlib;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import ast.type.Type;
@@ -17,13 +19,6 @@ public class IteStmt extends Statement {
 
 	private final Exp exp;
 	private ArrayList<Statement> thenStmtList, elseStmtList;
-
-	/*public IteStmt(int row,int column,Exp exp, Statement thenStmt) {
-		super(row, column);
-		this.exp = exp;
-		this.thenStmt = thenStmt;
-		this.elseStmt = null;
-	}*/
 	
 	public IteStmt(int row,int column,Exp exp, ArrayList<Statement> thenStmt, ArrayList<Statement> elseStmt) {
 		super(row, column);
@@ -57,10 +52,6 @@ public class IteStmt extends Statement {
 		}
 		
 		return s;
-        /*return indent + "If:\n" + this.exp.toPrint(indent + "\t") + "\n" + indent + "Then:\n"
-                + this.thenStmtList.toPrint(indent + "\t") 
-                + (this.elseStmtList != null ? "\n" + indent + "Else:\n" + this.elseStmtList.toPrint(indent+ "\t") : "");
-        */
     }
 		
 	@Override
@@ -184,25 +175,6 @@ public class IteStmt extends Statement {
 				endlabel+":\n";
 
 		return ifcgen;
-		/*
-		
-		String truelabel = AssetLanlib.freshLabel();
-
-        String endlabel = AssetLanlib.freshLabel();
-
-        
-
-        String ifcgen = this.exp.codeGeneration()+
-                        "li $t1 1\n"+
-                        "beq $a0 $t1 "+truelabel+"\n"+
-                        this.elseStmt.codeGeneration()+
-                        "b "+endlabel+"\n"+
-                        truelabel+":\n"+
-                        this.thenStmt.codeGeneration()+
-                        endlabel+":\n";
-
-        return ifcgen;
-        */
 	}
 
 	@Override
@@ -218,10 +190,116 @@ public class IteStmt extends Statement {
         for(Statement stmt : this.elseStmtList) {
         	stmt.analyzeEffect(tmpEnv);
 		}
-        
+
         env.maxModifyEnv(tmpEnv);
         
         return ;
+	}
+	
+	public void analyzeLiquidity(EEnvironment env, EEnvironment gEnv, String f) {
+		EEnvironment tmpEnv = env.clone();
+
+        for(Statement stmt : this.thenStmtList) {
+			
+			if (stmt instanceof CallStmt) {
+				if (!((CallStmt)(stmt)).getId().equals(f)) {
+
+					for (String g : env.getAllAsset().keySet()) {
+						((EEntryAsset)(env.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+					}
+
+					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
+				}
+			}
+			else {
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeLiquidity(env, gEnv, f);
+				}
+				else {
+					stmt.analyzeLiquidity(env);
+				}
+			}
+		}
+        
+        for(Statement stmt : this.elseStmtList) {
+			
+			if (stmt instanceof CallStmt) {
+				if(!((CallStmt)(stmt)).getId().equals(f)) {
+					
+					for (String g : tmpEnv.getAllAsset().keySet()) {
+						((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+					}
+					
+					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
+				}	
+			}
+			else {
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeLiquidity(tmpEnv, gEnv, f);
+				}
+				else {
+					stmt.analyzeLiquidity(tmpEnv);
+				}
+			}
+		}
+
+        env.maxModifyEnv(tmpEnv);
+        
+        return ;
+	}
+	
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		this.exp.analyzeEffect(env);
+		
+		EEnvironment tmpEnv = env.clone();
+        
+        for(Statement stmt : this.thenStmtList) {
+			
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {	// CAMBIARE CON ! equals()
+
+				for (String g : env.getAllAsset().keySet()) {
+					((EEntryAsset)(env.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+				}
+			}
+			else {
+				// DA CAMBIARE
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeEffectFixPoint(env, gEnv, f);
+				}
+				else {
+					stmt.analyzeEffect(env);
+				}
+			}
+		}
+        
+        for(Statement stmt : this.elseStmtList) {
+			
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {
+				
+				for (String g : tmpEnv.getAllAsset().keySet()) {
+					((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+				}
+			}
+			else {
+				// DA CAMBIARE
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeEffectFixPoint(tmpEnv, gEnv, f);
+				}
+				else {
+					stmt.analyzeEffect(tmpEnv);
+				}
+			}
+		}
+        
+        env.maxModifyEnv(tmpEnv);
+
+        return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

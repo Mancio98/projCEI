@@ -67,14 +67,13 @@ public class EEnvironment extends Environment<EEntry> {
 	public EEnvironment clone() {
 		EEnvironment env = new EEnvironment();
 		symTable.forEach( hashmap -> {
-			//env.entryScope();
 			env.symTable.add(0, new HashMap<String, EEntry>());
 			hashmap.forEach( (id, entry) -> {
 				if (entry instanceof EEntryAsset) {
 					env.addDeclarationAsset(id, ((EEntryAsset)(entry)).getEffectState());
 				}
 				else {
-					env.addDeclarationFun(id, ((EEntryFun)(entry)).getEnv0(), ((EEntryFun)(entry)).getEnv1());
+					env.addDeclarationFun(id, ((EEntryFun)(entry)).getEnv0().clone(), ((EEntryFun)(entry)).getEnv1().clone());
 				}
 			});
 		});
@@ -101,11 +100,10 @@ public class EEnvironment extends Environment<EEntry> {
 	
 	public static boolean environmentEquality(EEnvironment env1, EEnvironment env2) {		
 		for (String id : env1.getAllAsset().keySet()) {
-			if (env2.lookUp(id) == null || ((EEntryAsset)(env2.lookUp(id))).getEffectState() != ((EEntryAsset)(env1.lookUp(id))).getEffectState()) {
+			if (env2.lookUp(id) == null || !((EEntryAsset)(env2.lookUp(id))).getEffectState().equals(((EEntryAsset)(env1.lookUp(id))).getEffectState())) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 }

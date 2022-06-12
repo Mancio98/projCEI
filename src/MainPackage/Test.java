@@ -21,6 +21,7 @@ import parser.AVMLexer;
 import parser.AVMParser;
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
+import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
 
@@ -68,21 +69,22 @@ public class Test {
 				else {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
-					
-					
-					System.out.println("TEST");
+
 					Type programType = ast.typeCheck();
-					System.out.println("TEST");
 					if (programType instanceof VoidType) {
-						System.out.println("Il programma � ben tipato");
+						System.out.println("Il programma è ben tipato \n");
 						
-						String cgen = ast.codeGeneration();
+						System.out.println("START ANALYZE EFFECT\n");
+						EEnvironment eenv = new EEnvironment();
+						ast.analyzeEffect(eenv);
+						System.out.println("ANALYZE EFFECT DONE\n");
 						
+						String cgen = ast.codeGeneration();						
 						
 						BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
 						out.write(cgen);
 						out.close(); 
-						System.out.println("Code generated! Assembling and running generated code.");
+						System.out.println("Code generated! Assembling and running generated code.\n");
 
 						
 						CharStream inputASM = CharStreams.fromFileName(fileName+".asm");
@@ -94,15 +96,15 @@ public class Test {
 						AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
 						visitorAVM.visit(parserASM.assembly());
 						
-						System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
+						System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.\n");
 						if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
 
-						System.out.println("Starting Virtual Machine...");
+						System.out.println("Starting Virtual Machine...\n");
 						ExecuteVM vm = new ExecuteVM(visitorAVM.getCode());
 						vm.cpu();
 					}
 					else {
-						System.out.println("ERRORE nel TypeCheck");
+						System.out.println("ERRORE nel TypeCheck \n");
 					}
 				}
 			}

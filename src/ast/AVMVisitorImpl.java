@@ -140,7 +140,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitPrint(PrintContext ctx) {
 		
-		code.add(new LineCode(AVMLexer.PRINT,ctx.input1.getText()));
+		code.add(new LineCode(AVMLexer.PRINT,new String[]{ctx.input1.getText()},Integer.parseInt(ctx.input2.getText())));
 		return null;
 	}
 

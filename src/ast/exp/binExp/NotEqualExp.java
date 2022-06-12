@@ -26,13 +26,11 @@ public class NotEqualExp extends BinExp {
 	@Override
 	public Type typeCheck() {
 		if (super.left.typeCheck() instanceof BoolType && (super.right.typeCheck() instanceof AssetType || super.right.typeCheck() instanceof IntType)){
-			//DA CONTROLLARE IL MESSAGGIO
-			System.out.println(new TypeError(super.row, super.column, "expecting two same type").toPrint());
+			System.out.println(new TypeError(super.row, super.column, "comparison between this two type is not possible").toPrint());
             System.exit(0);
         }
 		else if ((super.left.typeCheck() instanceof AssetType || super.left.typeCheck() instanceof IntType ) && super.right.typeCheck() instanceof BoolType) {
-			//DA CONTROLLARE IL MESSAGGIO
-			System.out.println(new TypeError(super.row, super.column, "expecting two same type").toPrint());
+			System.out.println(new TypeError(super.row, super.column, "comparison between this two type is not possible").toPrint());
             System.exit(0);
 		} 
         return new BoolType();

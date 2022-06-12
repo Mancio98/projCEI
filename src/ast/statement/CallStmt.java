@@ -16,6 +16,7 @@ import util.SemanticError;
 import ast.type.Type;
 import ast.type.FunType;
 import ast.IdNode;
+import ast.dec.AdecNode;
 import ast.dec.AssetNode;
 import util.STentry;
 import util.TypeError;
@@ -24,8 +25,8 @@ import util.TypeError;
 public class CallStmt extends Statement {
 	
 	private String id;
-	private List<Exp> expList;
-	private List<IdNode> idList;
+	private ArrayList<Exp> expList;
+	private ArrayList<IdNode> idList;
 	private STentry entry;
 	private int nestingLevel;
 
@@ -38,6 +39,10 @@ public class CallStmt extends Statement {
 	
 	public String getId() {
 		return this.id;
+	}
+	
+	public ArrayList<IdNode> getIdList() {
+		return this.idList;
 	}
 	
 	@Override
@@ -97,7 +102,6 @@ public class CallStmt extends Statement {
         FunType typeFun = ((FunType) (this.entry.getType()));
         
         if ((this.expList.size() != typeFun.getParTypes().size()) && (this.idList.size() != typeFun.getParATypes().size())) {
-        	// SISTEMARE IL SYSTEM.OUT
         	System.out.println(new TypeError(super.row, super.column,
         						"[" + this.id + "] has " + (typeFun.getParTypes().size() + typeFun.getParATypes().size()) + " arguments, not " + (this.expList.size() + this.idList.size())).toPrint());
         	System.exit(0);
@@ -147,9 +151,6 @@ public class CallStmt extends Statement {
 		
 		
 		String alcgen = "";
-		System.out.println("PROVA");
-		System.out.println(this.entry.getNestinglevel());
-		System.out.println(this.nestingLevel);
 		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
 			
 			alcgen += "lw $al $al 0\n";
@@ -192,77 +193,59 @@ public class CallStmt extends Statement {
 		return errors;
 	}
 
-	private void substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
-		//EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+	private ArrayList<String> substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
 		EEntryAsset asset;
 		EEntryAsset par;
 		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
+		ArrayList<String> already = new ArrayList<String>();
 		
 		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
 			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
 			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
-			
+			already.add(parAsset.get(pos).getId());
 			par.updateEffectState(asset.getEffectState());
-			//System.out.println(par.getEffectState());
-			asset.updateEffectState("0");
+			asset.updateEffectState("0");	
 		}
 		
+		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
+			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
+			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
+		}
+		
+		
 		HashMap<String, EEntry> map = env0.getAllAsset();
-		for (String id : map.keySet()) {
-			//System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
-			if (((EEntryAsset)(map.get(id))).getEffectState() != "1" && ((EEntryAsset)(map.get(id))).getEffectState() != "0") {
-				/*System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
-				System.out.println(((EEntryAsset)(env.lookUp(id))).getEffectState());*/
+		for (String id : map.keySet()) {			
+			if (!already.contains(id) && !((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
 				((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env.lookUp(id))).getEffectState());
 			}
 		}
-		/*
-		for (String id : map.keySet()) {
-			System.out.println(id);
-			System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
-		}
-		*/
-		return ;
+		return already;
 	}
 	
 	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1) {
-		// CONTROLLO LIQUIDITY E AGGIORNAMENTO ENV
-		//EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
-		//EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
-		
 		int i;
 		String[] split;
 		HashMap<String, EEntry> subs = env0.getAllAsset();
 		HashMap<String, EEntry> map = env1.getAllAsset();
 		for (String id : map.keySet()) {
-			if (((EEntryAsset)(map.get(id))).getEffectState() != "1" && ((EEntryAsset)(map.get(id))).getEffectState() != "0") {
-				
+			if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
 				split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
-				/*for (String s : split) {
-					System.out.println("split");
-					System.out.println(s);
-				}*/
-				
-				//split = ((((EEntryAsset)(map.get(id))).getEffectState()).contains("+") ? (((EEntryAsset)(map.get(id))).getEffectState()).split("+") : new String[] {((EEntryAsset)(map.get(id))).getEffectState()});
-				
+								
 				i = 1;
-				String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
-				while (i < split.length) { // (((EEntryAsset)(map.get(id))).getEffectState()).length() > 1 && 
-					//System.out.println(((EEntryAsset)(subs.get(split[i]))).getEffectState());
-					EEntryAsset.effectStatePlus(res, ((EEntryAsset)(subs.get(split[i]))).getEffectState());
-					//EEntryAsset.effectStatePlus(((EEntryAsset)(subs.get(split[i]))).getEffectState(), (((EEntryAsset)(map.get(id))).getEffectState()).substring((((EEntryAsset)(map.get(id))).getEffectState()).indexOf("+"), (((EEntryAsset)(map.get(id))).getEffectState()).length() - 1));
-					i++;
+				
+				if (!split[0].equals("0") && !split[0].equals("1")) {
+					String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
+					
+					while (i < split.length) { 
+						EEntryAsset.effectStatePlus(res, ((EEntryAsset)(subs.get(split[i]))).getEffectState());
+						i++;
+					}
+					
+					((EEntryAsset)(map.get(id))).updateEffectState(res);
 				}
-				//System.out.println(res);
-				((EEntryAsset)(map.get(id))).updateEffectState(res);
 			}
 		}
-		/*
-		for (String id : map.keySet()) {
-			System.out.println(id);
-			System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
-		}
-		*/
+
 		return ;
 	}
 	
@@ -274,49 +257,47 @@ public class CallStmt extends Statement {
 		
 		EEnvironment clone0 = env0.clone();
 		EEnvironment clone1 = env1.clone();
-		substituteEnv0(env, clone0, clone1);
+		
+		ArrayList<String> already = substituteEnv0(env, clone0, clone1);
 		calculateEnv1(env, clone0, clone1);
 		
-		//HashMap<String, EEntry> mp = clone0.getAllAsset();
 		HashMap<String, EEntry> map = clone1.getAllAsset();
 		for (String id : map.keySet()) {
-			//System.out.println(id);
-			//System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
-			if (env.lookUp(id) != null) {
+			if (!already.contains(id)) {
 				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
 			}
 		}
-		/*HashMap<String, EEntry> as = env.getAllAsset();
-		for (String id : as.keySet()) {
-			System.out.println(id);
-			System.out.println(((EEntryAsset)(env.lookUp(id))).getEffectState());
-		}*/
-		
-		HashMap<String, EEntry> envAsset = env.getAllAsset();
-		for (String id : envAsset.keySet()) {
-			if (clone1.lookUp(id) != null) {
-				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
-				//System.out.println(id);
-				//System.out.println(((EEntryAsset)(envAsset.get(id))).getEffectState());
-			}
-		}
-		
-		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
-		
-		/*for (AssetNode parFor : parAsset) {
-			System.out.println("fdfs");
-			System.out.println(((EEntryAsset)(clone1.lookUp(parFor.getId()))).getEffectState());
-			if (((EEntryAsset)(clone1.lookUp(parFor.getId()))).getEffectState() != "0") {
-				liquidity = false;
-			}
-		}
-		
-		if (!liquidity) {
-			System.out.println(new EffectError(row, column, "Liquidity of function [" + this.id + "] is not respected").toPrint());
-			System.exit(0);
-		}*/
+
+		return ;
+	}
+	
+	public void analyzeEffectFixPoint(EEnvironment env0, EEnvironment env1, EEnvironment env) {
 		
 		return ;
 	}
+	
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		IdNode id;
+		EEntryAsset par;
+		
+		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
+		
+		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();
+		for (int pos = adec.getListAdec().size() - 1; pos >= 0; pos--) {
+			AssetNode a = adec.getListAdec().get(pos);
+			id = this.idList.get(pos);
+			
+			((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState(((EEntryAsset)(env.lookUp(id.getId()))).getEffectState());
+			((EEntryAsset)(env.lookUp(id.getId()))).updateEffectState("0");
+		
+		}
+		
+		env.exitScope();
+		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
+		
+	}
+	
+	
 
 }

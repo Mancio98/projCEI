@@ -47,31 +47,9 @@ public class ExecuteVM {
             String arg = bytecode.getArg();
             
             int offset = bytecode.getOffset();
-            /*
-            if(arg != "")
-            	System.out.println("arg "+arg+" "+registers.get(arg)+"\n");
-            for(String x : args) {
-            	
-            	if(registers.get(x)!= null)
-            		System.out.println("args "+x+" "+registers.get(x)+"\n");
-            }
-            System.out.println("offset "+offset+"\n");*/
             
-            System.out.println("fp "+registers.get("$fp")+"\n");
-            System.out.println("sp "+registers.get("$sp")+"\n");
-            System.out.println("al "+registers.get("$al")+"\n");
-            System.out.println("a0 "+registers.get("$a0")+"\n");
-            System.out.println("ra "+registers.get("$ra")+"\n");
-            
-            
-            for(int i=registers.get("$sp"); i<10000;i++) {
-
-                System.out.println(i + " : " +stack[i]);
-
-            }
             switch (bytecode.getCommand()) {
               case AVMParser.PUSH:
-            	  System.out.println("push");
             	  
             	  registers.put("$sp", registers.get("$sp")-1);
             	  stack[registers.get("$sp")] = registers.get(arg);
@@ -79,17 +57,14 @@ public class ExecuteVM {
             	  
                 break;
               case AVMParser.POP:
-            	  System.out.println("pop");
             	  registers.put("$sp", registers.get("$sp")+1);
             	  
                 break;
               case AVMParser.ADD :
-            	  System.out.println("add");
             	  int sum = registers.get(args[0]) + registers.get(args[1]);
             	  registers.put(args[2],sum); 
                 break;
               case AVMParser.ADDI :
-            	  System.out.println("addi");
             	  int sumi = registers.get(args[1]) + Integer.parseInt(args[2]);
             	  registers.put(args[0], sumi);
                   break;
@@ -100,11 +75,9 @@ public class ExecuteVM {
             	  else
             		  registers.put(args[2], registers.get(args[1]));
             	 
-            	 
                   break;
               case AVMParser.MOVE :
             	  
-            	  System.out.println("move");
 			      registers.put(args[0], registers.get(args[1]));            
                   break;
               case AVMParser.NOT :
@@ -136,40 +109,33 @@ public class ExecuteVM {
             	  registers.put(args[2], div); 
                 break;
               case AVMParser.SUB :
-            	  System.out.println("Faccio Sub");
             	  int sub = registers.get(args[0]) - registers.get(args[1]);
             	  registers.put(args[2], sub); 
   
                 break;
                 
               case AVMParser.STOREW : 
-            	  System.out.println("sw");
                    int possw = registers.get(args[1])+offset;
                    
                    stack[possw] = registers.get(args[0]);
                 break;
                 
               case AVMParser.LOADW : 
-            	  System.out.println("lw");
             	  int poslw = registers.get(args[1])+offset;
             	  
-                  registers.put(args[0], stack[poslw]);
-                  System.out.println(args[0]+": "+registers.get(args[0])+" "+poslw+"\n");       	  
+                  registers.put(args[0], stack[poslw]);      	  
                 break;
                 
               case AVMParser.LOADI :
-            	  System.out.println("li");
             	  registers.put(args[0], Integer.parseInt(args[1]));
   			    break;
   			    
               case AVMParser.BRANCH :
-            	  
-            	  System.out.println("branch");
+            	
             	  ip = Integer.parseInt(arg);
            
                 break;
               case AVMParser.BRANCHEQ :
-            	  System.out.println("beq");
                 if(registers.get(args[0])==registers.get(args[1]))
                 	ip = Integer.parseInt(args[2]);
              
@@ -180,10 +146,7 @@ public class ExecuteVM {
               		ip = Integer.parseInt(args[2]);
                 break;
               case AVMParser.EQUAL :
-            	  System.out.println("eq");
             	  if(registers.get(args[0]) == registers.get(args[1])) {
-            		  
-            		  
             		  registers.put(args[2],1);
             	  }
             	  else
@@ -221,35 +184,34 @@ public class ExecuteVM {
             		  registers.put(args[2],0);
             	  break;
               case AVMParser.JUMPALABEL:
-            	  System.out.println("jal");
             	  registers.put("$ra", ip);
             	  ip = Integer.parseInt(arg);
             	  break;
             	  
               case AVMParser.TRANSFER:
-            	  System.out.println("transf");
             	  stack[hp] += stack[registers.get(arg)];
             	  stack[registers.get(arg)] = 0;
             	  
             	  break;
               case AVMParser.JUMPREG:
-            	  System.out.println("jr");
             	  ip = registers.get(arg);
             	  break;
               case AVMParser.PRINT :
-            	  System.out.println("print");
-            	  System.out.println("print:"+((registers.get("$sp")<MEMSIZE) ? registers.get("$a0"):"Empty stack!"));
+            	  if(offset == 0) {
+            		  if(registers.get("$a0") == 0)
+            			  System.out.println("print: "+((registers.get("$sp")<MEMSIZE) ? "False" :"Empty stack!"));
+            		  else System.out.println("print: "+((registers.get("$sp")<MEMSIZE) ? "True" :"Empty stack!"));
+            	  }
+            	  else System.out.println("print: "+((registers.get("$sp")<MEMSIZE) ? registers.get("$a0"):"Empty stack!"));
+            	  
                 break;
               case AVMParser.HALT :
-            	  System.out.println("halt");
 	             //to print the result 
-	              System.out.println("\n Result: " + stack[hp] + "\n");
+	              System.out.println("\nEsecuzione completata \nTrasferiti " + stack[hp] + "€ sul wallet \n");
 	              return;
              	
             }
-            
-            bytecode.toPrint();
-            System.out.println("-------------------------\n");
+  
     	} 
       }
     } 

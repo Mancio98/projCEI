@@ -85,24 +85,20 @@ public class MoveStmt extends Statement {
 						  alcgenleft+
 						  "li $t1 0\n"+
 						  "sw $t1 $al "+this.left.getSTentry().getOffset()+"\n";
-		
-		/*String movecgen = "move $al $fp\n"+
-							alcgenleft+
-							"addi $al $al "+(this.left.getSTentry().getOffset()+1)+"\n"+
-							"move $a0 $al\n"+
-							"move $al $fp\n"+
-							alcgenright+
-							"addi $al $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
-							"mv $a0 $al\n";*/
-		
-		
-		
-		return movecgen;
+
+			return movecgen;
 	}
 	
 	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
 		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
 		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
 		return ;

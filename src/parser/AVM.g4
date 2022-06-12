@@ -41,7 +41,7 @@ instruction:
 		| 	LABEL COL 															#Label
 		| 	JUMPALABEL label = LABEL 											#JumpAL
 		| 	JUMPREG input1=REGISTER 											#JumpReg
-		| 	PRINT input1 = REGISTER 											#Print
+		| 	PRINT input1 = REGISTER input2 = NUMBER								#Print
 		| 	HALT 																#Halt
 		;
 

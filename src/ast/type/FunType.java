@@ -42,11 +42,7 @@ public class FunType extends Type {
 	public ArrayList<AssetNode> getParAsset() {
 		return this.parAsset;
 	}
-	/*
-	public int getArgumentsNumber() {
-		return this.parTypes.size() + this.parATypes.size();
-	}
-	*/
+	
 	public boolean isSubtype(Type type) {
     	return false;
     }

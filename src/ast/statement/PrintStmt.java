@@ -1,6 +1,10 @@
 package ast.statement;
 
 import java.util.ArrayList;
+
+import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
+
+import ast.type.BoolType;
 import ast.type.Type;
 import ast.type.VoidType;
 import ast.exp.Exp;
@@ -33,19 +37,24 @@ public class PrintStmt extends Statement {
 	@Override
 	public Type typeCheck() {
 		Type typeExp = this.exp.typeCheck();
-		//VEDERE SE VA FATTO CONTROLLO INT OR BOOL
 		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		
-		
-		return this.exp.codeGeneration()+"print $a0\n";
+		if(this.exp.typeCheck() instanceof BoolType) {
+			return this.exp.codeGeneration()+"print $a0 0\n";
+		}
+		else return this.exp.codeGeneration()+"print $a0 1\n";
 	}
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
 		return ;
 	}
 

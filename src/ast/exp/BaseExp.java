@@ -29,13 +29,6 @@ public class BaseExp extends Exp {
     public String toPrint(String indent) {
         return indent + "Exp: Base\n" + this.child.toPrint(indent + "\t");
     }
-    
-    /*
-    @Override
-    public String toPrintInFun(String indent) {
-        return indent + "Exp: Base " + this.child.toPrint(indent);
-    }
-    */
 
 	@Override
 	public String codeGeneration() {

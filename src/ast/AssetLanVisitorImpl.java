@@ -332,9 +332,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
 	public Node visitInitcall(InitcallContext ctx) {			
-			System.out.println(ctx);
-			System.out.println("PROVA");
-			System.out.println(ctx.ID());
 			ArrayList<Exp> exp1 = new ArrayList<Exp>();
 			ArrayList<Exp> exp2 = new ArrayList<Exp>();
 			
@@ -346,14 +343,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 					exp2.add((Exp)visit(ec));
 				}
 			}
-			
-			/*for(ExpContext ec: ctx.exp()) {
-				
-				if(ec.invokingState == 195 || ec.invokingState == 197)
-					exp1.add((Exp)visit(ec));
-				else
-					exp2.add((Exp)visit(ec));
-			}*/
 
 			return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}

@@ -15,6 +15,4 @@ public abstract class Exp extends Node {
     }
 	
 	public abstract int calculateExp();
-	
-	// public abstract String toPrintInFun(String indent);
 }
