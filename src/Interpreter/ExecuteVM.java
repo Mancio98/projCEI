@@ -42,7 +42,7 @@ public class ExecuteVM {
             return;
     	}
     	else {
-    		LineCode bytecode = code.get(ip++); // fetch
+    		LineCode bytecode = code.get(ip++); 
             String[] args = bytecode.getArgs();
             String arg = bytecode.getArg();
             
@@ -197,7 +197,7 @@ public class ExecuteVM {
             	  ip = registers.get(arg);
             	  break;
               case AVMParser.PRINT :
-            	  if(offset == 0) {
+            	  if(Integer.parseInt(args[1]) == 0) {
             		  if(registers.get("$a0") == 0)
             			  System.out.println("print: "+((registers.get("$sp")<MEMSIZE) ? "False" :"Empty stack!"));
             		  else System.out.println("print: "+((registers.get("$sp")<MEMSIZE) ? "True" :"Empty stack!"));
@@ -207,7 +207,7 @@ public class ExecuteVM {
                 break;
               case AVMParser.HALT :
 	             //to print the result 
-	              System.out.println("\nEsecuzione completata \nTrasferiti " + stack[hp] + "€ sul wallet \n");
+	              System.out.println("\nEsecuzione completata \nTrasferiti " + stack[hp] + "crediti sul wallet \n");
 	              return;
              	
             }

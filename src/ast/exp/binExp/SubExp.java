@@ -43,7 +43,7 @@ public class SubExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"sub $t1 $a0 $a0 \n"; // sub LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"sub $t1 $a0 $a0 \n"; 
 		
 		return subCGen;
 	}

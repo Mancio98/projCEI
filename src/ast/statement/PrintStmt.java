@@ -2,11 +2,8 @@ package ast.statement;
 
 import java.util.ArrayList;
 
-import org.antlr.v4.codegen.model.chunk.ThisRulePropertyRef_ctx;
-
 import ast.type.BoolType;
 import ast.type.Type;
-import ast.type.VoidType;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.EEnvironment;

@@ -11,7 +11,6 @@ import util.TypeError;
 import ast.type.AssetType;
 import ast.type.IntType;
 import ast.type.Type;
-import ast.type.VoidType;
 
 //Used for rule like "ID = exp"
 public class AssignmentStmt extends Statement {
@@ -75,7 +74,6 @@ public class AssignmentStmt extends Statement {
 		
 		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
 			alcgen += "lw $al $al 0\n";
-			//alcgen += "move $al $al 0\n";
 		}
 		String asgmcgen = expcgen+
 						"move $al $fp\n"+

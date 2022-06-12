@@ -1,6 +1,0 @@
-// 1x
-/* 2x 
-
-int 12222 sssx = ab;
-void x()[]{  if (x==0) x = 0; else x = 1; }
- f()[];

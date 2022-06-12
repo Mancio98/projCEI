@@ -49,7 +49,7 @@ public class NotEqualExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"ne $t1 $a0 $a0\n"; // ne LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"ne $t1 $a0 $a0\n"; 
 		
 		return neCGen;
 	}

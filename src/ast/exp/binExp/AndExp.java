@@ -44,7 +44,7 @@ public class AndExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"and $t1 $a0 $a0\n"; // and LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"and $t1 $a0 $a0\n"; 
 		
 		return andCGen;
 	}

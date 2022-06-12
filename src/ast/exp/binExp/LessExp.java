@@ -43,7 +43,7 @@ public class LessExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"less $t1 $a0 $a0\n"; // less LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"less $t1 $a0 $a0\n";
 		
 		return lessCGen;
 	}

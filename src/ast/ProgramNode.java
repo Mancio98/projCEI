@@ -20,10 +20,6 @@ public class ProgramNode extends Node {
 	private ArrayList<FunNode> function;
 	private InitcallNode initcall;
 	
-	// VEDERE COME FARE
-	public AssetNode globalAsset;
-	
-	
 	public ProgramNode(int row,int column,ArrayList<FieldNode> field, ArrayList<AssetNode> asset, ArrayList<FunNode> fun, InitcallNode init) {
 		super(row, column);
 		this.field = field;
@@ -125,7 +121,6 @@ public class ProgramNode extends Node {
 		return errors;
 	}
 
-	// FARE I CONTROLLI SULLA LIQUIDITY
 	@Override
 	public void analyzeEffect(EEnvironment env) {
 		env.entryScope();

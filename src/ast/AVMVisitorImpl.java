@@ -48,12 +48,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 
     
 	public ArrayList<LineCode> getCode() {
-		
-		/*
-		for(int i=0; i<code.size(); i++) {
-			System.out.println(i+": ");
-			code.get(i).toPrint();
-		}*/
+
 		return code;
 	}
 
@@ -140,7 +135,7 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitPrint(PrintContext ctx) {
 		
-		code.add(new LineCode(AVMLexer.PRINT,new String[]{ctx.input1.getText()},Integer.parseInt(ctx.input2.getText())));
+		code.add(new LineCode(AVMLexer.PRINT,new String[]{ctx.input1.getText(),ctx.input2.getText()}));
 		return null;
 	}
 

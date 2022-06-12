@@ -43,7 +43,7 @@ public class OrExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"or $t1 $a0 $a0\n"; // or LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"or $t1 $a0 $a0\n";
 		
 		return orCGen;
 	}

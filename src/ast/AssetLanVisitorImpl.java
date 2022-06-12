@@ -41,9 +41,6 @@ import parser.AssetLanParser.BinExpInitContext;
 import parser.AssetLanParser.BaseExpInitContext;
 import parser.AssetLanParser.ValExpInitContext;
 
-
-// DA RIVEDERE QUASI TUTTO PER VEDERE POSSIBILI PROBLEMATICHE (TIPO ORDINE DEI PARAMETRI PASSATI, ETC)
-
 public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
@@ -104,7 +101,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Type) visit(ctx.type()), ctx.ID().getText());
 			}
 			else
-				// CONTROLLARE LA CORRETTEZA
 				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine()), ctx.ID().getText());
 			
 			List<DecContext> decls = ctx.dec();

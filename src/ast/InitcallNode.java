@@ -22,8 +22,6 @@ import ast.type.IntType;
 import ast.type.Type;
 import ast.type.VoidType;
 
-// DA MODIFICARE COME CallNode
-
 ////Used to the management of initial function's call
 public class InitcallNode extends Node {
 	private String id;
@@ -166,10 +164,8 @@ public class InitcallNode extends Node {
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
-						"lw $al $fp 0\n"+ //forse si può fare a meno
-						//"move $al $fp\n"+
+						"lw $al $fp 0\n"+
 						alcgen+
-						//"move $fp $sp\n"+
 						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						
@@ -279,7 +275,6 @@ public class InitcallNode extends Node {
 	
 	public void analyzeLiquidity(EEnvironment env) {
 		Exp exp;
-		EEntryAsset par;
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
 		
 		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();

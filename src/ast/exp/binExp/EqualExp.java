@@ -49,7 +49,7 @@ public class EqualExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"eq $t1 $a0 $a0\n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"eq $t1 $a0 $a0\n";
 		
 		return eqCGen;
 	}

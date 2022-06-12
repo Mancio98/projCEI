@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ast.IdNode;
 import ast.type.Type;
-import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
 import util.EEntryAsset;

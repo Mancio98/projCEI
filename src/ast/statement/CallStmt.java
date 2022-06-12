@@ -2,7 +2,6 @@ package ast.statement;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.regex.Pattern;
 
 import ast.exp.Exp;
@@ -154,15 +153,12 @@ public class CallStmt extends Statement {
 		for(int i=0; i < (this.nestingLevel- this.entry.getNestinglevel()); i++) {
 			
 			alcgen += "lw $al $al 0\n";
-			//alcgen += "move $al $al\n";
 		}
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
 						"lw $al $fp 0\n"+
-						//"move $al $fp\n"+
 						alcgen+
-						//"move $fp $sp\n"+
 						"push $al\n"+
 						"jal "+this.entry.getLabel()+"\n";
 						
@@ -251,7 +247,6 @@ public class CallStmt extends Statement {
 	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		boolean liquidity = true;
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
 		EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
 		
@@ -279,8 +274,6 @@ public class CallStmt extends Statement {
 	@Override
 	public void analyzeLiquidity(EEnvironment env) {
 		IdNode id;
-		EEntryAsset par;
-		
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
 		
 		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();
@@ -295,9 +288,6 @@ public class CallStmt extends Statement {
 		
 		env.exitScope();
 		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
-		
 	}
 	
-	
-
 }

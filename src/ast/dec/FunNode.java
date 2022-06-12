@@ -189,17 +189,17 @@ public class FunNode extends Node {
 		
 		AssetLanlib.putCode(labelfun+":\n"+
 		
-			"move $fp $sp\n"+ 		// setta $fp a $sp				
-			"push $ra\n"+ 		// inserimento return address
-			declbody+		// inserimento dichiarazioni locali
-			stmcode+		// cgen body
+			"move $fp $sp\n"+ 			
+			"push $ra\n"+ 	
+			declbody+	
+			stmcode+		
 			popdeclbody+
-			"lw $ra $sp 0\n"+ 	//lw ra top\n"	 store return address
-			"pop\n"+		//pop di ra
-			"pop\n"+ 		// pop di al
+			"lw $ra $sp 0\n"+ 
+			"pop\n"+
+			"pop\n"+ 
 			popdecl+
-			"lw $fp $sp 0\n"+  //lw fp top
-			"pop\n"+		//pop old fp
+			"lw $fp $sp 0\n"+  
+			"pop\n"+		
 			"jr $ra\n"		
 				
 		);
@@ -248,10 +248,6 @@ public class FunNode extends Node {
 	public void analyzeLiquidity(EEnvironment env) {
 		String[] split;
 		int i;
-		
-		for (String a : env.getAllFun().keySet()) {
-			EEnvironment e3 = ((EEntryFun)(env.getAllFun().get(a))).getEnv1();
-		}
 		
 		EEnvironment e0 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0();
 		EEnvironment env0 = e0.clone();
@@ -351,7 +347,6 @@ boolean isRec = false;
 				isRec = isRec || isRecursive(stmt);
 			}
 		}
-		//System.out.println(isRec);
 		env.entryScope();
 		
 		this.parDec.analyzeEffect(env);
@@ -389,10 +384,6 @@ boolean isRec = false;
 			for(Statement stmt : this.statementList) {
 				stmt.analyzeEffect(env1);
 			}
-		
-			HashMap<String, EEntry> map3 = envFun.getAllAsset();
-			
-			HashMap<String, EEntry> map2 = env1.getAllAsset();
 			
 			env.exitScope();
 			env.addDeclarationFun(id, envFun, env1, this);

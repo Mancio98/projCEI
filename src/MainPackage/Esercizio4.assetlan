@@ -1,0 +1,13 @@
+int a ; 
+asset x ;
+
+void f()[asset u, asset v, asset w]{ 
+	f()[v,w,u] ;
+	u -o x; 
+}
+void main()[asset a, asset b, asset c]{
+	f()[a,b,c] ;
+	transfer x ;
+}
+
+main()[1,2,3]

@@ -298,8 +298,6 @@ public class IteStmt extends Statement {
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env) {
-		// TODO Auto-generated method stub
-		
 	}
 
 }

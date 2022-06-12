@@ -2,7 +2,6 @@ package ast.exp.binExp;
 
 import ast.type.Type;
 import ast.type.BoolType;
-import ast.type.IntType;
 import ast.exp.Exp;
 import util.TypeError;
 
@@ -47,7 +46,7 @@ public class GreaterOrEqualExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"goe $t1 $a0 $a0\n"; // goe LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"goe $t1 $a0 $a0\n";
 		
 		return goeCGen;
 	}
