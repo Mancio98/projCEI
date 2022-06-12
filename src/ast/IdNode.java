@@ -74,7 +74,7 @@ public class IdNode extends Exp {
 		}
 		String idcgen = "move $al $fp\n"+
 						alcgen+
-						"lw $a0 $al "+(this.entry.getOffset()+1)+"\n";
+						"lw $a0 $al "+this.entry.getOffset()+"\n";
 		
 		return idcgen;
 	}

@@ -65,7 +65,7 @@ public class TransferStmt extends Statement {
 		
 		String transfcgen = "move $al $fp\n"+
 				alcgen+
-				"addi $al $al "+(this.id.getSTentry().getOffset()+1)+"\n"+
+				"addi $al $al "+this.id.getSTentry().getOffset()+"\n"+
 				"move $a0 $al\n"+
 				"transf $a0\n";
 		

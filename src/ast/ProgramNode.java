@@ -75,14 +75,18 @@ public class ProgramNode extends Node {
 	public String codeGeneration() {
 		
 		String fieldcgen = "";
+		String popdeclcgen ="";
 		
-		for(int i = this.field.size()-1; i>=0; i--)
+		for(int i = this.field.size()-1; i>=0; i--) {
 			fieldcgen += this.field.get(i).codeGeneration();
-		
+			popdeclcgen += "pop \n";
+		}		
 		String assetcgen = "";
 		
-		for(int i = this.asset.size()-1; i>=0; i--)
+		for(int i = this.asset.size()-1; i>=0; i--) {
 			assetcgen += this.asset.get(i).codeGeneration();
+			popdeclcgen += "pop \n";
+		}
 		
 		String funcgen = "";
 				
@@ -98,6 +102,7 @@ public class ProgramNode extends Node {
 							"li $t1 1\n"+
 							"sub $fp $t1 $fp\n"+
 							initcgen+
+							popdeclcgen+
 							"halt"+
 							AssetLanlib.getCode();
 		

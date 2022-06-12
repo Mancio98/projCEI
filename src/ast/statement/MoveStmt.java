@@ -76,15 +76,15 @@ public class MoveStmt extends Statement {
 						  "push $a0\n"+
 						  "move $al $fp\n"+
 						  alcgenright+
-						  "lw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "lw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
 						  "lw $t1 $sp 0\n"+
 						  "pop\n"+
 						  "add $a0 $t1 $a0\n"+
-						  "sw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "sw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
 						  "move $al $fp\n"+
 						  alcgenleft+
 						  "li $t1 0\n"+
-						  "sw $t1 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
+						  "sw $t1 $al "+this.left.getSTentry().getOffset()+"\n";
 		
 		/*String movecgen = "move $al $fp\n"+
 							alcgenleft+

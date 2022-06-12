@@ -81,7 +81,7 @@ public class AssignmentStmt extends Statement {
 		String asgmcgen = expcgen+
 						"move $al $fp\n"+
 						alcgen+
-						"sw $a0 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
+						"sw $a0 $al "+this.left.getSTentry().getOffset()+"\n";
 		
 		return asgmcgen;
 	}
