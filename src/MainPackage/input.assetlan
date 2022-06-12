@@ -16,7 +16,7 @@ void f(int x)[asset y, asset k]{
 
 f(1)[6, 10];
 
-*/
+
 asset x ;
 void f(int n)[asset u, asset v]{ 
     if (n == 0){ u -o x; print n; } 
@@ -28,7 +28,7 @@ void main()[asset a]{
 }
 main()[1] ;
 
-/*
+
 int a = 1;
 
 void f()[]{
@@ -38,3 +38,20 @@ void f()[]{
 
 f()[];
 */
+
+int a = 1;
+bool r = false;
+asset b;
+
+void f()[asset y]{
+y -o b;
+	if(r==r){
+		print a;
+	}
+	else {
+		print b;
+	}
+
+}
+
+f()[10]

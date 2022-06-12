@@ -8,6 +8,8 @@ import util.SemanticError;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.TypeError;
+import ast.type.AssetType;
+import ast.type.IntType;
 import ast.type.Type;
 import ast.type.VoidType;
 
@@ -46,13 +48,23 @@ public class AssignmentStmt extends Statement {
 		Type typeLeft = this.left.typeCheck();
 		Type typeExp = this.exp.typeCheck();
 
+		if(typeLeft.isSubtype(new IntType()) && typeExp.isSubtype(new AssetType())) {
+			return null;	
+		}
+		
+		if(typeLeft.isSubtype(new AssetType())&& typeExp.isSubtype(new AssetType())) {
+			System.out.println(new TypeError(super.row, super.column, 
+					"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]").toPrint());
+				System.exit(0);
+		}
+		
 		if (!typeLeft.isSubtype(typeExp)) {
 			System.out.println(new TypeError(super.row, super.column, 
 								"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]").toPrint());
             System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override

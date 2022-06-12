@@ -34,7 +34,7 @@ public class PrintStmt extends Statement {
 	public Type typeCheck() {
 		Type typeExp = this.exp.typeCheck();
 		//VEDERE SE VA FATTO CONTROLLO INT OR BOOL
-		return new VoidType();
+		return null;
 	}
 
 	@Override

@@ -158,8 +158,8 @@ public class CallStmt extends Statement {
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
-						//"lw $al $fp 0\n"+
-						"move $al $fp\n"+
+						"lw $al $fp 0\n"+
+						//"move $al $fp\n"+
 						alcgen+
 						//"move $fp $sp\n"+
 						"push $al\n"+

@@ -1,7 +1,9 @@
 package ast.exp.binExp;
 
 import ast.type.Type;
+import ast.type.AssetType;
 import ast.type.BoolType;
+import ast.type.IntType;
 import ast.exp.Exp;
 import util.TypeError;
 
@@ -23,10 +25,16 @@ public class EqualExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
-			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+		if (super.left.typeCheck() instanceof BoolType && (super.right.typeCheck() instanceof AssetType || super.right.typeCheck() instanceof IntType)){
+			//DA CONTROLLARE IL MESSAGGIO
+			System.out.println(new TypeError(super.row, super.column, "expecting two same type").toPrint());
             System.exit(0);
         }
+		else if ((super.left.typeCheck() instanceof AssetType || super.left.typeCheck() instanceof IntType ) && super.right.typeCheck() instanceof BoolType) {
+			//DA CONTROLLARE IL MESSAGGIO
+			System.out.println(new TypeError(super.row, super.column, "expecting two same type").toPrint());
+            System.exit(0);
+		} 
         return new BoolType();
 	}
 

@@ -44,7 +44,7 @@ public class TransferStmt extends Statement {
 			// DA CAMBIARE IL SECONOD PARAMETRO NEL MESSAGGIO, SCRIVERE L'ASSET GLOBALE DEL PROGRAMMA
 			System.exit(0);
 		}
-		return new VoidType();
+		return null;
 	}
 
 	@Override

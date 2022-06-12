@@ -52,7 +52,7 @@ public class MoveStmt extends Statement {
 			System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override

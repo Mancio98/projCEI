@@ -13,7 +13,8 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import Interpreter.ExecuteVM;
 import ast.Node;
-
+import ast.type.Type;
+import ast.type.VoidType;
 import ast.AVMVisitorImpl;
 import ast.AssetLanVisitorImpl;
 import parser.AVMLexer;
@@ -62,17 +63,17 @@ public class Test {
 				if(err.size() > 0) {
 					System.out.println("You had: " +err.size()+" errors:");
 					for(SemanticError e : err)
-						System.out.println("\t" + e);
+						System.out.println("\t" + e.toPrint());
 				} 
 				else {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
 					
-					/*
+					
 					System.out.println("TEST");
 					Type programType = ast.typeCheck();
 					System.out.println("TEST");
-					if (programType instanceof VoidType) {*/
+					if (programType instanceof VoidType) {
 						System.out.println("Il programma � ben tipato");
 						
 						String cgen = ast.codeGeneration();
@@ -99,10 +100,10 @@ public class Test {
 						System.out.println("Starting Virtual Machine...");
 						ExecuteVM vm = new ExecuteVM(visitorAVM.getCode());
 						vm.cpu();
-					/*}
+					}
 					else {
 						System.out.println("ERRORE nel TypeCheck");
-					}*/
+					}
 				}
 			}
 	  }

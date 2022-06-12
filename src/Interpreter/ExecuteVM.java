@@ -127,12 +127,16 @@ public class ExecuteVM {
                 break;
               case AVMParser.DIV :
                 
+            	  if(registers.get(args[1]) == 0) {
+            		  System.out.println("Error : division by zero");
+            		  System.exit(0);
+            	  }
+            	  
             	  int div = registers.get(args[0]) / registers.get(args[1]);
             	  registers.put(args[2], div); 
                 break;
               case AVMParser.SUB :
-               
-            	  System.out.println("faccio sub:");
+            	  System.out.println("Faccio Sub");
             	  int sub = registers.get(args[0]) - registers.get(args[1]);
             	  registers.put(args[2], sub); 
   
@@ -239,7 +243,7 @@ public class ExecuteVM {
               case AVMParser.HALT :
             	  System.out.println("halt");
 	             //to print the result 
-	              System.out.println("\nResult: " + stack[hp] + "\n");
+	              System.out.println("\n Result: " + stack[hp] + "\n");
 	              return;
              	
             }

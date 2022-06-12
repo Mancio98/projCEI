@@ -196,8 +196,8 @@ public class InitcallNode extends Node {
 		
 		String callcgen ="push $fp\n"+
 						paramcgen+
-						//"lw $al $fp 0\n"+ //forse si può fare a meno
-						"move $al $fp\n"+
+						"lw $al $fp 0\n"+ //forse si può fare a meno
+						//"move $al $fp\n"+
 						alcgen+
 						//"move $fp $sp\n"+
 						"push $al\n"+

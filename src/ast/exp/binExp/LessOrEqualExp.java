@@ -2,6 +2,7 @@ package ast.exp.binExp;
 
 import ast.type.Type;
 import ast.type.BoolType;
+import ast.type.IntType;
 import ast.exp.Exp;
 import util.TypeError;
 
@@ -23,8 +24,8 @@ public class LessOrEqualExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
-			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+		if (super.left.typeCheck() instanceof BoolType || super.right.typeCheck() instanceof BoolType) {
+			System.out.println(new TypeError(super.row, super.column, "expecting int or asset value").toPrint());
             System.exit(0);
         }
         return new BoolType();
