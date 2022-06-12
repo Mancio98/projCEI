@@ -236,7 +236,7 @@ public class InitcallNode extends Node {
 		HashMap<String, EEntry> subs = env0.getAllAsset();
 		HashMap<String, EEntry> map = env1.getAllAsset();
 		for (String id : map.keySet()) {
-			if (((EEntryAsset)(map.get(id))).getEffectState() != "1" && ((EEntryAsset)(map.get(id))).getEffectState() != "0") {
+			if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
 				split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
 				//split = ((((EEntryAsset)(map.get(id))).getEffectState()).contains("+") ? (((EEntryAsset)(map.get(id))).getEffectState()).split("+") : new String[] {((EEntryAsset)(map.get(id))).getEffectState()});
 				/*
@@ -271,41 +271,7 @@ public class InitcallNode extends Node {
 	@Override
 	public void analizeEffect(EEnvironment env) {
 		boolean liquidity = true;
-		/*EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
-		EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
-		
-		EEnvironment clone0 = env0.clone();
-		EEnvironment clone1 = env1.clone();
-		substituteEnv0(env, clone0, clone1);
-		calculateEnv1(env, clone0, clone1);
-		
-		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
-		
-		HashMap<String, EEntry> map0 = clone0.getAllAsset();
-		for (String id : map0.keySet()) {
-			if (env.lookUp(id) != null) {
-				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map0.get(id))).getEffectState());
-			}
-		}
-		
-		for (AssetNode parFor : parAsset) {
-			if (((EEntryAsset)(clone1.lookUp(parFor.getId()))).getEffectState() != "0") {
-				liquidity = false;
-			}
-		}
-		
-		HashMap<String, EEntry> map = clone1.getAllAsset();
-		for (String id : map.keySet()) {
-			if (env.lookUp(id) != null) {
-				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
-			}
-		}*/
-		/*System.out.println("INIT");
-		for (String as : env.getAllAsset().keySet()) {
-			System.out.println(as);
-			System.out.println(((EEntryAsset)(env.lookUp(as))).getEffectState());
-		}
-		System.out.println("INIT");*/
+
 		EEnvironment l0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0().clone();
 		EEnvironment l1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1().clone();
 		
@@ -314,8 +280,6 @@ public class InitcallNode extends Node {
 		
 		HashMap<String, EEntry> map = l1.getAllAsset();
 		for (String id : map.keySet()) {
-			//System.out.println(id);
-			//System.out.println(((EEntryAsset)(map.get(id))).getEffectState());
 			if (env.lookUp(id) != null) {
 				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
 			}
@@ -325,15 +289,11 @@ public class InitcallNode extends Node {
 		for (String id : envAsset.keySet()) {
 			if (l1.lookUp(id) != null) {
 				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
-				//System.out.println(id);
-				//System.out.println(((EEntryAsset)(envAsset.get(id))).getEffectState());
 			}
 		}
 		
 		for (String as : env.getAllAsset().keySet()) {
-			System.out.println(as);
-			System.out.println(((EEntryAsset)(env.lookUp(as))).getEffectState());
-			if (((EEntryAsset)(env.lookUp(as))).getEffectState() != "0") {
+			if (!((EEntryAsset)(env.lookUp(as))).getEffectState().equals("0")) {
 				liquidity = false;
 			}
 		}
@@ -347,15 +307,11 @@ public class InitcallNode extends Node {
 	}
 
 	public void analizeLiquidity(EEnvironment env) {
-		/*for (String i : env.getAllFun().keySet()) {
-			System.out.println(i);
-			System.out.println(((EEntryFun)(env.lookUp(i))).getFunNode());
-		}*/
 		Exp exp;
 		EEntryAsset par;
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
-		//ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
 		
+		System.out.println("INITCALL");
 		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();
 		for (int pos = adec.getListAdec().size() - 1; pos >= 0; pos--) {
 			AssetNode a = adec.getListAdec().get(pos);
@@ -367,14 +323,14 @@ public class InitcallNode extends Node {
 			else {
 				((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState("0");
 			}
-			
+			System.out.println(a.getId());
+			System.out.println(((EEntryAsset)(env0.lookUp(a.getId()))).getEffectState());
 		}
-		/*
-		for (String s : env0.getAllAsset().keySet()) {
-			System.out.println(s);
-			System.out.println(((EEntryAsset)(env0.lookUp(s))).getEffectState());
-		}
-		*/
+		System.out.println("INITCALL");
+		
+		// PROBABILMENTE BISOGNA PASSARE L'AMBIENTE INIZIALE DELLA FUNZIONE CHIAMATA
+		// MODIFICANDOLO CON I VALORI CORRETTI
+		System.out.println(this.id);
 		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
 	}
 }

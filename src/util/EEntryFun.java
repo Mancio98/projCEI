@@ -36,8 +36,16 @@ public class EEntryFun extends EEntry {
 		return this.env0;
 	}
 	
+	public EEnvironment setEnv0(EEnvironment env0) {
+		return this.env0 = env0;
+	}
+	
 	public EEnvironment getEnv1() {
 		return this.env1;
+	}
+	
+	public EEnvironment setEnv1(EEnvironment env1) {
+		return this.env1 = env1;
 	}
 	
 	public FunNode setFunNode(FunNode fun) {

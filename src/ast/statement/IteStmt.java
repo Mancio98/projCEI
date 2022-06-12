@@ -1,10 +1,14 @@
 package ast.statement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ast.IdNode;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEntry;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.Environment;
 import util.STEnvironment;
@@ -166,7 +170,7 @@ public class IteStmt extends Statement {
         for(Statement stmt : this.elseStmtList) {
         	stmt.analizeEffect(tmpEnv);
 		}
-        
+
         env.maxModifyEnv(tmpEnv);
         
         return ;
@@ -178,23 +182,116 @@ public class IteStmt extends Statement {
 		return null;
 	}
 
-	@Override
-	public void analizeLiquidity(EEnvironment env) {
+	public void analizeLiquidity(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("ITE");
+		System.out.println(f);
+		for (String s : gEnv.getAllFun().keySet()) {
+			System.out.println(s);
+			System.out.println(((EEntryFun)(gEnv.lookUp(s))));
+		}
+		EEnvironment tmpEnv = env.clone();
+
+        for(Statement stmt : this.thenStmtList) {
+			
+			if (stmt instanceof CallStmt) {
+				if (!((CallStmt)(stmt)).getId().equals(f)) {
+
+					for (String g : env.getAllAsset().keySet()) {
+						((EEntryAsset)(env.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+					}
+
+					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
+				}
+			}
+			else {
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analizeLiquidity(env, gEnv, f);
+				}
+				else {
+					stmt.analizeLiquidity(env);
+				}
+			}
+		}
+        
+        for(Statement stmt : this.elseStmtList) {
+			
+			if (stmt instanceof CallStmt) {
+				if(!((CallStmt)(stmt)).getId().equals(f)) {
+					
+					for (String g : tmpEnv.getAllAsset().keySet()) {
+						((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+					}
+					
+					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
+				}	
+			}
+			else {
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analizeLiquidity(tmpEnv, gEnv, f);
+				}
+				else {
+					stmt.analizeLiquidity(tmpEnv);
+				}
+			}
+		}
+
+        env.maxModifyEnv(tmpEnv);
+        
+        return ;
+	}
+	
+	public void analizeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
 		this.exp.analizeEffect(env);
 		
 		EEnvironment tmpEnv = env.clone();
         
         for(Statement stmt : this.thenStmtList) {
-        	stmt.analizeEffect(env);
+			
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {	// CAMBIARE CON ! equals()
+
+				for (String g : env.getAllAsset().keySet()) {
+					((EEntryAsset)(env.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+				}
+			}
+			else {
+				// DA CAMBIARE
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analizeEffectFixPoint(env, gEnv, f);
+				}
+				else {
+					stmt.analizeEffect(env);
+				}
+			}
 		}
         
         for(Statement stmt : this.elseStmtList) {
-        	stmt.analizeEffect(tmpEnv);
+			
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {
+				
+				for (String g : tmpEnv.getAllAsset().keySet()) {
+					((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+				}
+			}
+			else {
+				// DA CAMBIARE
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analizeEffectFixPoint(tmpEnv, gEnv, f);
+				}
+				else {
+					stmt.analizeEffect(tmpEnv);
+				}
+			}
 		}
         
         env.maxModifyEnv(tmpEnv);
-        
+
         return ;
+	}
+
+	@Override
+	public void analizeLiquidity(EEnvironment env) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

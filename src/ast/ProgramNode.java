@@ -116,35 +116,7 @@ public class ProgramNode extends Node {
 		for(FunNode f : this.function) {
 			f.analizeEffect(env);
 		}
-		/*
-		for (String fu : env.getAllFun().keySet()) {
-			System.out.println(fu);
-			EEnvironment e0 = ((EEntryFun)(env.lookUp(fu))).getEnv0();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e0.lookUp(i))).getEffectState());
-			}
-			EEnvironment e1 = ((EEntryFun)(env.lookUp(fu))).getEnv1();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e1.lookUp(i))).getEffectState());
-			}
-		}
-		*/
-		/*
-		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
 		
-		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
-			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
-			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
-			
-			par.updateEffectState(asset.getEffectState());
-			//System.out.println(par.getEffectState());
-			asset.updateEffectState("0");
-		}
-		
-		((EEntryFun)(env.lookUp(this.initcall.getId()))).getFunNode().analyzeLiquidity(env);
-		*/
 		EEnvironment envLiq = env.clone();
 		for(FunNode f : this.function) {
 			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);

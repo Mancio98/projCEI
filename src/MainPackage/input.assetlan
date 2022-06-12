@@ -1,16 +1,54 @@
+/*
 asset x ;
 asset y ;
 
-void f(int n)[] {
-	int m
-	transfer x ;
-	return ;
+void f()[asset u, asset v]{
+	u -o y ;
+	v -o x ;
 }
 
-void main()[asset u, asset v] {
-	u -o x ;
-	//v -o y ;
-	return ;
+void main()[asset u, asset v]{
+   	u -o x ;
+	v -o y ;
+	f()[x,y] ;
 }
 
 main()[2,3]
+*/
+
+/*
+int a ; 
+
+asset x ;
+
+void f()[asset u, asset v, asset w]{ 
+	
+	f()[v,w,u] ;
+	u -o x ; 
+}
+     
+void main()[asset a, asset b, asset c]{
+	f()[a,b,c] ;
+	transfer x ;
+}
+     
+main()[1,2,3] ;	// il contratto e` liquido
+*/
+
+/*
+asset x ;
+     
+void f()[asset u, asset v]{
+	int n 
+	n = 0 ;
+    if (n == 0) { v -o x ; } 
+	else { u -o x ; v -o x ; }
+}
+     
+void main()[asset a]{
+	f()[a,a] ;	// semantica di f()[a,a] ?
+	transfer x ;
+}
+     
+main()[1] ;
+*/

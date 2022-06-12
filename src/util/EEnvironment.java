@@ -28,9 +28,13 @@ public class EEnvironment extends Environment<EEntry> {
 	public void exitScope() {
 		super.exitScope();
 	}
+	/*
+	public HashMap<String, EEntry> getGlobal() {
+		return symTable.get(symTable.size() - 1);
+	}*/
 	
 	public void addDeclarationAsset(String id, String state) {
-		symTable.get(0).put(id, new EEntryAsset(nestingLevel, state));
+		symTable.get(0).put(id, new EEntryAsset(nestingLevel, new String(state)));
 	}
 	
 	public void addDeclarationFun(String id, EEnvironment env0, EEnvironment env1) {
@@ -78,7 +82,7 @@ public class EEnvironment extends Environment<EEntry> {
 					env.addDeclarationAsset(id, ((EEntryAsset)(entry)).getEffectState());
 				}
 				else {
-					env.addDeclarationFun(id, ((EEntryFun)(entry)).getEnv0(), ((EEntryFun)(entry)).getEnv1());
+					env.addDeclarationFun(id, ((EEntryFun)(entry)).getEnv0().clone(), ((EEntryFun)(entry)).getEnv1().clone());
 				}
 			});
 		});
@@ -105,11 +109,12 @@ public class EEnvironment extends Environment<EEntry> {
 	
 	public static boolean environmentEquality(EEnvironment env1, EEnvironment env2) {		
 		for (String id : env1.getAllAsset().keySet()) {
-			if (env2.lookUp(id) == null || ((EEntryAsset)(env2.lookUp(id))).getEffectState() != ((EEntryAsset)(env1.lookUp(id))).getEffectState()) {
+			/*System.out.println("EQ");
+			System.out.println(id);*/
+			if (env2.lookUp(id) == null || !((EEntryAsset)(env2.lookUp(id))).getEffectState().equals(((EEntryAsset)(env1.lookUp(id))).getEffectState())) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 }

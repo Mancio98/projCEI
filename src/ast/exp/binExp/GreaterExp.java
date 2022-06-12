@@ -2,6 +2,7 @@ package ast.exp.binExp;
 
 import ast.type.Type;
 import ast.type.BoolType;
+import ast.type.IntType;
 import ast.exp.Exp;
 import util.TypeError;
 
@@ -23,7 +24,7 @@ public class GreaterExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
+		if (!(super.left.typeCheck() instanceof IntType && super.right.typeCheck() instanceof IntType)) {
 			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
             System.exit(0);
         }
