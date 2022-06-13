@@ -1,0 +1,13 @@
+int a = true;
+
+int f()[]{
+
+return 6;
+}
+
+void g()[]{
+	a = f()[];
+	print a;
+}
+
+g()[]

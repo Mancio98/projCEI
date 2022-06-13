@@ -229,8 +229,11 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
 	public Node visitAssignment(AssignmentContext ctx) {
-		return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
-	}
+		if(ctx.exp() instanceof CallExpContext) {
+			return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(CallStmt)visit(ctx.exp()));
+		}
+		else return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
+		}
 	
 	@Override
 	public Node visitMove(MoveContext ctx) {

@@ -18,17 +18,30 @@ public class AssignmentStmt extends Statement {
 	private final IdNode left;
 	private final Exp exp;
 	private int nestingLevel;
+	private final CallStmt call;
 
 	
 	public AssignmentStmt(int row,int column,IdNode left, Exp exp) {
 		super(row, column);
 		this.left = left;
 		this.exp = exp;
+		this.call = null;
+	}
+	
+	public AssignmentStmt(int row,int column,IdNode left, CallStmt call) {
+		super(row, column);
+		this.left = left;
+		this.exp = null;
+		this.call = call;
 	}
 	
 	@Override
 	public String toPrint(String indent) {
-		return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
+		if(exp == null) {
+			return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
+					+ "\tRight: \n" + this.call.toPrint(indent + "\t\t");
+		}
+		else return indent + "Assignment:\n" + indent + "\tLeft: \n" + this.left.toPrint(indent + "\t\t") + "\n" + indent
 				+ "\tRight: \n" + this.exp.toPrint(indent + "\t\t");
 	}
 
@@ -36,7 +49,10 @@ public class AssignmentStmt extends Statement {
 	public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
 		ArrayList<SemanticError> errors = new ArrayList<SemanticError>();
 		errors.addAll(this.left.checkSemantics(env));
-		errors.addAll(this.exp.checkSemantics(env));
+		if(exp == null) {
+			errors.addAll(this.call.checkSemantics(env));
+		}
+		else errors.addAll(this.exp.checkSemantics(env));
 		this.nestingLevel = env.getNestingLevel();
 		return errors;
 	}
@@ -44,7 +60,15 @@ public class AssignmentStmt extends Statement {
 	@Override
 	public Type typeCheck() {
 		Type typeLeft = this.left.typeCheck();
-		Type typeExp = this.exp.typeCheck();
+		Type typeExp;
+		
+		if (exp == null) {
+			typeExp = this.call.typeCheck();
+		}
+		else {
+			typeExp = this.exp.typeCheck();
+		}
+		 
 
 		if(typeLeft.isSubtype(new IntType()) && typeExp.isSubtype(new AssetType())) {
 			return null;	
@@ -68,7 +92,14 @@ public class AssignmentStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		
-		String expcgen = this.exp.codeGeneration();
+		String expcgen = "";
+		
+		if (exp == null) {
+			expcgen += this.call.codeGeneration();
+		}
+		else {
+			expcgen += this.exp.codeGeneration();
+		}
 		
 		String alcgen = "";
 		
