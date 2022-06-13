@@ -251,13 +251,6 @@ public class InitcallNode extends Node {
 			}
 		}
 		
-		HashMap<String, EEntry> envAsset = env.getAllAsset();
-		for (String id : envAsset.keySet()) {
-			if (l1.lookUp(id) != null) {
-				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
-			}
-		}
-		
 		for (String as : env.getAllAsset().keySet()) {
 			if (!((EEntryAsset)(env.lookUp(as))).getEffectState().equals("0")) {
 				liquidity = false;

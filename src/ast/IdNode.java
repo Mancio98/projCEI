@@ -87,5 +87,11 @@ public class IdNode extends Exp {
 	public int calculateExp() {
 		return 0;
 	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		return;
+		
+	}
     
 }

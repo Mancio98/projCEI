@@ -56,5 +56,11 @@ public class BoolExp extends Exp {
 		return ;
 	}
 
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		return;
+		
+	}
+
     
 }

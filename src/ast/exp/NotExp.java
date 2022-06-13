@@ -59,6 +59,12 @@ public class NotExp extends Exp {
 		return ;
 	}
 
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		return ;
+		
+	}
+
 
 
 

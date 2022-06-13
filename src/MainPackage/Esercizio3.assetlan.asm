@@ -20,11 +20,22 @@ halt
 function0:
 move $fp $sp
 push $ra
+li $a0 1
+li $t1 1
+beq $a0 $t1 label0
 move $al $fp
 lw $al $al 0
 addi $al $al 3
 move $a0 $al
 transf $a0
+b label1
+label0:
+move $al $fp
+lw $al $al 0
+addi $al $al 3
+move $a0 $al
+transf $a0
+label1:
 lw $ra $sp 0
 pop
 pop

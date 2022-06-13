@@ -1,12 +1,17 @@
 int a = 0;
 
-int f()[]{
+int h()[]{
+return 1;}
 
+int f()[]{
+if(2&&h()[]){
 return 6;
+}
+else {return 10;}
 }
 
 void g()[]{
-	a = f()[];
+	a = 1 - f()[];
 	print a;
 }
 

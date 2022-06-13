@@ -59,6 +59,11 @@ public class NegExp extends Exp {
 		return ;
 	}
 
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		this.child.analyzeLiquidity(env);
+		return ;
+	}
 
 
 	

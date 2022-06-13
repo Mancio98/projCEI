@@ -51,5 +51,11 @@ public class ValExp extends Exp {
 	public void analyzeEffect(EEnvironment env) {
 		return ;
 	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env) {
+		return ;
+		
+	}
     
 }

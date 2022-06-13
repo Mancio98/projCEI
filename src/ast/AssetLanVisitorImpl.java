@@ -229,10 +229,8 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
 	public Node visitAssignment(AssignmentContext ctx) {
-		if(ctx.exp() instanceof CallExpContext) {
-			return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(CallStmt)visit(ctx.exp()));
-		}
-		else return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
+		
+		return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
 		}
 	
 	@Override
@@ -278,6 +276,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 		return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.exp()), thenStatement, elseStatement);
 	}
+	
 
 	@Override
 	public Node visitCall(CallContext ctx) {
@@ -342,8 +341,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 					exp2.add((Exp)visit(ec));
 				}
 			}
-
-			System.out.println(ctx.ID());
+			
 			return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}
 
@@ -422,7 +420,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 			exp.add((Exp) visit(ec));
 		}
 		
-		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
+		return new CallExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
 	}
 	
 	@Override

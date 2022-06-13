@@ -12,3 +12,4 @@ void f(int x)[asset y]{
 }
 
 f(1)[2];
+

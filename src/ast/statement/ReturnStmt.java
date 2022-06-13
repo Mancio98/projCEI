@@ -52,7 +52,10 @@ public class ReturnStmt extends Statement {
 	@Override
 	public String codeGeneration() {
 		
-		return this.exp.codeGeneration();
+		if (this.exp != null) {
+			return this.exp.codeGeneration();}
+		else 
+			return "";
 	}
 
 	@Override

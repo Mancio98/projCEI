@@ -1,6 +1,7 @@
 package ast.exp;
 
 import ast.Node;
+import util.EEnvironment;
 
 //Extension of class Node used for readability
 public abstract class Exp extends Node {
@@ -15,4 +16,6 @@ public abstract class Exp extends Node {
     }
 	
 	public abstract int calculateExp();
+	
+	public abstract void analyzeLiquidity(EEnvironment env);
 }

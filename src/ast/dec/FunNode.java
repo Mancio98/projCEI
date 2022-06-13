@@ -18,6 +18,7 @@ import util.STEnvironment.UndeclaredIdException;
 import util.STentry;
 import util.SemanticError;
 import util.TypeError;
+import ast.statement.AssignmentStmt;
 import ast.statement.CallStmt;
 import ast.statement.IteStmt;
 import ast.statement.Statement;
@@ -306,9 +307,10 @@ public class FunNode extends Node {
 			else if (stmt instanceof IteStmt) {
 				((IteStmt)(stmt)).analyzeLiquidity(env0, env, this.id);
 			}
-			else {
-				stmt.analyzeLiquidity(env0);
+			else if (stmt instanceof AssignmentStmt) {
+				stmt.analyzeLiquidity(env);
 			}
+			else stmt.analyzeLiquidity(env0);
 		}
 	}
 
@@ -447,7 +449,11 @@ boolean isRec = false;
 		}
 		
 	    if (EEnvironment.environmentEquality(env1, tmpEnv0)) {
-	    
+	    	
+	    	for(String id : newEnv0.getAllAsset().keySet() ) {
+	    		((EEntryAsset)newEnv0.getAllAsset().get(id)).updateEffectState(id);
+	    	}
+	    	((EEntryFun)(env.lookUp(this.id))).setEnv0(newEnv0);
 	        return ;
 	    }
 	    

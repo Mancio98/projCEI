@@ -41,5 +41,13 @@ public abstract class BinExp extends Exp {
     	this.right.analyzeEffect(env);
 		return ;
 	}
+    
+    @Override
+    public void analyzeLiquidity(EEnvironment env) {
+    	this.left.analyzeLiquidity(env);
+    	this.right.analyzeLiquidity(env);
+		return ;
+    	
+    }
 	
 }
