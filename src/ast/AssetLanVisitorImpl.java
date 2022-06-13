@@ -343,6 +343,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				}
 			}
 
+			System.out.println(ctx.ID());
 			return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}
 

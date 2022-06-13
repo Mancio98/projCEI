@@ -56,15 +56,16 @@ public class Test {
 	        int lexicalErrors = ((VerboseListener) (lexer.getErrorListeners().get(0))).getNumberErrors();
 	        int syntaxErrors = ((VerboseListener) (parser.getErrorListeners().get(0))).getNumberErrors();
 	        
-	        AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();
-	       
-	        Node ast = visitor.visit(tree);
-	        
 	        //Check number errors 
 			if (lexicalErrors > 0 || syntaxErrors > 0) {
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
+				System.exit(0);
 			} 
 			else {
+				
+				AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();
+		        Node ast = visitor.visit(tree);
+		        
 				STEnvironment env = new STEnvironment();
 				ArrayList<SemanticError> err = ast.checkSemantics(env);
 				if(err.size() > 0) {
@@ -111,6 +112,7 @@ public class Test {
 					}
 					else {
 						System.out.println("ERRORE nel TypeCheck \n");
+						System.exit(0);
 					}
 				}
 			}

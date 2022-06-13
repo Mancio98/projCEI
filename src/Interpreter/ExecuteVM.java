@@ -207,7 +207,7 @@ public class ExecuteVM {
                 break;
               case AVMParser.HALT :
 	             //to print the result 
-	              System.out.println("\nEsecuzione completata \nTrasferiti " + stack[hp] + "crediti sul wallet \n");
+	              System.out.println("\nEsecuzione completata \nTrasferiti " + stack[hp] + " crediti sul wallet \n");
 	              return;
              	
             }

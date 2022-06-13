@@ -1,4 +1,4 @@
-int a = true;
+int a = 0;
 
 int f()[]{
 
@@ -10,4 +10,4 @@ void g()[]{
 	print a;
 }
 
-g()[]
+g()[];
