@@ -373,8 +373,10 @@ boolean isRec = false;
 		mapFun.forEach((id, entry) -> { envFun.addDeclaration(id, entry); });
 		map10.forEach((id, entry) -> { env1.addDeclaration(id, entry); });
 		
-		envFun.entryScope();
-		env1.entryScope();
+		if (!mapFun.isEmpty()) {
+			envFun.entryScope();
+			env1.entryScope();
+		}
 		
 		HashMap<String, EEntry> mapAsset = env.getAllAsset();
 		HashMap<String, EEntry> mapAsset1 = env.getAllAsset();
@@ -404,40 +406,34 @@ boolean isRec = false;
 		return ;
 	}
 	
+	/*
 	private void analyzeEffectFixPoint(EEnvironment env0, EEnvironment env1, EEnvironment env) {
 		EEnvironment newEnv0 = new EEnvironment();
 		newEnv0.entryScope();
 		EEnvironment tmpEnv = env.clone();
 		EEnvironment tmpEnv0 = ((EEntryFun)(tmpEnv.lookUp(this.id))).getEnv0();
+		
+		// Per ogni statement del body della funzione, faccio l'analisi
 		for(Statement stmt : this.statementList) {
-			
+			// Controllo se la chiamata trovata è quella ricorsiva
 			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(this.id)) {
-				ArrayList<AssetNode> aList = this.parAdec.getListAdec();
+				//ArrayList<AssetNode> aList = this.parAdec.getListAdec();
 				ArrayList<IdNode> list = ((CallStmt)(stmt)).getIdList();
-				
+				// Aggiorno gli effetti degli asset in base ai valori di uscita dell'ambiente calcolato precedetemente
 				for (int pos = list.size() - 1; pos >= 0; pos--) {
-					newEnv0.addDeclarationAsset(aList.get(pos).getId(), ((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).getEffectState());
 					((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).updateEffectState("0");
-					
-				}
-				for (String a0 : tmpEnv0.getAllAsset().keySet()) {
-					if (newEnv0.lookUp(a0) == null) {
-						newEnv0.addDeclarationAsset(a0, ((EEntryAsset)(tmpEnv0.getAllAsset().get(a0))).getEffectState());
-						}
-					
 				}
 				
 				HashMap<String, EEntry> map = env.getAllAsset();
 				for (String id : map.keySet()) {
-					((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env1.getAllAsset().get(id))).getEffectState());
+					// VARIABILI GLOBALI
+					if (env.getSymTable().get(env.getNestingLevel()).get(id) != null) {
+						((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env1.getAllAsset().get(id))).getEffectState());
+					}	
 				}
-				
-				for (int pos = list.size() - 1; pos >= 0; pos--) {
-					((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).updateEffectState( ((EEntryAsset)( env1.lookUp( ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec().getListAdec().get(pos).getId() ))).getEffectState() );
-				}
-
 			}
 			else {
+				// Per gli altri statement chiamata la rispettiva analisi da fare
 				if (stmt instanceof IteStmt) {
 					((IteStmt)(stmt)).analyzeEffectFixPoint(tmpEnv0, env, this.id);
 				}
@@ -463,7 +459,64 @@ boolean isRec = false;
         this.analyzeEffectFixPoint(env0, tmpEnv0.clone(), env); 
 		return ;
 	}
-	
+	*/
+	// Analisi del punto fisso
+	private void analyzeEffectFixPoint(EEnvironment env0, EEnvironment env1, EEnvironment env) {
+		EEnvironment newEnv0 = new EEnvironment();
+		newEnv0.entryScope();
+		EEnvironment tmpEnv = env.clone();
+		EEnvironment tmpEnv0 = ((EEntryFun)(tmpEnv.lookUp(this.id))).getEnv0();
+		
+		// Per ogni statement del body della funzione, faccio l'analisi
+		for(Statement stmt : this.statementList) {
+			// Controllo se la chiamata trovata � quella ricorsiva
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(this.id)) {
+				//ArrayList<AssetNode> aList = this.parAdec.getListAdec();
+				ArrayList<IdNode> list = ((CallStmt)(stmt)).getIdList();
+
+				// Aggiorno gli effetti degli asset in base ai valori di uscita dell'ambiente calcolato precedetemente
+				for (int pos = list.size() - 1; pos >= 0; pos--) {
+					((EEntryAsset)(tmpEnv0.getAllAsset().get(list.get(pos).getId()))).updateEffectState("0");
+				}
+				
+				HashMap<String, EEntry> map = env.getAllAsset();
+				for (String id : map.keySet()) {
+					// VARIABILI GLOBALI
+					if (env.getSymTable().get(env.getNestingLevel()).get(id) != null) {
+						((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env1.getAllAsset().get(id))).getEffectState());
+					}	
+				}
+			}
+			else {
+				// Per gli altri statement chiamata la rispettiva analisi da fare
+				if (stmt instanceof IteStmt) {
+					((IteStmt)(stmt)).analyzeEffectFixPoint(tmpEnv0, env, this.id);
+				}
+				else {
+					stmt.analyzeEffect(tmpEnv0);
+				}
+			}
+		}
+		
+		// Confronto tra gli ambienti di uscita, se sono uguali il punto fisso termina
+	    if (EEnvironment.environmentEquality(env1, tmpEnv0)) {
+	    	//SETTAGGIO ENV0 ERRATO
+	    	/*
+	    	 for(String id : newEnv0.getAllAsset().keySet() ) {
+	    		((EEntryAsset)newEnv0.getAllAsset().get(id)).updateEffectState(id);
+	    	}
+	    	((EEntryFun)(env.lookUp(this.id))).setEnv0(newEnv0);
+	    	 */
+	        return ;
+	    }
+	    
+	    // Aggiorno il nuovo ambiente di uscita della funzione con quello calcolato al passo corrente del punto fisso
+	    ((EEntryFun)(env.lookUp(this.id))).setEnv1(tmpEnv0);
+	    
+	    // Altro giro del punto fisso con i valori aggiornati
+        this.analyzeEffectFixPoint(env0, tmpEnv0.clone(), env); 
+		return ;
+	}
 	
 	
 }

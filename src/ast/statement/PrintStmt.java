@@ -47,11 +47,13 @@ public class PrintStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		this.exp.analyzeEffect(env);
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env) {
+		this.exp.analyzeLiquidity(env);
 		return ;
 	}
 

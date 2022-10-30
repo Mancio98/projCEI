@@ -19,6 +19,19 @@ halt
 function0:
 move $fp $sp
 push $ra
+move $al $fp
+lw $a0 $al 1
+push $a0
+move $al $fp
+lw $al $al 0
+lw $a0 $al 2
+lw $t1 $sp 0
+pop
+add $a0 $t1 $a0
+sw $a0 $al 2
+move $al $fp
+li $t1 0
+sw $t1 $al 1
 push $fp
 move $al $fp
 lw $a0 $al 1
@@ -33,19 +46,6 @@ lw $al $fp 0
 lw $al $al 0
 push $al
 jal function0
-move $al $fp
-lw $a0 $al 1
-push $a0
-move $al $fp
-lw $al $al 0
-lw $a0 $al 2
-lw $t1 $sp 0
-pop
-add $a0 $t1 $a0
-sw $a0 $al 2
-move $al $fp
-li $t1 0
-sw $t1 $al 1
 lw $ra $sp 0
 pop
 pop

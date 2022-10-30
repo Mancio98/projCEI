@@ -64,20 +64,21 @@ public class EEnvironment extends Environment<EEntry> {
 		return super.getSymTable();
 	}
 	
+	// Crea una copia dell'ambiente chiamante
 	public EEnvironment clone() {
 		EEnvironment env = new EEnvironment();
 		symTable.forEach( hashmap -> {
-			env.symTable.add(0, new HashMap<String, EEntry>());
+			env.symTable.add(new HashMap<String, EEntry>()); 
+			env.nestingLevel++;
 			hashmap.forEach( (id, entry) -> {
 				if (entry instanceof EEntryAsset) {
-					env.addDeclarationAsset(id, ((EEntryAsset)(entry)).getEffectState());
+					env.symTable.get(env.nestingLevel).put(id, new EEntryAsset(nestingLevel, ((EEntryAsset)(entry)).getEffectState()));
 				}
 				else {
-					env.addDeclarationFun(id, ((EEntryFun)(entry)).getEnv0().clone(), ((EEntryFun)(entry)).getEnv1().clone());
+					env.symTable.get(env.nestingLevel).put(id, new EEntryFun(nestingLevel, ((EEntryFun)(entry)).getEnv0().clone(), ((EEntryFun)(entry)).getEnv1().clone()));
 				}
 			});
 		});
-		
 		return env;
 	}
 	

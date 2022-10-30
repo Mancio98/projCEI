@@ -1,18 +1,14 @@
-int a = 0;
-
-int h()[]{
-return 1;}
-
-int f()[]{
-if(2&&h()[]){
-return 6;
+asset x;
+asset y;
+void f()[asset u,asset v]{
+u -o y;
+v -o x;
 }
-else {return 10;}
+void main()[asset u,asset v]{
+u -o x;
+v -o y;
+f()[x,y];
+transfer x;
+transfer y;
 }
-
-void g()[]{
-	a = 1 - f()[];
-	print a;
-}
-
-g()[];
+main()[2,3];

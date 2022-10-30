@@ -189,59 +189,62 @@ public class CallStmt extends Statement {
 		return errors;
 	}
 
-	private ArrayList<String> substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+	private void substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
 		EEntryAsset asset;
 		EEntryAsset par;
 		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
-		ArrayList<String> already = new ArrayList<String>();
+		// Lista degli ID dei parametri formali della funzione chiamata
+		ArrayList<String> formals = new ArrayList<String>();
 		
+		// Valuto dall'ultimo al primo tutti gli asset passati come parametri attuali alla funzione
 		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
 			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
 			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
-			already.add(parAsset.get(pos).getId());
+			formals.add(parAsset.get(pos).getId());
+			
+			// I parametri formali della funzione vengono riempiti con il valore dei rispettivi parametri attuali, i quali verrano svuotati mano a mano
 			par.updateEffectState(asset.getEffectState());
 			asset.updateEffectState("0");	
 		}
 		
-		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
-			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
-			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
-		}
-		
-		
+		// Aggiorno anche i valori degli asset globali all'interno dell'ambiente di entrata
 		HashMap<String, EEntry> map = env0.getAllAsset();
-		for (String id : map.keySet()) {			
-			if (!already.contains(id) && !((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
+		for (String id : map.keySet()) {	
+			if (!formals.contains(id) && !((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
 				((EEntryAsset)(map.get(id))).updateEffectState(((EEntryAsset)(env.lookUp(id))).getEffectState());
 			}
 		}
-		return already;
+
+		return;
 	}
 	
-	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1, ArrayList<String> param) {
 		int i;
 		String[] split;
 		HashMap<String, EEntry> subs = env0.getAllAsset();
 		HashMap<String, EEntry> map = env1.getAllAsset();
 		for (String id : map.keySet()) {
-			if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
-				split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
-								
-				i = 1;
-				
-				if (!split[0].equals("0") && !split[0].equals("1")) {
-					String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
+			// Controllo se lo stato di un asset dipende da dei termini
+			if (!param.contains(id)) {
+				if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
+					split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
+		
+					i = 1;
 					
-					while (i < split.length) { 
-						EEntryAsset.effectStatePlus(res, ((EEntryAsset)(subs.get(split[i]))).getEffectState());
-						i++;
+					// Se si, allora sostituisco i termini con il valore corrispondente e faccio la somma astratta tra essi
+					if (!split[0].equals("0") && !split[0].equals("1")) {
+						String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
+						
+						while (i < split.length) { 
+							EEntryAsset.effectStatePlus(res, ((EEntryAsset)(subs.get(split[i]))).getEffectState());
+							i++;
+						}
+						
+						((EEntryAsset)(map.get(id))).updateEffectState(res);
 					}
-					
-					((EEntryAsset)(map.get(id))).updateEffectState(res);
 				}
 			}
 		}
-
 		return ;
 	}
 	
@@ -250,19 +253,26 @@ public class CallStmt extends Statement {
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
 		EEnvironment env1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1();
 		
+		ArrayList<String> param = new ArrayList<String>();
+		for (AssetNode an : ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec().getListAdec()) {
+			param.add(an.getId());
+		}
+		
 		EEnvironment clone0 = env0.clone();
 		EEnvironment clone1 = env1.clone();
+
+		// Aggiorno gli ambienti con i valori correnti
+		substituteEnv0(env, clone0, clone1);
+		calculateEnv1(env, clone0, clone1, param);
 		
-		ArrayList<String> already = substituteEnv0(env, clone0, clone1);
-		calculateEnv1(env, clone0, clone1);
-		
+		// Aggiorno l'ambiente principale con i valori degli effetti calcolati nel passaggio precedente
 		HashMap<String, EEntry> map = clone1.getAllAsset();
 		for (String id : map.keySet()) {
-			if (!already.contains(id)) {
+			if (!param.contains(id)) {
 				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
 			}
 		}
-
+		
 		return ;
 	}
 	

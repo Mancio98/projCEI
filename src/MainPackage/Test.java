@@ -30,9 +30,9 @@ public class Test {
 
 	  public static void main(String[] args) throws Exception {
 	      
-		  	String fileName = "src/mainPackage/input.assetlan";
+		  	//String fileName = "src/mainPackage/input.assetlan";
 		  	//String fileName = "src/mainPackage/Esercizio1.assetlan";
-		  	//String fileName = "src/mainPackage/Esercizio2.assetlan";
+		  	String fileName = "src/mainPackage/Esercizio2.assetlan";
 		  	//String fileName = "src/mainPackage/Esercizio3.assetlan";
 		  	//String fileName = "src/mainPackage/Esercizio4.assetlan";
 		  	//String fileName = "src/mainPackage/Esercizio5.assetlan";
