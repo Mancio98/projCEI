@@ -65,7 +65,6 @@ public class IdNode extends Exp {
 	@Override
 	public String codeGeneration() {
 		
-		
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
@@ -76,6 +75,15 @@ public class IdNode extends Exp {
 						"lw $a0 $al "+this.entry.getOffset()+"\n";
 		
 		return idcgen;
+	}
+	
+	public String reachId() {
+		String alcgen = "move $al $fp\n";
+		
+		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
+			alcgen += "lw $al $al 0\n";
+		}
+		return alcgen;
 	}
 
 	@Override

@@ -181,16 +181,20 @@ public class IteStmt extends Statement {
 	public void analyzeEffect(EEnvironment env) {
 		this.exp.analyzeEffect(env);
 		
+		// Creo un ambiente ulteriore per tenere traccia delle modifiche di entrambi rami dell'IF
 		EEnvironment tmpEnv = env.clone();
         
+		// Analizzo tutti gli statement del ramo THEN
         for(Statement stmt : this.thenStmtList) {
         	stmt.analyzeEffect(env);
 		}
         
+        // Analizzo tutti gli statement del ramo ELSE
         for(Statement stmt : this.elseStmtList) {
         	stmt.analyzeEffect(tmpEnv);
 		}
 
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
         env.maxModifyEnv(tmpEnv);
         
         return ;
@@ -199,15 +203,21 @@ public class IteStmt extends Statement {
 	public void analyzeLiquidity(EEnvironment env, EEnvironment gEnv, String f) {
 		EEnvironment tmpEnv = env.clone();
 
+		// Analizzo tutti gli statement del ramo THEN
         for(Statement stmt : this.thenStmtList) {
 			
 			if (stmt instanceof CallStmt) {
+				// Controllo se la chiamata ad una funzione non sia quella ricorsiva
 				if (!((CallStmt)(stmt)).getId().equals(f)) {
-
+					
 					for (String g : env.getAllAsset().keySet()) {
-						((EEntryAsset)(env.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+						// VARIABILI GLOBALI
+						if (gEnv.getSymTable().get(gEnv.getNestingLevel()).get(g) != null) {
+							((EEntryAsset)(env.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+						}
 					}
-
+					
+					// Se � una chiamata ad un'altra funzione allora passo ad analizzare la funzione, solo dopo aver aggiornato gli effetti
 					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
 				}
 			}
@@ -221,15 +231,21 @@ public class IteStmt extends Statement {
 			}
 		}
         
+        // Analizzo tutti gli statement del ramo ELSE
         for(Statement stmt : this.elseStmtList) {
 			
 			if (stmt instanceof CallStmt) {
+				// Controllo se la chiamata ad una funzione non sia quella ricorsiva
 				if(!((CallStmt)(stmt)).getId().equals(f)) {
 					
 					for (String g : tmpEnv.getAllAsset().keySet()) {
-						((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+						// VARIABILI GLOBALI
+						if (gEnv.getSymTable().get(gEnv.getNestingLevel()).get(f) != null) {
+							((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState(((EEntryAsset)(gEnv.lookUp(g))).getEffectState());
+						}
 					}
 					
+					// Se � una chiamata ad un'altra funzione allora passo ad analizzare la funzione, solo dopo aver aggiornato gli effetti
 					((EEntryFun)(gEnv.lookUp(((CallStmt)(stmt)).getId()))).getFunNode().analyzeLiquidity(gEnv);
 				}	
 			}
@@ -243,26 +259,33 @@ public class IteStmt extends Statement {
 			}
 		}
 
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
         env.maxModifyEnv(tmpEnv);
         
         return ;
 	}
 	
+	// Funzione ausiliaria utile per analizzare lo statement IF quando calcoliamo il punto fisso di una funzione ricorsiva
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
 		this.exp.analyzeEffect(env);
 		
 		EEnvironment tmpEnv = env.clone();
         
+		// Analizzo tutti gli statement del ramo THEN
         for(Statement stmt : this.thenStmtList) {
-			
-			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {	// CAMBIARE CON ! equals()
-
+			// Controllo se la chiamata ricorsiva � presente all'interno dell'IF
+			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {
+				
+				// Aggiorno gli effetti degli asset dopo la chiamata ricorsiva
 				for (String g : env.getAllAsset().keySet()) {
-					((EEntryAsset)(env.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+					// VARIABILI GLOBALI
+					if (gEnv.getSymTable().get(gEnv.getNestingLevel()).get(g) != null) {
+						((EEntryAsset)(env.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+					}
 				}
+				
 			}
 			else {
-				// DA CAMBIARE
 				if (stmt instanceof IteStmt) {
 					((IteStmt)(stmt)).analyzeEffectFixPoint(env, gEnv, f);
 				}
@@ -272,16 +295,21 @@ public class IteStmt extends Statement {
 			}
 		}
         
+        // Analizzo tutti gli statement del ramo ELSE
         for(Statement stmt : this.elseStmtList) {
 			
+			// Controllo se la chiamata ricorsiva � presente all'interno dell'IF
 			if (stmt instanceof CallStmt && ((CallStmt)(stmt)).getId().equals(f)) {
 				
+				// Aggiorno gli effetti degli asset dopo la chiamata ricorsiva
 				for (String g : tmpEnv.getAllAsset().keySet()) {
-					((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+					// VARIABILI GLOBALI
+					if (gEnv.getSymTable().get(gEnv.getNestingLevel()).get(g) != null) {
+						((EEntryAsset)(tmpEnv.lookUp(g))).updateEffectState( ((EEntryAsset)( ((EEntryFun)(gEnv.lookUp(f))).getEnv1().getAllAsset().get(g) )).getEffectState());
+					}
 				}
 			}
 			else {
-				// DA CAMBIARE
 				if (stmt instanceof IteStmt) {
 					((IteStmt)(stmt)).analyzeEffectFixPoint(tmpEnv, gEnv, f);
 				}
@@ -291,6 +319,7 @@ public class IteStmt extends Statement {
 			}
 		}
         
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
         env.maxModifyEnv(tmpEnv);
 
         return ;
@@ -301,3 +330,4 @@ public class IteStmt extends Statement {
 	}
 
 }
+

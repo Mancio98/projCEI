@@ -195,6 +195,8 @@ public class InitcallNode extends Node {
 		return errors;
 	}
 
+	// Funzione ausiliaria utile per settare l'ambiente di entrata della funzione, con i valori correnti degli asset
+	// In questo caso facendo una pre-valutazione delle espressioni passate come asset
 	private void substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
 		Exp exp;
 		EEntryAsset par;
@@ -203,7 +205,10 @@ public class InitcallNode extends Node {
 		for (int pos = this.exp2List.size() - 1; pos >= 0; pos--) {
 			exp = this.exp2List.get(pos);
 			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
+			
+			// Pre-valutazione
 			int valExp = exp.calculateExp();
+			// Settaggio degli effetti
 			if (valExp > 0) {
 				par.updateEffectState("1");
 			}
@@ -214,13 +219,17 @@ public class InitcallNode extends Node {
 		return ;
 	}
 	
+	// Funzione ausiliaria che calcola l'ambiente di uscita partendo dall'ambiente di entrata creato precedentemente
 	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1) {
 		int i;
 		String[] split;
 		HashMap<String, EEntry> subs = env0.getAllAsset();
 		HashMap<String, EEntry> map = env1.getAllAsset();
 		for (String id : map.keySet()) {
+			// Controllare se l'effetto dipende da dei termini oppure se � gi� 0 o 1
 			if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
+				
+				// Se dipende da dei termini allora li sostituiamo con il valore corretto e facciamo la somma astratta tra di essi
 				split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
 				i = 1;
 				String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
@@ -234,6 +243,7 @@ public class InitcallNode extends Node {
 		return ;
 	}
 	
+	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
 		boolean liquidity = true;
@@ -241,9 +251,11 @@ public class InitcallNode extends Node {
 		EEnvironment l0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0().clone();
 		EEnvironment l1 = ((EEntryFun)(env.lookUp(this.id))).getEnv1().clone();
 		
+		// Aggiorno gli ambienti con i valori correnti
 		substituteEnv0(env, l0, l1);
 		calculateEnv1(env, l0, l1);
 		
+		// Aggiorno l'ambiente principale con i valori degli effetti calcolati nel passaggio precedente
 		HashMap<String, EEntry> map = l1.getAllAsset();
 		for (String id : map.keySet()) {
 			if (env.lookUp(id) != null) {
@@ -251,12 +263,21 @@ public class InitcallNode extends Node {
 			}
 		}
 		
+		HashMap<String, EEntry> envAsset = env.getAllAsset();
+		for (String id : envAsset.keySet()) {
+			if (l1.lookUp(id) != null) {
+				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
+			}
+		}
+		
+		// Controllo se tutti i valori degli asset sono pari a 0
 		for (String as : env.getAllAsset().keySet()) {
 			if (!((EEntryAsset)(env.lookUp(as))).getEffectState().equals("0")) {
 				liquidity = false;
 			}
 		}
 		
+		// Nel caso di almeno un asset globale che non abbia valore 0, allora il programma non � liquido
 		if (!liquidity) {
 			System.out.println(new EffectError(row, column, "Program is not liquid").toPrint());
 			System.exit(0);
@@ -266,6 +287,7 @@ public class InitcallNode extends Node {
 
 	}
 	
+	// Analisi della liquidit�
 	public void analyzeLiquidity(EEnvironment env) {
 		Exp exp;
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
@@ -274,6 +296,8 @@ public class InitcallNode extends Node {
 		for (int pos = adec.getListAdec().size() - 1; pos >= 0; pos--) {
 			AssetNode a = adec.getListAdec().get(pos);
 			exp = this.exp2List.get(pos);
+			
+			// Pre-valutazione
 			int valExp = exp.calculateExp();
 			if (valExp > 0) {
 				((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState("1");
@@ -281,12 +305,14 @@ public class InitcallNode extends Node {
 			else if(valExp == 0) {
 				((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState("0");
 			}
-			else { 
+			else {
+				// Il caso minore di 0 non dovrebbe mai accadere
 				System.out.println(new EffectError(row, column, "Passing negative value with move is not possibile").toPrint());
 				System.exit(0);
 			}
 		}
 		
+		// Passo a valutare la funzione che � stata chiamata
 		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
 	}
 }

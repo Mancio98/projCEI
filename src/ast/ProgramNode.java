@@ -125,6 +125,7 @@ public class ProgramNode extends Node {
 	public void analyzeEffect(EEnvironment env) {
 		env.entryScope();
 		
+		// Analisi degli effetti delle varie dichiarazioni
 		for(FieldNode f : this.field) {
 			// VEDERE SE SI PUò FARE MEGLIO
 			f.analyzeEffect(env);
@@ -132,6 +133,7 @@ public class ProgramNode extends Node {
 		for(AssetNode a : this.asset) {
 			a.analyzeEffect(env);
 		}
+		// Analisi deglli effetti delle funzioni
 		for(FunNode f : this.function) {
 			f.analyzeEffect(env);
 		}
@@ -140,7 +142,10 @@ public class ProgramNode extends Node {
 		for(FunNode f : this.function) {
 			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);
 		}
+		
+		// Analisi della liquidit� delle sole funzioni che vengono chiamate durante l'esecuzione del programma
 		this.initcall.analyzeLiquidity(envLiq);
+		// Analisi della liquidit� del programma, ovvero degli asset globali del programma
 		this.initcall.analyzeEffect(env);
 		
 		env.exitScope();

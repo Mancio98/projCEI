@@ -135,11 +135,15 @@ public class CallStmt extends Statement {
 	public String codeGeneration() {
 		
 		String paramcgen = "";
+		String emptyAsset = "";
 		
 		for(int i = this.idList.size()-1; i>= 0; i--) {
 			
 			paramcgen += this.idList.get(i).codeGeneration();
 			paramcgen += "push $a0\n";
+			emptyAsset += this.idList.get(i).reachId()+
+					"li $t1 0\n"+
+					"sw $t1 $al "+this.idList.get(i).getSTentry().getOffset()+"\n";
 		}
 		
 		for(int i = this.expList.size()-1; i>= 0; i--) {
@@ -160,6 +164,7 @@ public class CallStmt extends Statement {
 						"lw $al $fp 0\n"+
 						alcgen+
 						"push $al\n"+
+						emptyAsset+
 						"jal "+this.entry.getLabel()+"\n";
 						
 		return callcgen;
@@ -189,7 +194,9 @@ public class CallStmt extends Statement {
 		return errors;
 	}
 
-	private void substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+	// Funzione ausiliaria utile per settare l'ambiente di entrata della funzione, con i valori correnti degli asset
+	private ArrayList<String> substituteEnv0(EEnvironment env, EEnvironment env0, EEnvironment env1) {
+		System.out.println("ENV 0");
 		EEntryAsset asset;
 		EEntryAsset par;
 		ArrayList<AssetNode> parAsset = ((FunType)(this.entry.getType())).getParAsset();
@@ -207,6 +214,13 @@ public class CallStmt extends Statement {
 			asset.updateEffectState("0");	
 		}
 		
+		/*
+		for (int pos = this.idList.size() - 1; pos >= 0; pos--) {
+			asset = (EEntryAsset) env.lookUp(this.idList.get(pos).getId());
+			par = (EEntryAsset) env0.lookUp(parAsset.get(pos).getId());
+		}
+		*/
+		
 		// Aggiorno anche i valori degli asset globali all'interno dell'ambiente di entrata
 		HashMap<String, EEntry> map = env0.getAllAsset();
 		for (String id : map.keySet()) {	
@@ -215,23 +229,42 @@ public class CallStmt extends Statement {
 			}
 		}
 
-		return;
+		env.getSymTable().forEach( hashmap -> {
+			System.out.println();
+			hashmap.forEach( (id, entry) -> {
+				if (entry instanceof EEntryAsset) {
+					System.out.println(id);
+					System.out.println(((EEntryAsset)(entry)).getEffectState());
+				}
+			});
+		});
+		
+		System.out.println("ENV 0");
+		return formals;
 	}
 	
+	// VERIFICARE L'AGGIORNAMENTO DELLE VARIABILI, SOLO QUELLE GLOBALI DOVREBBERO ESSERE AGGIORNATE
+	
+	// Funzione ausiliaria che calcola l'ambiente di uscita partendo dall'ambiente di entrata creato precedentemente
 	private void calculateEnv1(EEnvironment env, EEnvironment env0, EEnvironment env1, ArrayList<String> param) {
+		System.out.println("ENV 1");
 		int i;
 		String[] split;
 		HashMap<String, EEntry> subs = env0.getAllAsset();
 		HashMap<String, EEntry> map = env1.getAllAsset();
+		//System.out.println("CALC");
 		for (String id : map.keySet()) {
+			//System.out.println(env.getSymTable().get(env.getNestingLevel()).get(id));
 			// Controllo se lo stato di un asset dipende da dei termini
 			if (!param.contains(id)) {
+				//System.out.println(id);
 				if (!((EEntryAsset)(map.get(id))).getEffectState().equals("1") && !((EEntryAsset)(map.get(id))).getEffectState().equals("0")) {
 					split = (((EEntryAsset)(map.get(id))).getEffectState()).split(Pattern.quote("+"));
+					//System.out.println(split);
 		
 					i = 1;
 					
-					// Se si, allora sostituisco i termini con il valore corrispondente e faccio la somma astratta tra essi
+					// Se s�, allora sostituisco i termini con il valore corrispondente e faccio la somma astratta tra essi
 					if (!split[0].equals("0") && !split[0].equals("1")) {
 						String res = ((EEntryAsset)(subs.get(split[0]))).getEffectState();
 						
@@ -245,6 +278,17 @@ public class CallStmt extends Statement {
 				}
 			}
 		}
+		env1.getSymTable().forEach( hashmap -> {
+			System.out.println();
+			hashmap.forEach( (id, entry) -> {
+				if (entry instanceof EEntryAsset) {
+					System.out.println(id);
+					System.out.println(((EEntryAsset)(entry)).getEffectState());
+				}
+			});
+		});
+		//System.out.println("CALC");
+		System.out.println("ENV 1");
 		return ;
 	}
 	
@@ -260,9 +304,18 @@ public class CallStmt extends Statement {
 		
 		EEnvironment clone0 = env0.clone();
 		EEnvironment clone1 = env1.clone();
-
+		/*
+		System.out.println("BOH");
+		env.getSymTable().forEach( hashmap -> {
+			System.out.println();
+			hashmap.forEach( (id, entry) -> {
+				System.out.println(id);
+			});
+		});
+		System.out.println("BOH");
+		*/
 		// Aggiorno gli ambienti con i valori correnti
-		substituteEnv0(env, clone0, clone1);
+		ArrayList<String> formals = substituteEnv0(env, clone0, clone1);
 		calculateEnv1(env, clone0, clone1, param);
 		
 		// Aggiorno l'ambiente principale con i valori degli effetti calcolati nel passaggio precedente
@@ -272,6 +325,18 @@ public class CallStmt extends Statement {
 				((EEntryAsset)(env.lookUp(id))).updateEffectState(((EEntryAsset)(map.get(id))).getEffectState());
 			}
 		}
+
+		System.out.println("FUUUUUUUUUUUUUUUUUUUUUN");
+		env.getSymTable().forEach( hashmap -> {
+			System.out.println();
+			
+			hashmap.forEach( (id, entry) -> {
+				System.out.println(id);
+				if (entry instanceof EEntryAsset)
+					System.out.println(((EEntryAsset)(entry)).getEffectState());
+			});
+		});
+		System.out.println("FUUUUUUUUUUUUUUUUUUUUUN");
 		
 		return ;
 	}
@@ -281,23 +346,27 @@ public class CallStmt extends Statement {
 		return ;
 	}
 	
+	// Analisi della liquidit�
 	@Override
 	public void analyzeLiquidity(EEnvironment env) {
 		IdNode id;
 		EEnvironment env0 = ((EEntryFun)(env.lookUp(this.id))).getEnv0();
 		
+		// Valuto dall'ultimo al primo tutti gli asset passati come parametri attuali alla funzione
 		AdecNode adec = ((EEntryFun)(env.lookUp(this.id))).getFunNode().getParAdec();
 		for (int pos = adec.getListAdec().size() - 1; pos >= 0; pos--) {
 			AssetNode a = adec.getListAdec().get(pos);
 			id = this.idList.get(pos);
 			
+			// I parametri formali della funzione vengono riempiti con il valore dei rispettivi parametri attuali, i quali verrano svuotati mano a mano
 			((EEntryAsset)(env0.lookUp(a.getId()))).updateEffectState(((EEntryAsset)(env.lookUp(id.getId()))).getEffectState());
 			((EEntryAsset)(env.lookUp(id.getId()))).updateEffectState("0");
 		
 		}
 		
 		env.exitScope();
+		// Passo a valutare la funzione che � stata chiamata
 		((EEntryFun)(env.lookUp(this.id))).getFunNode().analyzeLiquidity(env);
 	}
-	
 }
+

@@ -10,5 +10,6 @@ v -o y;
 f()[x,y];
 transfer x;
 transfer y;
+transfer x;
 }
 main()[2,3];

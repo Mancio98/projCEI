@@ -16,41 +16,45 @@ public class EEntryAsset extends EEntry {
 		super(nl);
 		this.state = state;
 	}
-	  
-	public void updateEffectState(String state){
-		this.state = state;
-	}
-	  
-	public String getEffectState(){
-		return this.state;
-	}
-	
-	public static String effectStatePlus(String state1, String state2) {
-		String state = state1;
+	 
+		// Aggiorna lo stato dell'asset chiamante
+		public void updateEffectState(String state){
+			this.state = state;
+		}
+		 
+		// Ritorna lo stato dell'asset chiamante
+		public String getEffectState(){
+			return this.state;
+		}
 		
-		String[] split = state2.split(Pattern.quote("+"));
-		int i = 0;
-		boolean exit = false;
-		if (!state.equals("0") && !state.equals("1")) {
-			while (!exit && i < split.length) {
-				if (split[i].equals("1")) {
-					state = "1";
-					exit = true;
-				}
-				else if (!(split[i].equals("0"))) {
-					if (!state.contains(split[i])) {
-						state += "+" + split[i];
+		// Somma i due stati passati secondo l'operazione di somma astratta definita nel PDF
+		public static String effectStatePlus(String state1, String state2) {
+			String state = state1;
+			
+			String[] split = state2.split(Pattern.quote("+"));
+			int i = 0;
+			boolean exit = false;
+			if (!state.equals("0") && !state.equals("1")) {
+				while (!exit && i < split.length) {
+					if (split[i].equals("1")) {
+						state = "1";
+						exit = true;
 					}
+					else if (!(split[i].equals("0"))) {
+						if (!state.contains(split[i])) {
+							state += "+" + split[i];
+						}
+					}
+					i++;
 				}
-				i++;
 			}
+			else if (state.equals("0")) {
+				state = state2;
+			}
+			return state;
 		}
-		else if (state.equals("0")) {
-			state = state2;
-		}
-		return state;
-	}
-	
+		
+		// Ritorna il pi� grande tra i due stati passati in base all'ordinamento definito dal dominio astratto (0 < 1)
 		public static String effectStateMax(String state1, String state2) {
 			String state = "";
 			String[] sstate = state1.split(Pattern.quote("+"));

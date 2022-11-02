@@ -111,7 +111,6 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitLabel(LabelContext ctx) {
 		
-		
 		labelAdd.put(ctx.LABEL().getText(), code.size());
 		return null;
 	}
@@ -119,7 +118,6 @@ public class AVMVisitorImpl extends AVMBaseVisitor<Void> {
 	@Override
 	public Void visitStoreW(StoreWContext ctx) {
 		
-
 		code.add(new LineCode(AVMLexer.STOREW, new String[]{ctx.input1.getText(),ctx.input2.getText()},Integer.parseInt(ctx.offset.getText())));
 		return null;
 	}
