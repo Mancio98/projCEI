@@ -31,13 +31,6 @@ public class BoolExp extends Exp {
     public String toPrint(String indent) {
         return indent + "Bool(" + String.valueOf(this.bool) + ")";
     }
-    
-    /*
-    @Override
-    public String toPrintInFun(String indent) {
-    	return indent + "Bool(" + String.valueOf(this.bool) + ")";
-    }
-    */
 
     @Override
     public ArrayList<SemanticError> checkSemantics(STEnvironment env) {
@@ -60,6 +53,16 @@ public class BoolExp extends Exp {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		return ;
+	}
+
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
 		return ;
 	}
 

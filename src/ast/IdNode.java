@@ -65,18 +65,25 @@ public class IdNode extends Exp {
 	@Override
 	public String codeGeneration() {
 		
-		
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
 			alcgen += "lw $al $al 0\n";
-			//alcgen += "move $al $al\n";
 		}
 		String idcgen = "move $al $fp\n"+
 						alcgen+
-						"lw $a0 $al "+(this.entry.getOffset()+1)+"\n";
+						"lw $a0 $al "+this.entry.getOffset()+"\n";
 		
 		return idcgen;
+	}
+	
+	public String reachId() {
+		String alcgen = "move $al $fp\n";
+		
+		for(int i=0; i < (this.nestingLevel - this.entry.getNestinglevel()); i++) {
+			alcgen += "lw $al $al 0\n";
+		}
+		return alcgen;
 	}
 
 	@Override
@@ -87,6 +94,17 @@ public class IdNode extends Exp {
 	@Override
 	public int calculateExp() {
 		return 0;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		return;
+		
+	}
+
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		return ;
 	}
     
 }

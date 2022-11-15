@@ -20,13 +20,6 @@ public class AndExp extends BinExp {
     public String toPrint(String indent) {
         return indent + "Exp: And\n" + indent + "\tLeft:\n" + super.left.toPrint(indent + "\t\t") + "\n" + indent + "\tRight:\n" + super.right.toPrint(indent + "\t\t");
     }
-    
-    /*
-    @Override
-    public String toPrintInFun(String indent) {
-    	return indent + "Exp: And " + indent + " Left: " + super.left.toPrint(indent) + indent + " Right: " + super.right.toPrint(indent);
-    }
-    */
 
 	@Override
 	public Type typeCheck() {
@@ -51,7 +44,7 @@ public class AndExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"and $t1 $a0 $a0\n"; // and LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"and $t1 $a0 $a0\n"; 
 		
 		return andCGen;
 	}

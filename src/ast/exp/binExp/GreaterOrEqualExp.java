@@ -24,7 +24,7 @@ public class GreaterOrEqualExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
+		if (super.left.typeCheck() instanceof BoolType || super.right.typeCheck() instanceof BoolType) {
 			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
             System.exit(0);
         }
@@ -46,7 +46,7 @@ public class GreaterOrEqualExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"goe $t1 $a0 $a0\n"; // goe LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"goe $t1 $a0 $a0\n";
 		
 		return goeCGen;
 	}

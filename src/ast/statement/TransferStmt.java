@@ -41,10 +41,9 @@ public class TransferStmt extends Statement {
 		if (!(typeId != null && this.id.getSTentry().getType() instanceof AssetType)) {
 			System.out.println(new TypeError(super.row, super.column,
 								"Cannot transfer from [" + typeId.getType() + "] to [" + typeId.getType() + "]").toPrint());
-			// DA CAMBIARE IL SECONOD PARAMETRO NEL MESSAGGIO, SCRIVERE L'ASSET GLOBALE DEL PROGRAMMA
 			System.exit(0);
 		}
-		return new VoidType();
+		return null;
 	}
 
 	@Override
@@ -55,17 +54,10 @@ public class TransferStmt extends Statement {
 		for(int i=0; i < (this.id.getNestingLevel() - this.id.getSTentry().getNestinglevel()); i++) {
 			alcgen += "lw $al $al 0\n";
 		}
-		/*
-		String transfcgen = "move $al $fp\n"+
-						alcgen+
-						"lw $a0 $al "+(this.id.getSTentry().getOffset()+1)+"\n"+
-						"transf $a0\n"+
-						"li $t1 0\n"+
-						"sw $t1 $al "+(this.id.getSTentry().getOffset()+1)+"\n";*/
 		
 		String transfcgen = "move $al $fp\n"+
 				alcgen+
-				"addi $al $al "+(this.id.getSTentry().getOffset()+1)+"\n"+
+				"addi $al $al "+this.id.getSTentry().getOffset()+"\n"+
 				"move $a0 $al\n"+
 				"transf $a0\n";
 		
@@ -74,6 +66,21 @@ public class TransferStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("TRANSFER");
+		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
+		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("TRANSFER");
+		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
+		return ;
+	}
+
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("TRANSFER FIX POINT");
 		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
 		return ;
 	}

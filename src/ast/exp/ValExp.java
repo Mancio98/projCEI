@@ -19,7 +19,7 @@ public class ValExp extends Exp {
     }
 
     public int getValue() {
-        return value;
+        return this.value;
     }
     
     public int calculateExp() {
@@ -47,9 +47,20 @@ public class ValExp extends Exp {
 		return "li $a0 "+this.value+"\n";
 	}
 
-	   @Override
-		public void analyzeEffect(EEnvironment env) {
-			return ;
-		}
+	@Override
+	public void analyzeEffect(EEnvironment env) {
+		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		return ;
+		
+	}
+
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		return ;		
+	}
     
 }

@@ -2,9 +2,13 @@ package ast.statement;
 
 import java.util.ArrayList;
 
+import ast.IdNode;
+import ast.exp.CallExp;
 import ast.exp.Exp;
 import util.SemanticError;
 import util.AssetLanlib;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import ast.type.Type;
@@ -17,13 +21,6 @@ public class IteStmt extends Statement {
 
 	private final Exp exp;
 	private ArrayList<Statement> thenStmtList, elseStmtList;
-
-	/*public IteStmt(int row,int column,Exp exp, Statement thenStmt) {
-		super(row, column);
-		this.exp = exp;
-		this.thenStmt = thenStmt;
-		this.elseStmt = null;
-	}*/
 	
 	public IteStmt(int row,int column,Exp exp, ArrayList<Statement> thenStmt, ArrayList<Statement> elseStmt) {
 		super(row, column);
@@ -32,6 +29,10 @@ public class IteStmt extends Statement {
 		this.elseStmtList = elseStmt;
 	}
 
+	public Exp getExp() {
+		return this.exp;
+	}
+	
 	public ArrayList<Statement> getThenStmt() {
 		return this.thenStmtList;
 	}
@@ -57,10 +58,6 @@ public class IteStmt extends Statement {
 		}
 		
 		return s;
-        /*return indent + "If:\n" + this.exp.toPrint(indent + "\t") + "\n" + indent + "Then:\n"
-                + this.thenStmtList.toPrint(indent + "\t") 
-                + (this.elseStmtList != null ? "\n" + indent + "Else:\n" + this.elseStmtList.toPrint(indent+ "\t") : "");
-        */
     }
 		
 	@Override
@@ -184,44 +181,108 @@ public class IteStmt extends Statement {
 				endlabel+":\n";
 
 		return ifcgen;
-		/*
-		
-		String truelabel = AssetLanlib.freshLabel();
-
-        String endlabel = AssetLanlib.freshLabel();
-
-        
-
-        String ifcgen = this.exp.codeGeneration()+
-                        "li $t1 1\n"+
-                        "beq $a0 $t1 "+truelabel+"\n"+
-                        this.elseStmt.codeGeneration()+
-                        "b "+endlabel+"\n"+
-                        truelabel+":\n"+
-                        this.thenStmt.codeGeneration()+
-                        endlabel+":\n";
-
-        return ifcgen;
-        */
 	}
 
+	// Funzione di analisi degli effetti base, ovvero senza possibile chiamata ricorsiva in uno dei rami
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("IF");
+		// Analisi della guardia dell'IF
 		this.exp.analyzeEffect(env);
 		
+		// Creo un ambiente ulteriore per tenere traccia delle modifiche di entrambi rami dell'IF
 		EEnvironment tmpEnv = env.clone();
-        
+		
+		for (String fun : env.getAllFun().keySet()) {
+			((EEntryFun)(tmpEnv.lookUp(fun))).setFunNode(((EEntryFun)(env.lookUp(fun))).getFunNode());
+		}
+
+		System.out.println("THEN");
+		// Analizzo tutti gli statement del ramo THEN
         for(Statement stmt : this.thenStmtList) {
         	stmt.analyzeEffect(env);
 		}
         
+        System.out.println("ELSE");
+        // Analizzo tutti gli statement del ramo ELSE
         for(Statement stmt : this.elseStmtList) {
         	stmt.analyzeEffect(tmpEnv);
 		}
-        
+
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
         env.maxModifyEnv(tmpEnv);
         
         return ;
 	}
-
+	
+	// COME IN FunNode VERIFICARE IL CASO DELLA CHIAMATA RICORSIVA
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("IF");
+		// Analizzo l'espressione nella guardia dell'IF
+		this.exp.analyzeLiquidity(env, f);
+		
+		EEnvironment tmpEnv = env.clone();
+		for (String fun : env.getAllFun().keySet()) {
+			((EEntryFun)(tmpEnv.lookUp(fun))).setFunNode(((EEntryFun)(env.lookUp(fun))).getFunNode());
+		}
+		
+		System.out.println("THEN");
+		// Analizzo tutti gli statement del ramo THEN
+		for(Statement stmt : this.thenStmtList) {
+			stmt.analyzeLiquidity(env, f);
+		}
+		
+		System.out.println("ELSE");
+        // Analizzo tutti gli statement del ramo ELSE
+		for(Statement stmt : this.elseStmtList) {
+			stmt.analyzeLiquidity(tmpEnv, f);
+		}
+				
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
+        env.maxModifyEnv(tmpEnv);
+        
+        return ;
+	}
+	
+	// Funzione ausiliaria utile per analizzare lo statement IF quando calcoliamo il punto fisso di una funzione ricorsiva
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("IF FIX POINT");
+		// Analisi della guardia dell'IF
+		this.exp.analyzeEffectFixPoint(env, gEnv, f);
+		
+		EEnvironment tmpEnv = env.clone();
+		//EEnvironment tmpGEnv = gEnv.clone();
+		
+		System.out.println("THEN FIX POINT");
+		// Analizzo tutti gli statement del ramo THEN
+        for(Statement stmt : this.thenStmtList) {
+        	stmt.analyzeEffectFixPoint(env, gEnv, f);
+		}
+        
+        System.out.println("ELSE FIX POINT");
+        // Analizzo tutti gli statement del ramo ELSE
+        for(Statement stmt : this.elseStmtList) {
+        	stmt.analyzeEffectFixPoint(tmpEnv, gEnv, f);
+		}
+        
+        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
+        env.maxModifyEnv(tmpEnv);
+        /*
+        System.out.println("MAX MODIFY ENV");
+        env.getSymTable().forEach(  hashmap -> {
+			System.out.println();
+			hashmap.forEach( (id, entry) -> {
+				if (entry instanceof EEntryAsset) {
+					System.out.println(id);
+					System.out.println(((EEntryAsset)(entry)).getEffectState());
+				}
+			});
+		});
+        System.out.println("MAX MODIFY ENV");
+		*/
+        return ;
+	}
 }
+

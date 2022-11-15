@@ -1,10 +1,15 @@
 package ast.statement;
 
 import java.util.ArrayList;
+
+import ast.type.BoolType;
 import ast.type.Type;
-import ast.type.VoidType;
+import ast.IdNode;
+import ast.exp.CallExp;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 
@@ -18,6 +23,18 @@ public class PrintStmt extends Statement {
 		this.exp = exp;
 	}
 
+	public boolean isCallExp() {
+		boolean call = false;
+		if (this.exp instanceof CallExp) {
+			call = true;
+		}
+		return call;
+	}
+	
+	public Exp getExp() {
+		return this.exp;
+	}
+	
 	@Override
 	public String toPrint(String indent) {
 		return indent + "Print:\n" + this.exp.toPrint(indent + "\t");
@@ -33,21 +50,37 @@ public class PrintStmt extends Statement {
 	@Override
 	public Type typeCheck() {
 		Type typeExp = this.exp.typeCheck();
-		//VEDERE SE VA FATTO CONTROLLO INT OR BOOL
-		return new VoidType();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
-		
-		
-		return this.exp.codeGeneration()+"print $a0\n";
+		if(this.exp.typeCheck() instanceof BoolType) {
+			return this.exp.codeGeneration()+"print $a0 0\n";
+		}
+		else return this.exp.codeGeneration()+"print $a0 1\n";
 	}
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("PRINT");
+		this.exp.analyzeEffect(env);
 		return ;
 	}
 
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("PRINT");
+		this.exp.analyzeLiquidity(env, f);
+		
+		return ;
+	}
 
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("PRINT FIX POINT");
+		this.exp.analyzeEffectFixPoint(env, gEnv, f);
+		
+		return ;
+	}
 }

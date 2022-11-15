@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 import ast.IdNode;
 import ast.type.Type;
-import ast.type.VoidType;
 import ast.type.AssetType;
 import util.SemanticError;
 import util.EEntryAsset;
@@ -52,7 +51,7 @@ public class MoveStmt extends Statement {
 			System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override
@@ -76,36 +75,42 @@ public class MoveStmt extends Statement {
 						  "push $a0\n"+
 						  "move $al $fp\n"+
 						  alcgenright+
-						  "lw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "lw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
 						  "lw $t1 $sp 0\n"+
 						  "pop\n"+
 						  "add $a0 $t1 $a0\n"+
-						  "sw $a0 $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
+						  "sw $a0 $al "+this.right.getSTentry().getOffset()+"\n"+
 						  "move $al $fp\n"+
 						  alcgenleft+
 						  "li $t1 0\n"+
-						  "sw $t1 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
-		
-		/*String movecgen = "move $al $fp\n"+
-							alcgenleft+
-							"addi $al $al "+(this.left.getSTentry().getOffset()+1)+"\n"+
-							"move $a0 $al\n"+
-							"move $al $fp\n"+
-							alcgenright+
-							"addi $al $al "+(this.right.getSTentry().getOffset()+1)+"\n"+
-							"mv $a0 $al\n";*/
-		
-		
-		
-		return movecgen;
+						  "sw $t1 $al "+this.left.getSTentry().getOffset()+"\n";
+
+			return movecgen;
 	}
 	
 	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("MOVE");
 		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
 		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
 		return ;
+	}
+
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("MOVE");
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;
+	}
+
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("MOVE FIX POINT");
+		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
+		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
+		return ;		
 	}
 
 }

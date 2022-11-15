@@ -43,7 +43,7 @@ public class SumExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"add $t1 $a0 $a0\n"; // sum LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"add $t1 $a0 $a0\n";
 		
 		return sumCGen;
 	}

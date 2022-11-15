@@ -1,7 +1,9 @@
 package ast.exp.binExp;
 
 import ast.type.Type;
+import ast.type.AssetType;
 import ast.type.BoolType;
+import ast.type.IntType;
 import ast.exp.Exp;
 import util.TypeError;
 
@@ -23,10 +25,14 @@ public class EqualExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
-			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+		if (super.left.typeCheck() instanceof BoolType && (super.right.typeCheck() instanceof AssetType || super.right.typeCheck() instanceof IntType)){
+			System.out.println(new TypeError(super.row, super.column, "comparison between this two type is not possible").toPrint());
             System.exit(0);
         }
+		else if ((super.left.typeCheck() instanceof AssetType || super.left.typeCheck() instanceof IntType ) && super.right.typeCheck() instanceof BoolType) {
+			System.out.println(new TypeError(super.row, super.column, "comparison between this two type is not possible").toPrint());
+            System.exit(0);
+		} 
         return new BoolType();
 	}
 
@@ -43,7 +49,7 @@ public class EqualExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"eq $t1 $a0 $a0\n"; // eq LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"eq $t1 $a0 $a0\n";
 		
 		return eqCGen;
 	}

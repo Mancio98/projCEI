@@ -23,8 +23,8 @@ public class LessExp extends BinExp {
 
 	@Override
 	public Type typeCheck() {
-		if (!(super.left.typeCheck() instanceof BoolType && super.right.typeCheck() instanceof BoolType)) {
-			System.out.println(new TypeError(super.row, super.column, "expecting a bool value").toPrint());
+		if (super.left.typeCheck() instanceof BoolType || super.right.typeCheck() instanceof BoolType) {
+			System.out.println(new TypeError(super.row, super.column, "expecting int or asset value").toPrint());
             System.exit(0);
         }
         return new BoolType();
@@ -43,7 +43,7 @@ public class LessExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"less $t1 $a0 $a0\n"; // less LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"less $t1 $a0 $a0\n";
 		
 		return lessCGen;
 	}

@@ -7,6 +7,8 @@ import ast.dec.FieldNode;
 import ast.dec.FunNode;
 import ast.type.Type;
 import util.AssetLanlib;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
@@ -18,10 +20,6 @@ public class ProgramNode extends Node {
 	private ArrayList<AssetNode> asset;
 	private ArrayList<FunNode> function;
 	private InitcallNode initcall;
-	
-	// VEDERE COME FARE
-	public AssetNode globalAsset;
-	
 	
 	public ProgramNode(int row,int column,ArrayList<FieldNode> field, ArrayList<AssetNode> asset, ArrayList<FunNode> fun, InitcallNode init) {
 		super(row, column);
@@ -54,18 +52,14 @@ public class ProgramNode extends Node {
 	@Override
 	public Type typeCheck() {
 		for(FieldNode f : this.field) {
-			System.out.println("D");
 			f.typeCheck();
 		}
 		for(AssetNode a : this.asset) {
-			System.out.println("A");
 			a.typeCheck();
 		}
 		for(FunNode f : this.function) {
-			System.out.println("F");
 			f.typeCheck();
 		}
-		System.out.println("P");
 		Type programType = this.initcall.typeCheck();
 		return programType;
 	}
@@ -75,14 +69,18 @@ public class ProgramNode extends Node {
 	public String codeGeneration() {
 		
 		String fieldcgen = "";
+		String popdeclcgen ="";
 		
-		for(int i = this.field.size()-1; i>=0; i--)
+		for(int i = this.field.size()-1; i>=0; i--) {
 			fieldcgen += this.field.get(i).codeGeneration();
-		
+			popdeclcgen += "pop \n";
+		}		
 		String assetcgen = "";
 		
-		for(int i = this.asset.size()-1; i>=0; i--)
+		for(int i = this.asset.size()-1; i>=0; i--) {
 			assetcgen += this.asset.get(i).codeGeneration();
+			popdeclcgen += "pop \n";
+		}
 		
 		String funcgen = "";
 				
@@ -98,6 +96,7 @@ public class ProgramNode extends Node {
 							"li $t1 1\n"+
 							"sub $fp $t1 $fp\n"+
 							initcgen+
+							popdeclcgen+
 							"halt"+
 							AssetLanlib.getCode();
 		
@@ -123,39 +122,68 @@ public class ProgramNode extends Node {
 		return errors;
 	}
 
-	// FARE I CONTROLLI SULLA LIQUIDITY
 	@Override
 	public void analyzeEffect(EEnvironment env) {
 		env.entryScope();
 		
+		// Analisi degli effetti delle varie dichiarazioni
 		for(FieldNode f : this.field) {
-			// VEDERE SE SI PUÃ² FARE MEGLIO
 			f.analyzeEffect(env);
 		}
+		// Analisi degli effetti delle varie dichiarazioni di asset
 		for(AssetNode a : this.asset) {
 			a.analyzeEffect(env);
 		}
+		
+		// Analisi deglli effetti delle funzioni
 		for(FunNode f : this.function) {
+			System.out.println("------------------------------------------");
+			System.out.println("FUN " + f.getId());
 			f.analyzeEffect(env);
+			/*
+			((EEntryFun)(env.lookUp(f.getId()))).getEnv0().getSymTable().forEach(  hashmap -> {
+				System.out.println();
+				hashmap.forEach( (id, entry) -> {
+					if (entry instanceof EEntryAsset) {
+						System.out.println(id);
+						System.out.println(((EEntryAsset)(entry)).getEffectState());
+					}
+				});
+			});
+			*/
+			((EEntryFun)(env.lookUp(f.getId()))).getEnv1().getSymTable().forEach(  hashmap -> {
+				System.out.println();
+				hashmap.forEach( (id, entry) -> {
+					if (entry instanceof EEntryAsset) {
+						System.out.println(id);
+						System.out.println(((EEntryAsset)(entry)).getEffectState());
+					}
+				});
+			});
+			
+			System.out.println("FUN " + f.getId());
+			System.out.println("------------------------------------------");
 		}
 		/*
-		for (String fu : env.getAllFun().keySet()) {
-			System.out.println(fu);
-			EEnvironment e0 = ((EEntryFun)(env.lookUp(fu))).getEnv0();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e0.lookUp(i))).getEffectState());
-			}
-			EEnvironment e1 = ((EEntryFun)(env.lookUp(fu))).getEnv1();
-			for (String i : e0.getAllAsset().keySet()) {
-				System.out.println(i);
-				System.out.println(((EEntryAsset)(e1.lookUp(i))).getEffectState());
-			}
+		// Setto tutti gli asset globali con effetto 0, questo perchè nel caso di fixpoint vengono cambiati i valori
+		for(String id : env.getAllAsset().keySet()) {
+			((EEntryAsset)(env.lookUp(id))).updateEffectState("0");
 		}
 		*/
-		this.initcall.getId();
+		// Per ogni funzione del programma, passo all'entry il nodo della funzione (servirà durante l'analisi della liquidità)
+		EEnvironment envLiq = env.clone();
+		for(FunNode f : this.function) {
+			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);
+		}
 		
+		
+		System.out.println("LIQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
+		// Analisi della liquiditï¿½ delle sole funzioni che vengono chiamate durante l'esecuzione del programma
+		this.initcall.analyzeLiquidity(envLiq);
+		
+		// Analisi della liquiditï¿½ del programma, ovvero degli asset globali del programma
 		this.initcall.analyzeEffect(env);
+		System.out.println("LIQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
 		
 		env.exitScope();
 		

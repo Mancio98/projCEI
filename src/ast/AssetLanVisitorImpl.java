@@ -41,9 +41,6 @@ import parser.AssetLanParser.BinExpInitContext;
 import parser.AssetLanParser.BaseExpInitContext;
 import parser.AssetLanParser.ValExpInitContext;
 
-
-// DA RIVEDERE QUASI TUTTO PER VEDERE POSSIBILI PROBLEMATICHE (TIPO ORDINE DEI PARAMETRI PASSATI, ETC)
-
 public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
@@ -104,7 +101,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(),(Type) visit(ctx.type()), ctx.ID().getText());
 			}
 			else
-				// CONTROLLARE LA CORRETTEZA
 				res = new FunNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), new VoidType(ctx.start.getLine(), ctx.start.getCharPositionInLine()), ctx.ID().getText());
 			
 			List<DecContext> decls = ctx.dec();
@@ -233,8 +229,9 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
 	public Node visitAssignment(AssignmentContext ctx) {
+		
 		return new AssignmentStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(),new IdNode(ctx.ID().getSymbol().getLine(), ctx.ID().getSymbol().getCharPositionInLine(),ctx.ID().getText()),(Exp)visit(ctx.exp()));
-	}
+		}
 	
 	@Override
 	public Node visitMove(MoveContext ctx) {
@@ -279,6 +276,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 		return new IteStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), (Exp)visit(ctx.exp()), thenStatement, elseStatement);
 	}
+	
 
 	@Override
 	public Node visitCall(CallContext ctx) {
@@ -332,9 +330,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 	
 	@Override
 	public Node visitInitcall(InitcallContext ctx) {			
-			System.out.println(ctx);
-			System.out.println("PROVA");
-			System.out.println(ctx.ID());
 			ArrayList<Exp> exp1 = new ArrayList<Exp>();
 			ArrayList<Exp> exp2 = new ArrayList<Exp>();
 			
@@ -347,14 +342,6 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 				}
 			}
 			
-			/*for(ExpContext ec: ctx.exp()) {
-				
-				if(ec.invokingState == 195 || ec.invokingState == 197)
-					exp1.add((Exp)visit(ec));
-				else
-					exp2.add((Exp)visit(ec));
-			}*/
-
 			return new InitcallNode(ctx.start.getLine(), ctx.start.getCharPositionInLine(), ctx.ID().getText(), exp1, exp2);
 	}
 
@@ -433,7 +420,7 @@ public class AssetLanVisitorImpl extends AssetLanBaseVisitor<Node>{
 			exp.add((Exp) visit(ec));
 		}
 		
-		return new CallStmt(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
+		return new CallExp(ctx.start.getLine(), ctx.start.getCharPositionInLine(), idFun, exp, id);
 	}
 	
 	@Override

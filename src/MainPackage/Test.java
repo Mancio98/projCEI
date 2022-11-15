@@ -13,13 +13,15 @@ import org.antlr.v4.runtime.tree.ParseTree;
 
 import Interpreter.ExecuteVM;
 import ast.Node;
-
+import ast.type.Type;
+import ast.type.VoidType;
 import ast.AVMVisitorImpl;
 import ast.AssetLanVisitorImpl;
 import parser.AVMLexer;
 import parser.AVMParser;
 import parser.AssetLanLexer;
 import parser.AssetLanParser;
+import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
 
@@ -28,7 +30,13 @@ public class Test {
 
 	  public static void main(String[] args) throws Exception {
 	      
-		  	String fileName = "src/mainPackage/input.assetlan";
+		  	//String fileName = "src/mainPackage/input.assetlan";
+		  	//String fileName = "src/mainPackage/Esercizio1.assetlan";
+		  	//String fileName = "src/mainPackage/Esercizio2.assetlan";
+		  	String fileName = "src/mainPackage/Esercizio3.assetlan";
+		  	//String fileName = "src/mainPackage/Esercizio4.assetlan";
+		  	//String fileName = "src/mainPackage/Esercizio5.assetlan";
+		  	//String fileName = "src/mainPackage/Esercizio6.assetlan";
 
 	        CharStream input = CharStreams.fromFileName(fileName);
 	        AssetLanLexer lexer = new AssetLanLexer(input);
@@ -48,40 +56,42 @@ public class Test {
 	        int lexicalErrors = ((VerboseListener) (lexer.getErrorListeners().get(0))).getNumberErrors();
 	        int syntaxErrors = ((VerboseListener) (parser.getErrorListeners().get(0))).getNumberErrors();
 	        
-	        AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();
-	       
-	        Node ast = visitor.visit(tree);
-	        
 	        //Check number errors 
 			if (lexicalErrors > 0 || syntaxErrors > 0) {
 				System.out.println("The program was not in the right format. Exiting the compilation process now");
+				System.exit(0);
 			} 
 			else {
+				
+				AssetLanVisitorImpl visitor = new AssetLanVisitorImpl();
+		        Node ast = visitor.visit(tree);
+		        
 				STEnvironment env = new STEnvironment();
 				ArrayList<SemanticError> err = ast.checkSemantics(env);
 				if(err.size() > 0) {
 					System.out.println("You had: " +err.size()+" errors:");
 					for(SemanticError e : err)
-						System.out.println("\t" + e);
+						System.out.println("\t" + e.toPrint());
 				} 
 				else {
 					System.out.println("Visualizing AST...");
 					System.out.println(ast.toPrint(""));
-					
-					/*
-					System.out.println("TEST");
+
 					Type programType = ast.typeCheck();
-					System.out.println("TEST");
-					if (programType instanceof VoidType) {*/
-						System.out.println("Il programma � ben tipato");
+					if (programType instanceof VoidType) {
+						System.out.println("Il programma è ben tipato \n");
 						
-						String cgen = ast.codeGeneration();
+						System.out.println("START ANALYZE EFFECT\n");
+						EEnvironment eenv = new EEnvironment();
+						ast.analyzeEffect(eenv);
+						System.out.println("ANALYZE EFFECT DONE\n");
 						
+						String cgen = ast.codeGeneration();						
 						
 						BufferedWriter out = new BufferedWriter(new FileWriter(fileName+".asm")); 
 						out.write(cgen);
 						out.close(); 
-						System.out.println("Code generated! Assembling and running generated code.");
+						System.out.println("Code generated! Assembling and running generated code.\n");
 
 						
 						CharStream inputASM = CharStreams.fromFileName(fileName+".asm");
@@ -93,16 +103,17 @@ public class Test {
 						AVMVisitorImpl visitorAVM = new AVMVisitorImpl();
 						visitorAVM.visit(parserASM.assembly());
 						
-						System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.");
+						System.out.println("You had: "+lexerASM.lexicalErrors+" lexical errors and "+parserASM.getNumberOfSyntaxErrors()+" syntax errors.\n");
 						if (lexerASM.lexicalErrors>0 || parserASM.getNumberOfSyntaxErrors()>0) System.exit(1);
 
-						System.out.println("Starting Virtual Machine...");
+						System.out.println("Starting Virtual Machine...\n");
 						ExecuteVM vm = new ExecuteVM(visitorAVM.getCode());
 						vm.cpu();
-					/*}
+					}
 					else {
-						System.out.println("ERRORE nel TypeCheck");
-					}*/
+						System.out.println("ERRORE nel TypeCheck \n");
+						System.exit(0);
+					}
 				}
 			}
 	  }

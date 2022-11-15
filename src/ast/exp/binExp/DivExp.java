@@ -42,7 +42,7 @@ public class DivExp extends BinExp {
 				rightCGen +
 				"lw $t1 $sp 0\n" +
 				"pop\n"+
-				"div $t1 $a0 $a0\n"; // div LEFTVALUE RIGHTVALUE RETURNADDRESS
+				"div $t1 $a0 $a0\n"; 
 		
 		return divCGen;
 	}

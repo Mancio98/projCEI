@@ -12,40 +12,41 @@ public int lexicalErrors=0;
 assembly: (instruction)* ;
 
 
-instruction:	
-				PUSH input1 = (REGISTER|NUMBER)													#Push     
-			  | POP																				#Pop	    
-			  | ADD	input1 = REGISTER input2 = REGISTER output = REGISTER						#Add
-	  		  | ADDI input1 = REGISTER input2 = REGISTER input3 = NUMBER						#Addi
-			  |	MOVE input1 = REGISTER input2 = REGISTER										#Move
-			  | NOT	input1 = REGISTER input2 = REGISTER 										#Not	    
-			  | SUB	input1 = REGISTER input2 = REGISTER output = REGISTER						#Sub	    
-			  | MULT input1 = REGISTER input2 = REGISTER output = REGISTER						#Mult	    
-			  | DIV input1 = REGISTER input2 = REGISTER output = REGISTER						#Div
-			  | AND input1 = REGISTER input2 = REGISTER output = REGISTER						#And
-			  | OR	input1 = REGISTER input2 = REGISTER output = REGISTER						#Or
-			  | TRANSFER  input1 = REGISTER 													#Transfer
-			  | EQUAL input1 = REGISTER input2 = REGISTER output = REGISTER						#Equal
-			  | NOTEQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 					#Notequal
-			  | GREATER	input1 = REGISTER input2 = REGISTER output = REGISTER 					#Greater
-			  | GREATEROREQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 			#GreaterOrEq 
-			  | LESS input1 = REGISTER input2 = REGISTER output = REGISTER						#Less
-			  | LESSOREQUAL	input1 = REGISTER input2 = REGISTER output = REGISTER 				#LessOrEq	    
-			  | STOREW	input1 = REGISTER input2 = REGISTER offset=NUMBER						#StoreW				  
-			  | LOADW	input1 = REGISTER input2 = REGISTER offset=NUMBER						#LoadW				
-			  | LOADI   input1 = REGISTER input2 = NUMBER 										#Loadi          
-			  | BRANCH  label = LABEL															#Branch
-			  | BRANCHEQ input1 = REGISTER input2 = REGISTER label=LABEL						#BranchQ
-			  | BRANCHLESSEQ input1 = REGISTER input2 = REGISTER label=LABEL 					#BranchLessQ
-			  | LABEL COL																		#Label
-			  | JUMPALABEL 	label = LABEL														#JumpAL  
-			  | JUMPREG input1=REGISTER    														#JumpReg
-			  | PRINT input1 = REGISTER 														#Print    
-			  | HALT 																			#Halt
-			   ;
+
+instruction:
+			PUSH input1 = (REGISTER|NUMBER) 									#Push
+		| 	POP 																#Pop
+		| 	ADD input1 = REGISTER input2 = REGISTER output = REGISTER 			#Add
+		| 	ADDI input1 = REGISTER input2 = REGISTER input3 = NUMBER 			#Addi
+		| 	MOVE input1 = REGISTER input2 = REGISTER 							#Move
+		| 	NOT input1 = REGISTER input2 = REGISTER 							#Not
+		| 	SUB input1 = REGISTER input2 = REGISTER output = REGISTER 			#Sub
+		| 	MULT input1 = REGISTER input2 = REGISTER output = REGISTER 			#Mult
+		| 	DIV input1 = REGISTER input2 = REGISTER output = REGISTER 			#Div
+		| 	AND input1 = REGISTER input2 = REGISTER output = REGISTER 			#And
+		| 	OR input1 = REGISTER input2 = REGISTER output = REGISTER 			#Or
+		| 	TRANSFER input1 = REGISTER 											#Transfer
+		| 	EQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 		#Equal
+		| 	NOTEQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 		#Notequal
+		| 	GREATER input1 = REGISTER input2 = REGISTER output = REGISTER 		#Greater
+		| 	GREATEROREQUAL input1 = REGISTER input2 = REGISTER output = REGISTER #GreaterOrEq
+		| 	LESS input1 = REGISTER input2 = REGISTER output = REGISTER 			#Less
+		| 	LESSOREQUAL input1 = REGISTER input2 = REGISTER output = REGISTER 	#LessOrEq
+		| 	STOREW input1 = REGISTER input2 = REGISTER offset=NUMBER 			#StoreW
+		| 	LOADW input1 = REGISTER input2 = REGISTER offset=NUMBER 			#LoadW
+		| 	LOADI input1 = REGISTER input2 = NUMBER 							#Loadi
+		| 	BRANCH label = LABEL 												#Branch
+		| 	BRANCHEQ input1 = REGISTER input2 = REGISTER label=LABEL 			#BranchQ
+		| 	BRANCHLESSEQ input1 = REGISTER input2 = REGISTER label=LABEL 		#BranchLessQ
+		| 	LABEL COL 															#Label
+		| 	JUMPALABEL label = LABEL 											#JumpAL
+		| 	JUMPREG input1=REGISTER 											#JumpReg
+		| 	PRINT input1 = REGISTER input2 = NUMBER								#Print
+		| 	HALT 																#Halt
+		;
+
 /*------------------------------------------------------------------
 * LEXER RULES
-
 *------------------------------------------------------------------*/
 
 

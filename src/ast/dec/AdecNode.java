@@ -65,6 +65,7 @@ public class AdecNode extends Node {
 		return errors;
 	}
 
+	// Per ogni lista di asset, richiamo l'analisi degli effetti uno ad uno per ogni asset
 	@Override
 	public void analyzeEffect(EEnvironment env) {
 		for (AssetNode node : this.adec) {

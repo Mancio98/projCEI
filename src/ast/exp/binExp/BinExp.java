@@ -1,8 +1,15 @@
 package ast.exp.binExp;
 
+import ast.IdNode;
+import ast.exp.CallExp;
 import ast.exp.Exp;
+import ast.statement.CallStmt;
+import ast.statement.IteStmt;
+
 import java.util.ArrayList;
 
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
@@ -37,8 +44,28 @@ public abstract class BinExp extends Exp {
     
     @Override
 	public void analyzeEffect(EEnvironment env) {
+    	System.out.println("BIN EXP");
     	this.left.analyzeEffect(env);
     	this.right.analyzeEffect(env);
+		return ;
+	}
+    
+    @Override
+    public void analyzeLiquidity(EEnvironment env, String f) {
+    	System.out.println("BIN EXP");
+    	this.left.analyzeLiquidity(env, f);
+    	this.right.analyzeLiquidity(env, f);
+
+		return ;
+    	
+    }
+    
+    @Override
+    public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+    	System.out.println("BIN EXP FIX POINT");
+    	this.left.analyzeEffectFixPoint(env, gEnv, f);
+    	this.right.analyzeEffectFixPoint(env, gEnv, f);
+		
 		return ;
 	}
 	

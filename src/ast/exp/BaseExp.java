@@ -1,8 +1,11 @@
 package ast.exp;
 
+import ast.IdNode;
 import ast.type.Type;
 import java.util.ArrayList;
 
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
@@ -29,13 +32,6 @@ public class BaseExp extends Exp {
     public String toPrint(String indent) {
         return indent + "Exp: Base\n" + this.child.toPrint(indent + "\t");
     }
-    
-    /*
-    @Override
-    public String toPrintInFun(String indent) {
-        return indent + "Exp: Base " + this.child.toPrint(indent);
-    }
-    */
 
 	@Override
 	public String codeGeneration() {
@@ -55,10 +51,23 @@ public class BaseExp extends Exp {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("BASE EXP");
 		this.child.analyzeEffect(env);
 		return ;
 	}
 
-
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("BASE EXP");
+		this.child.analyzeLiquidity(env, f);
+		
+		return ;
+	}
 	
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("BASE EXP FIX POINT");
+		this.child.analyzeEffectFixPoint(env, gEnv, f);
+
+		return ;
+	}
 }

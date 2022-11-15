@@ -1,9 +1,12 @@
 package ast.exp;
 
+import ast.IdNode;
 import ast.type.IntType;
 import ast.type.Type;
 import java.util.ArrayList;
 
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.SemanticError;
@@ -55,11 +58,25 @@ public class NegExp extends Exp {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("NEG EXP");
 		this.child.analyzeEffect(env);
 		return ;
 	}
 
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("NEG EXP");
+		this.child.analyzeLiquidity(env, f);
 
+		return ;
+	}
 
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("NEG EXP FIX POINT");
+		this.child.analyzeEffectFixPoint(env, gEnv, f);
+
+		return ;
+	}
 	
 }

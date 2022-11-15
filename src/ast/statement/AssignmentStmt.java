@@ -1,21 +1,26 @@
 package ast.statement;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import ast.IdNode;
+import ast.exp.CallExp;
 import ast.exp.Exp;
 import util.SemanticError;
+import util.EEntry;
+import util.EEntryAsset;
+import util.EEntryFun;
 import util.EEnvironment;
 import util.STEnvironment;
 import util.TypeError;
+import ast.type.AssetType;
+import ast.type.IntType;
 import ast.type.Type;
-import ast.type.VoidType;
 
 //Used for rule like "ID = exp"
 public class AssignmentStmt extends Statement {
 
 	private final IdNode left;
-	//private final String id;
 	private final Exp exp;
 	private int nestingLevel;
 
@@ -24,6 +29,18 @@ public class AssignmentStmt extends Statement {
 		super(row, column);
 		this.left = left;
 		this.exp = exp;
+	}
+	
+	public boolean isCallExp() {
+		boolean call = false;
+		if (this.exp instanceof CallExp) {
+			call = true;
+		}
+		return call;
+	}
+	
+	public Exp getExp() {
+		return this.exp;
 	}
 	
 	@Override
@@ -44,39 +61,71 @@ public class AssignmentStmt extends Statement {
 	@Override
 	public Type typeCheck() {
 		Type typeLeft = this.left.typeCheck();
-		Type typeExp = this.exp.typeCheck();
+		Type typeExp;
+	
+		typeExp = this.exp.typeCheck();
+		
+		 
 
+		if(typeLeft.isSubtype(new IntType()) && typeExp.isSubtype(new AssetType())) {
+			return null;	
+		}
+		
+		if(typeLeft.isSubtype(new AssetType())&& typeExp.isSubtype(new AssetType())) {
+			System.out.println(new TypeError(super.row, super.column, 
+					"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]").toPrint());
+				System.exit(0);
+		}
+		
 		if (!typeLeft.isSubtype(typeExp)) {
 			System.out.println(new TypeError(super.row, super.column, 
 								"Cannot assign [" + typeExp.getType() + "] to [" + typeLeft.getType() + "]").toPrint());
             System.exit(0);
 		}
 		
-		return new VoidType();
+		return null;
 	}
 
 	@Override
 	public String codeGeneration() {
 		
-		String expcgen = this.exp.codeGeneration();
+		String expcgen = "";
+		expcgen += this.exp.codeGeneration();
+		
 		
 		String alcgen = "";
 		
 		for(int i=0; i < (this.nestingLevel - this.left.getSTentry().getNestinglevel()); i++) {
 			alcgen += "lw $al $al 0\n";
-			//alcgen += "move $al $al 0\n";
 		}
 		String asgmcgen = expcgen+
 						"move $al $fp\n"+
 						alcgen+
-						"sw $a0 $al "+(this.left.getSTentry().getOffset()+1)+"\n";
+						"sw $a0 $al "+this.left.getSTentry().getOffset()+"\n";
 		
 		return asgmcgen;
 	}
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
+		System.out.println("ASSIGNMENT");
+		this.exp.analyzeEffect(env);
+		return ;
+	}
+	
+	@Override
+	public void analyzeLiquidity(EEnvironment env, String f) {
+		System.out.println("ASSIGNMENT");
+		this.exp.analyzeLiquidity(env, f);
+		
 		return ;
 	}
 
+	@Override
+	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
+		System.out.println("ASSIGNMENT FIX POINT");
+		this.exp.analyzeEffectFixPoint(env, gEnv, f);
+
+		return ;
+	}
 }

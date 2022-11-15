@@ -57,6 +57,7 @@ public class AssetNode extends Node {
 		return errors;
 	}
 
+	// Per ogni asset dichiaro, creato un'entry nella tabella con stato iniziale 0
 	@Override
 	public void analyzeEffect(EEnvironment env) {
 		env.addDeclarationAsset(this.id, "0");
