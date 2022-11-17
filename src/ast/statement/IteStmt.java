@@ -183,43 +183,39 @@ public class IteStmt extends Statement {
 		return ifcgen;
 	}
 
-	// Funzione di analisi degli effetti base, ovvero senza possibile chiamata ricorsiva in uno dei rami
+	// Basic effect analysis function, that is without recursive call in one of the branches
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("IF");
-		// Analisi della guardia dell'IF
+		// Analysis of the "if" guard
 		this.exp.analyzeEffect(env);
 		
-		// Creo un ambiente ulteriore per tenere traccia delle modifiche di entrambi rami dell'IF
+		// We create another enviroment to keep track of the changes of both the branches
 		EEnvironment tmpEnv = env.clone();
 		
 		for (String fun : env.getAllFun().keySet()) {
 			((EEntryFun)(tmpEnv.lookUp(fun))).setFunNode(((EEntryFun)(env.lookUp(fun))).getFunNode());
 		}
 
-		System.out.println("THEN");
-		// Analizzo tutti gli statement del ramo THEN
+		// We analyze all the statement in the "then" branch
         for(Statement stmt : this.thenStmtList) {
         	stmt.analyzeEffect(env);
 		}
         
-        System.out.println("ELSE");
-        // Analizzo tutti gli statement del ramo ELSE
+        // We analyze all the statement in the "else" branch
         for(Statement stmt : this.elseStmtList) {
         	stmt.analyzeEffect(tmpEnv);
 		}
-
-        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
+        
+        // After analyzed both the branches, we utilize an auxiliary function to check the maximum of the effect for each asset
         env.maxModifyEnv(tmpEnv);
         
         return ;
 	}
 	
-	// COME IN FunNode VERIFICARE IL CASO DELLA CHIAMATA RICORSIVA
+	
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("IF");
-		// Analizzo l'espressione nella guardia dell'IF
+		// Analysis of the "if" guard
 		this.exp.analyzeLiquidity(env, f);
 		
 		EEnvironment tmpEnv = env.clone();
@@ -227,61 +223,42 @@ public class IteStmt extends Statement {
 			((EEntryFun)(tmpEnv.lookUp(fun))).setFunNode(((EEntryFun)(env.lookUp(fun))).getFunNode());
 		}
 		
-		System.out.println("THEN");
-		// Analizzo tutti gli statement del ramo THEN
+		// We analyze all the statement in the "then" branch
 		for(Statement stmt : this.thenStmtList) {
 			stmt.analyzeLiquidity(env, f);
 		}
 		
-		System.out.println("ELSE");
-        // Analizzo tutti gli statement del ramo ELSE
+		// We analyze all the statement in the "else" branch
 		for(Statement stmt : this.elseStmtList) {
 			stmt.analyzeLiquidity(tmpEnv, f);
 		}
 				
-        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
-        env.maxModifyEnv(tmpEnv);
-        
+		// After analyzed both the branches, we utilize an auxiliary function to check the maximum of the effect for each asset
+		env.maxModifyEnv(tmpEnv);
+      
         return ;
 	}
 	
-	// Funzione ausiliaria utile per analizzare lo statement IF quando calcoliamo il punto fisso di una funzione ricorsiva
+	// Auxiliary function to analyze the "if" statement when we compute the fixed point of a recursive function
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("IF FIX POINT");
-		// Analisi della guardia dell'IF
+		// Analysis of the "if" guard
 		this.exp.analyzeEffectFixPoint(env, gEnv, f);
 		
 		EEnvironment tmpEnv = env.clone();
-		//EEnvironment tmpGEnv = gEnv.clone();
 		
-		System.out.println("THEN FIX POINT");
-		// Analizzo tutti gli statement del ramo THEN
+		// We analyze all the statement in the "then" branch
         for(Statement stmt : this.thenStmtList) {
         	stmt.analyzeEffectFixPoint(env, gEnv, f);
 		}
         
-        System.out.println("ELSE FIX POINT");
-        // Analizzo tutti gli statement del ramo ELSE
+        // We analyze all the statement in the "else" branch
         for(Statement stmt : this.elseStmtList) {
         	stmt.analyzeEffectFixPoint(tmpEnv, gEnv, f);
 		}
         
-        // Una volta analizzati i due rami, utilizzo una funzione ausiliaria per controllare quale sia il massimo degli effeti per ogni asset
+        // After analyzed both the branches, we utilize an auxiliary function to check the maximum of the effect for each asset
         env.maxModifyEnv(tmpEnv);
-        /*
-        System.out.println("MAX MODIFY ENV");
-        env.getSymTable().forEach(  hashmap -> {
-			System.out.println();
-			hashmap.forEach( (id, entry) -> {
-				if (entry instanceof EEntryAsset) {
-					System.out.println(id);
-					System.out.println(((EEntryAsset)(entry)).getEffectState());
-				}
-			});
-		});
-        System.out.println("MAX MODIFY ENV");
-		*/
         return ;
 	}
 }

@@ -52,32 +52,25 @@ public class NotExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
-		
-		
 		return this.child.codeGeneration()+"not $a0 $a0\n";
 	}
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("NOT EXP");
 		this.child.analyzeEffect(env);
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("NOT EXP");
 		this.child.analyzeLiquidity(env, f);
-
 		return ;
 		
 	}
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("NOT EXP FIX POINT");
 		this.child.analyzeEffectFixPoint(env, gEnv, f);
-
 		return ;
 	}
 

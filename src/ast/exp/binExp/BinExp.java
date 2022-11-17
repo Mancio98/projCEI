@@ -44,7 +44,6 @@ public abstract class BinExp extends Exp {
     
     @Override
 	public void analyzeEffect(EEnvironment env) {
-    	System.out.println("BIN EXP");
     	this.left.analyzeEffect(env);
     	this.right.analyzeEffect(env);
 		return ;
@@ -52,7 +51,6 @@ public abstract class BinExp extends Exp {
     
     @Override
     public void analyzeLiquidity(EEnvironment env, String f) {
-    	System.out.println("BIN EXP");
     	this.left.analyzeLiquidity(env, f);
     	this.right.analyzeLiquidity(env, f);
 
@@ -62,7 +60,6 @@ public abstract class BinExp extends Exp {
     
     @Override
     public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-    	System.out.println("BIN EXP FIX POINT");
     	this.left.analyzeEffectFixPoint(env, gEnv, f);
     	this.right.analyzeEffectFixPoint(env, gEnv, f);
 		

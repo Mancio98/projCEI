@@ -66,21 +66,18 @@ public class TransferStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("TRANSFER");
 		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("TRANSFER");
 		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
 		return ;
 	}
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("TRANSFER FIX POINT");
 		((EEntryAsset)(env.lookUp(this.id.getId()))).updateEffectState("0");
 		return ;
 	}

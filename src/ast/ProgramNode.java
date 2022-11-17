@@ -126,64 +126,30 @@ public class ProgramNode extends Node {
 	public void analyzeEffect(EEnvironment env) {
 		env.entryScope();
 		
-		// Analisi degli effetti delle varie dichiarazioni
+		// Analysis of the effects of the various declarations
 		for(FieldNode f : this.field) {
 			f.analyzeEffect(env);
 		}
-		// Analisi degli effetti delle varie dichiarazioni di asset
+		// Analysis of the effects of the various asset declarations
 		for(AssetNode a : this.asset) {
 			a.analyzeEffect(env);
 		}
 		
-		// Analisi deglli effetti delle funzioni
+		// Analysis of the effects of the functions
 		for(FunNode f : this.function) {
-			System.out.println("------------------------------------------");
-			System.out.println("FUN " + f.getId());
-			f.analyzeEffect(env);
-			/*
-			((EEntryFun)(env.lookUp(f.getId()))).getEnv0().getSymTable().forEach(  hashmap -> {
-				System.out.println();
-				hashmap.forEach( (id, entry) -> {
-					if (entry instanceof EEntryAsset) {
-						System.out.println(id);
-						System.out.println(((EEntryAsset)(entry)).getEffectState());
-					}
-				});
-			});
-			*/
-			((EEntryFun)(env.lookUp(f.getId()))).getEnv1().getSymTable().forEach(  hashmap -> {
-				System.out.println();
-				hashmap.forEach( (id, entry) -> {
-					if (entry instanceof EEntryAsset) {
-						System.out.println(id);
-						System.out.println(((EEntryAsset)(entry)).getEffectState());
-					}
-				});
-			});
-			
-			System.out.println("FUN " + f.getId());
-			System.out.println("------------------------------------------");
+			f.analyzeEffect(env);	
 		}
-		/*
-		// Setto tutti gli asset globali con effetto 0, questo perchè nel caso di fixpoint vengono cambiati i valori
-		for(String id : env.getAllAsset().keySet()) {
-			((EEntryAsset)(env.lookUp(id))).updateEffectState("0");
-		}
-		*/
-		// Per ogni funzione del programma, passo all'entry il nodo della funzione (servirà durante l'analisi della liquidità)
+		// For each function of the program, I pass the function node to the entry ( It will be used during the liquidity analysis)
 		EEnvironment envLiq = env.clone();
 		for(FunNode f : this.function) {
 			((EEntryFun)(envLiq.lookUp(f.getId()))).setFunNode(f);
 		}
 		
-		
-		System.out.println("LIQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
-		// Analisi della liquiditï¿½ delle sole funzioni che vengono chiamate durante l'esecuzione del programma
+		//Liquidity analysis of the only called functions during the esecution of the program
 		this.initcall.analyzeLiquidity(envLiq);
 		
-		// Analisi della liquiditï¿½ del programma, ovvero degli asset globali del programma
+		// Liquidity analysis of the program, that is of the global assets
 		this.initcall.analyzeEffect(env);
-		System.out.println("LIQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQQ");
 		
 		env.exitScope();
 		

@@ -252,39 +252,27 @@ public class FunNode extends Node {
 		return semErrors;
 	}
 	
-	// Analisi della liquiditï¿½
+	// Liquidity analysis
 	public void analyzeLiquidity(EEnvironment env) {
-		System.out.println("FUN NODE " + this.id);
 		String[] split;
 		ArrayList<String> liq = new ArrayList<String>();
 		int i;
 		
-		//EEnvironment e0 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0();
 		EEnvironment env0 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0().clone();
-		System.out.println();
-		System.out.println("ENV 0");
-		System.out.println();
-		// Aggiorno gli stati degli asset dell'ambiente di entrata della funzione in base a quelli calcolati fino ad ora
+		
+		// Update the asset state of the entry environment of the function based on those calculated up to now
 		for (String g : env.getAllAsset().keySet()) {
 			((EEntryAsset)(env0.lookUp(g))).updateEffectState(((EEntryAsset)(env.lookUp(g))).getEffectState());
-			System.out.println("asset: " + g);
-			System.out.println("effect: " + ((EEntryAsset)(env0.lookUp(g))).getEffectState());
 		}
 		
-		//EEnvironment e1 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv1();
 		EEnvironment env1 = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv1().clone();
-		System.out.println();
-		System.out.println();
-		System.out.println("ENV 1");
-		System.out.println();
-		// Per ogni asset controllo se l'effetto ï¿½ formato da termini oppure no
+
+		// For each asset check if the effect is based on other terms
 		for (String a : env1.getAllAsset().keySet()) {
-			System.out.println("asset: " + a);
-			System.out.println("effect: " + ((EEntryAsset)(env1.lookUp(a))).getEffectState());
 			if (!((EEntryAsset)(env1.lookUp(a))).getEffectState().equals("1") && !((EEntryAsset)(env1.lookUp(a))).getEffectState().equals("0")) {
 				split = ((EEntryAsset)(env1.lookUp(a))).getEffectState().split(Pattern.quote("+"));
 				
-				// Nel caso sia formato da termini allora li risolvo e faccio la somma tra i valori trovati
+				// If it is based on other terms I will compute the sum between this terms
 				i = 1;
 				if (!split[0].equals("0") && !split[0].equals("1")) {
 					String res = ((EEntryAsset)(env0.getAllAsset().get(split[0]))).getEffectState();
@@ -292,14 +280,12 @@ public class FunNode extends Node {
 						res = EEntryAsset.effectStatePlus(res, ((EEntryAsset)(env0.getAllAsset().get(split[i]))).getEffectState());
 						i++;
 					}
-					
-					System.out.println("-> " + res);
 					((EEntryAsset)(env1.getAllAsset().get(a))).updateEffectState(res);
 				}
 			}	
 		}
 		
-		// Controllo se nell'ambiente di uscita tutti i parametri formali hanno valore pari a 0, altrimenti la funzione non ï¿½ liquida
+		// Check if in the exit environment all the formal parameters have equal value to 0, otherwise the function is not liquid
 		for (AssetNode an : this.parAdec.getListAdec()) {
 			if (!((EEntryAsset)(env1.lookUp(an.getId()))).getEffectState().equals("0")) {
 				liq.add(an.getId());
@@ -320,9 +306,9 @@ public class FunNode extends Node {
 			System.exit(0);
 		}
 		
-		// Prendo l'ambiente di entrata della funzione che stiamo controllando
+		// Take the entry environment of the function that we are checking
 		EEnvironment env0Fun = ((EEntryFun)(env.getAllFun().get(this.id))).getEnv0();
-		// Mi creo un nuovo nesting level dove aggiungo gli asset locali usati dalla funzione corrente
+		// Create a new nesting level where we add only local assets used from current function
 		env.entryScope();
 		for (String add : env0Fun.getAllAsset().keySet()) {
 			if (env.getAllAsset().get(add) == null) {
@@ -330,35 +316,17 @@ public class FunNode extends Node {
 			}	
 		}
 		
-		System.out.println();
-		System.out.println("BODY");
-		// Analizzo il body della funzione
+		// Function body analysis 
 		for(Statement stmt : this.statementList) {
 			stmt.analyzeLiquidity(env, this.id);
 		}
-		
-		/*
-		System.out.println("uidity");
-		env.getSymTable().forEach( hashmap -> {
-			System.out.println();
-			hashmap.forEach( (idd, entry) -> {
-				if (entry instanceof EEntryAsset) {
-					System.out.println(idd);
-					System.out.println(((EEntryAsset)(entry)).getEffectState());
-				}
-				else {
-					System.out.println(idd);
-				}
-			});
-		});
-		*/
 		
 		env.exitScope();
 		
 		return ;
 	}
 
-	// Funzione ausiliaria per il controllo se la funzione ï¿½ ricorsiva
+	// Auxiliary function to check if the function is recursive
 	private boolean isRecursive(Statement stmt) {
 		boolean isRec = false;
 		
@@ -407,7 +375,7 @@ public class FunNode extends Node {
 		return isRec;
 	}
 	
-	// Funzione ausiliaria per il controllo se la funzione ï¿½ ricorsiva
+	// Auxiliary function to check if the function is recursive
 	private boolean expIsRecursive(Exp exp) {
 		boolean isRec = false;
 		
@@ -458,10 +426,9 @@ public class FunNode extends Node {
 	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("FUN NODE " + this.id);
 		boolean isRec = false;
 		
-		// Controllo se la funzione ï¿½ ricorsiva
+		// Check if the function is recursive
 		for (Statement stmt : this.statementList) {		
 			if (stmt instanceof CallStmt && ((((CallStmt)(stmt)).getId()).equals(this.id))) {
 				isRec = true;
@@ -482,108 +449,88 @@ public class FunNode extends Node {
 				}
 			}
 		}
-		
-		System.out.println("IS RECURSIVE? " + isRec);
+	
 		env.entryScope();
 		
-		// Faccio l'analisi degli effetti della lista dei parametri formali e delle dichiarazioni nel body
+		// Effect analysis of the formal parameters  
 		this.parDec.analyzeEffect(env);
 		this.parAdec.analyzeEffect(env);
 		for (AssetNode asset : this.parAdec.getListAdec()) {
 			((EEntryAsset)(env.lookUp(asset.getId()))).updateEffectState(asset.getId());
 		}
 		
-		// Faccio l'analisi degli effetti delle dichiarazioni nel body
+		// Effect analysis of the formal parameters body declaration
 		for(DecNode n : this.decList) {
 			n.analyzeEffect(env);
 		}
 		
-		// Creazione ed inizializzazione degli ambienti di entrata e uscita della funzione che stiamo valutando
+		// Creation and initialization of entry and exit environment of the function
 		EEnvironment envFun = new EEnvironment();
 		EEnvironment env1 = new EEnvironment();
 		
 		envFun.entryScope();
 		env1.entryScope();
 		
-		// Creo l'ambiente delle funzioni
+		// We create function environment
 		HashMap<String, EEntry> mapFun = env.getAllFun();
 		HashMap<String, EEntry> map10 = env.getAllFun();
 		
 		mapFun.forEach((id, entry) -> { envFun.addDeclaration(id, entry); });
 		map10.forEach((id, entry) -> { env1.addDeclaration(id, entry); });
 		
-		// Se non ci sono funzioni già valutate, non aggiungiamo l'ambiente delle funzioni in testa
+		// If there are not functions already evaluated, we don't add the function environment overhead
 		if (!mapFun.isEmpty()) {
 			envFun.entryScope();
 			env1.entryScope();
 		}
 		
-		// Creo l'ambiente con tutti gli asset che sono visibili all'interno della funzione
+		// We create the environment with all asset that are visible within the function
 		HashMap<String, EEntry> mapAsset = env.getAllAsset();
 		HashMap<String, EEntry> mapAsset1 = env.getAllAsset();
 		
 		mapAsset.forEach((id, entry) -> { envFun.addDeclarationAsset(id, id); });
 		mapAsset1.forEach((id, entry) -> { env1.addDeclarationAsset(id, id); });
 		
-		// Se la funzione ï¿½ ricorsiva allora devo utilizzare il punto fisso
+		// If the function is recursive i have to use the fixed point
 		if (!isRec) {		
-			System.out.println("FUN BODY");
-			// Se non lo ï¿½, analizzo subito il body della funzione senza fare punto fisso
+			// If the function is not recursive, we analyze the function body without fixed point
 			for(Statement stmt : this.statementList) {
-				// Richiamo l'analisi degli effetti per ogni statement
-				stmt.analyzeEffect(env1);	//QUI NON C'ï¿½ AMBIENTE COMPLETO
+				// Effect analysis for each statement
+				stmt.analyzeEffect(env1);
 			}
 			
 			env.exitScope();
-			// Dichiaro la funzione all'interno dell'ambiente
+			// We declare the function inside the environment
 			env.addDeclarationFun(id, envFun, env1, this);
 		}
 		else {
-			// Inizializzazione del punto fisso al caso base, ovvero con tutti gli effeti pari a 1
+			// Initialization of fixed point with the base case so with all the value effect as 1
 			for (String asset : envFun.getAllAsset().keySet()) {
 				((EEntryAsset)(envFun.getAllAsset().get(asset))).updateEffectState("1");
 				((EEntryAsset)(env1.getAllAsset().get(asset))).updateEffectState("1");
 			}
 			
 			env.exitScope();
-			// Dichiaro la funzione all'interno dell'ambiente, anche se non ï¿½ quella definitiva e potrebbe esser cambiata
+			// We declare the function inside the environment, even if it isn't the final one and may have changed
 			env.addDeclarationFun(id, envFun, env1, this);
-			// Inizio la computazione del punto fisso
+			// Starting  the computation of fixed point 
 			analyzeEffectFixPoint(envFun, env1.clone(), env);
 		}
-		
-		System.out.println("ENV 1");
-		((EEntryFun)(env.lookUp(this.id))).getEnv1().getSymTable().forEach(  hashmap -> {
-			System.out.println();
-			hashmap.forEach( (id, entry) -> {
-				if (entry instanceof EEntryAsset) {
-					System.out.println(id);
-					System.out.println(((EEntryAsset)(entry)).getEffectState());
-				}
-			});
-		});
-        System.out.println("ENV 1");
-		
 		return ;
 	}
 	
-	// Analisi del punto fisso
+	// Fixed point analysis
 	private void analyzeEffectFixPoint(EEnvironment env0, EEnvironment env1, EEnvironment env) {
 		EEnvironment newEnv1 = ((EEntryFun)(env.lookUp(this.id))).getEnv0().clone();
 		
-		//EEnvironment tmpEnv = env.clone();
-		//EEnvironment tmpEnv0 = ((EEntryFun)(tmpEnv.lookUp(this.id))).getEnv0();
-		
-		System.out.println("");
-		System.out.println("FUN BODY");
-		// Per ogni statement del body della funzione, faccio l'analisi
+		// We analyze each statement inside the function body
 		for(Statement stmt : this.statementList) {
 			stmt.analyzeEffectFixPoint(newEnv1, env, this.id);
 		}
 		
-		// Confronto tra gli ambienti di uscita, se sono uguali il punto fisso termina
+		// Comparison between the exit environment, if they are the same the fixed point ends
 		if (EEnvironment.environmentEquality(env1, newEnv1)) {
-	    	// Setto l'ambiente di entrata al caso base
+			// Setting the entry environment to the base case 
 			for (String asset : ((EEntryFun)(env.lookUp(this.id))).getEnv0().getAllAsset().keySet()) {
 				((EEntryAsset)(((EEntryFun)(env.lookUp(this.id))).getEnv0().getAllAsset().get(asset))).updateEffectState(asset);
 			}
@@ -591,10 +538,10 @@ public class FunNode extends Node {
 	        return ;
 	    }		
 		
-	    // Aggiorno il nuovo ambiente di uscita della funzione con quello calcolato al passo corrente del punto fisso
+		// Updating the new exit environment of the function with the one calculated at the current step of fixed point
 	    ((EEntryFun)(env.lookUp(this.id))).setEnv1(newEnv1);
 	    
-	    // Altro giro del punto fisso con i valori aggiornati
+	    // New fixed point step with the updated value
         this.analyzeEffectFixPoint(env0, newEnv1.clone(), env);
         
 		return ;

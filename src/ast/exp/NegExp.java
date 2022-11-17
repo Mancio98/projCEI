@@ -51,31 +51,25 @@ public class NegExp extends Exp {
 
 	@Override
 	public String codeGeneration() {
-		
 		String expcgen = this.child.codeGeneration();
 		return "li $a0 -"+expcgen;
 	}
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("NEG EXP");
 		this.child.analyzeEffect(env);
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("NEG EXP");
 		this.child.analyzeLiquidity(env, f);
-
 		return ;
 	}
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("NEG EXP FIX POINT");
 		this.child.analyzeEffectFixPoint(env, gEnv, f);
-
 		return ;
 	}
 	

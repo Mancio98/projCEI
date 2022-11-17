@@ -91,7 +91,6 @@ public class MoveStmt extends Statement {
 	
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("MOVE");
 		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
 		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
 		return ;
@@ -99,7 +98,6 @@ public class MoveStmt extends Statement {
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("MOVE");
 		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
 		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
 		return ;
@@ -107,7 +105,6 @@ public class MoveStmt extends Statement {
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("MOVE FIX POINT");
 		((EEntryAsset)(env.lookUp(this.right.getId()))).updateEffectState(EEntryAsset.effectStatePlus(((EEntryAsset)(env.lookUp(this.left.getId()))).getEffectState(), ((EEntryAsset)(env.lookUp(this.right.getId()))).getEffectState()));
 		((EEntryAsset)(env.lookUp(this.left.getId()))).updateEffectState("0");
 		return ;		

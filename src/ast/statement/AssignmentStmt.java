@@ -108,14 +108,12 @@ public class AssignmentStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("ASSIGNMENT");
 		this.exp.analyzeEffect(env);
 		return ;
 	}
 	
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("ASSIGNMENT");
 		this.exp.analyzeLiquidity(env, f);
 		
 		return ;
@@ -123,7 +121,6 @@ public class AssignmentStmt extends Statement {
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("ASSIGNMENT FIX POINT");
 		this.exp.analyzeEffectFixPoint(env, gEnv, f);
 
 		return ;

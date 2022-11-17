@@ -76,7 +76,6 @@ public class ReturnStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("RETURN");
 		if (exp != null) {
             exp.analyzeEffect(env);
         }
@@ -85,7 +84,6 @@ public class ReturnStmt extends Statement {
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("RETURN");
 		if (exp != null) {
 			this.exp.analyzeLiquidity(env, f);
 		}
@@ -95,11 +93,9 @@ public class ReturnStmt extends Statement {
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("RETURN FIX POINT");
 		if (exp != null) {
 			this.exp.analyzeEffectFixPoint(env, gEnv, f);
 		}
-		
 		return ;
 	}
 }

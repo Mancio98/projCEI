@@ -63,24 +63,19 @@ public class PrintStmt extends Statement {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("PRINT");
 		this.exp.analyzeEffect(env);
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("PRINT");
 		this.exp.analyzeLiquidity(env, f);
-		
 		return ;
 	}
 
 	@Override
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("PRINT FIX POINT");
 		this.exp.analyzeEffectFixPoint(env, gEnv, f);
-		
 		return ;
 	}
 }

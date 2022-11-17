@@ -51,21 +51,18 @@ public class BaseExp extends Exp {
 
 	@Override
 	public void analyzeEffect(EEnvironment env) {
-		System.out.println("BASE EXP");
 		this.child.analyzeEffect(env);
 		return ;
 	}
 
 	@Override
 	public void analyzeLiquidity(EEnvironment env, String f) {
-		System.out.println("BASE EXP");
 		this.child.analyzeLiquidity(env, f);
 		
 		return ;
 	}
 	
 	public void analyzeEffectFixPoint(EEnvironment env, EEnvironment gEnv, String f) {
-		System.out.println("BASE EXP FIX POINT");
 		this.child.analyzeEffectFixPoint(env, gEnv, f);
 
 		return ;
